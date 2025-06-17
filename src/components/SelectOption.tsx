@@ -61,7 +61,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
 
   const selectedLabel =
     options.find((opt) => opt.value === currentValue)?.label ||
-    `Select ${placeholder}`;
+    `${placeholder}`;
   return (
     <>
       <div ref={dropdownRef} className="relative m-0">
@@ -85,14 +85,14 @@ const SelectOption: React.FC<SelectOptionProps> = ({
           </div>
         </div>
         {isOpen && (
-          <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100">
+          <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-2">
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search..."
-                className="w-full px-2 py-1 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#0093DD]"
+                className="w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b-[#222222] border-gray-200 rounded-lg focus:outline-none focus:border-[#0093DD]"
               />
             </div>
             <div className="max-h-56 overflow-y-auto m-0">

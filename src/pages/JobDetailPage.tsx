@@ -70,7 +70,7 @@ const JobDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5fafd]">
+    <div className="min-h-screen flex flex-col bg-[#E6F8FF]">
       <Header />
 
       <main className="flex-1 py-8">
@@ -104,9 +104,9 @@ const JobDetailPage = () => {
               <div className="mt-4 md:mt-0 flex flex-col gap-2">
                 <Link
                   to="/applicant-form"
-                  className="inline-flex items-center justify-start md:justify-end border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
+                  className="inline-flex hover:underline items-center justify-start md:justify-end border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
                 >
-                  Apply
+                  Apply Now
                   <ArrowRight className="w-6 h-6 -rotate-45 ml-2" />
                 </Link>
                 <Link

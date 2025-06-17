@@ -13,61 +13,55 @@ import Footer from "../components/Footer";
 import SelectOption from "../components/SelectOption";
 import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
-import { CircleUserRound, MinusCircle } from "lucide-react";
+import { CirclePlus, CircleUserRound, MinusCircle } from "lucide-react";
 import StarRating from "../components/StarRating";
 
 // Define the schema for the form
 const applicantFormSchema = z.object({
   // Basic Information
-  title: z.string().min(1, "Title is required"),
-  firstName: z.string().min(1, "First name is required"),
+  title: z.string().min(1, "Required"),
+  firstName: z.string().min(1, "Required"),
   middleName: z.string().optional(),
-  lastName: z.string().min(1, "Last name is required"),
+  lastName: z.string().min(1, "Required"),
 
   // Personal Information
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  citizenship: z.string().min(1, "Citizenship is required"),
-  nationalId: z.string().min(1, "National ID is required"),
-  nationality: z.string().min(1, "Nationality is required"),
-  gender: z.string().min(1, "Gender is required"),
-  maritalStatus: z.string().min(1, "Marital status is required"),
+  dateOfBirth: z.string().min(1, "Required"),
+  citizenship: z.string().min(1, "Required"),
+  nationalId: z.string().min(1, "Required"),
+  nationality: z.string().min(1, "Required"),
+  gender: z.string().min(1, "Required"),
+  maritalStatus: z.string().min(1, "Required"),
   religion: z.string().optional(),
-  nic: z.string().min(1, "NIC/CNIC/SNIC is required"),
+  nic: z.string().min(1, "Required"),
 
   // Contact Information
-  country: z.string().min(1, "Country is required"),
-  city: z.string().min(1, "City is required"),
-  address: z.string().min(1, "Address is required"),
-  mobileWithCountryCode: z.string().min(1, "Mobile number is required"),
+  country: z.string().min(1, "Required"),
+  city: z.string().min(1, "Required"),
+  address: z.string().min(1, "Required"),
+  mobileWithCountryCode: z.string().min(1, "Required"),
   landlineWithCountryCode: z.string().optional(),
-  emailAddress: z.string().email("Invalid email address"),
+  emailAddress: z.string().email("Invalid"),
 
   // General Information
-  tenativeDaysOfJoining: z.coerce
-    .number()
-    .min(1, "Tenative days of joining is required"),
-  currentDesignation: z.string().min(1, "Current designation is required"),
-  currentEmployer: z.string().min(1, "Current employer is required"),
-  currentSalary: z.coerce.number().min(1, "Current salary is required"),
-  expectedSalaryRangeFrom: z.coerce
-    .number()
-    .min(1, "Expected salary range from is required"),
-  expectedSalaryRangeTo: z.coerce
-    .number()
-    .min(1, "Expected salary range to is required"),
+  tenativeDaysOfJoining: z.coerce.number().min(1, "Required"),
+  currentDesignation: z.string().min(1, "Required"),
+  currentEmployer: z.string().min(1, "Required"),
+  currentSalary: z.coerce.number().min(1, "Required"),
+  expectedSalaryRangeFrom: z.coerce.number().min(1, "Required"),
+  expectedSalaryRangeTo: z.coerce.number().min(1, "Required"),
   anyOtherRelevantInformationYouWishToShare: z.string().optional(),
 
   // Academic Information
   academics: z
     .array(
       z.object({
-        institution: z.string().min(1, "Institution is required"),
-        qualification: z.string().min(1, "Qualification is required"),
-        cgpa: z.string().min(1, "CGPA is required"),
-        startDate: z.string().min(1, "Start date is required"),
-        endDate: z.string().min(1, "End date is required"),
-        city: z.string().min(1, "City is required"),
-        country: z.string().min(1, "Country is required"),
+        institution: z.string().min(1, "Required"),
+        qualification: z.string().min(1, "Required"),
+        cgpa: z.string().min(1, "Required"),
+        startDate: z.string().min(1, "Required"),
+        endDate: z.string().min(1, "Required"),
+        city: z.string().min(1, "Required"),
+        country: z.string().min(1, "Required"),
       })
     )
     .min(1, "At least one academic record is required"),
@@ -76,12 +70,12 @@ const applicantFormSchema = z.object({
   experiences: z
     .array(
       z.object({
-        employer: z.string().min(1, "Employer is required"),
-        designation: z.string().min(1, "Designation is required"),
-        startDate: z.string().min(1, "Start date is required"),
-        endDate: z.string().min(1, "End date is required"),
-        city: z.string().min(1, "City is required"),
-        country: z.string().min(1, "Country is required"),
+        employer: z.string().min(1, "Required"),
+        designation: z.string().min(1, "Required"),
+        startDate: z.string().min(1, "Required"),
+        endDate: z.string().min(1, "Required"),
+        city: z.string().min(1, "Required"),
+        country: z.string().min(1, "Required"),
       })
     )
     .min(1, "At least one experience record is required"),
@@ -90,10 +84,10 @@ const applicantFormSchema = z.object({
   skills: z
     .array(
       z.object({
-        skillName: z.string().min(1, "Skill name is required"),
-        details: z.string().min(1, "Skill details are required"),
-        startDate: z.string().min(1, "Start date is required"),
-        endDate: z.string().min(1, "End date is required"),
+        skillName: z.string().min(1, "Required"),
+        details: z.string().min(1, "Required"),
+        startDate: z.string().min(1, "Required"),
+        endDate: z.string().min(1, "Required"),
         rating: z.number().min(0).max(5),
         certification: z.string().optional(),
       })
@@ -129,12 +123,12 @@ const ApplicantFormPage = () => {
       mobileWithCountryCode: "",
       landlineWithCountryCode: "",
       emailAddress: "",
-      tenativeDaysOfJoining: 0,
+      tenativeDaysOfJoining: undefined,
       currentDesignation: "",
       currentEmployer: "",
-      currentSalary: 0,
-      expectedSalaryRangeFrom: 0,
-      expectedSalaryRangeTo: 0,
+      currentSalary: undefined,
+      expectedSalaryRangeFrom: undefined,
+      expectedSalaryRangeTo: undefined,
       anyOtherRelevantInformationYouWishToShare: "",
       academics: [],
       experiences: [],
@@ -295,13 +289,13 @@ const ApplicantFormPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5fafd]">
+    <div className="min-h-screen flex flex-col bg-[#E6F8FF]">
       <Header />
       <main className="flex-1 py-8">
         <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Form */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 order-2 lg:order-1">
               <FormProvider {...methods}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                   {/* Basic Information */}
@@ -630,9 +624,9 @@ const ApplicantFormPage = () => {
                             country: "",
                           })
                         }
-                        className="text-sm bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] rounded-full text-white px-4 p-2"
+                        className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] rounded-full text-white px-3 p-1"
                       >
-                        + Add
+                        <CirclePlus className="inline-block w-3 h-3" /> Add
                       </button>
                     </div>
                     <div className="overflow-x-auto">
@@ -640,28 +634,28 @@ const ApplicantFormPage = () => {
                         <table className="w-full">
                           <thead>
                             <tr className="bg-white rounded-md text-[#222222]">
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Action
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Institution
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Qualification
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 CGPA
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Start Date
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 End Date
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 City
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Country
                               </th>
                             </tr>
@@ -736,7 +730,9 @@ const ApplicantFormPage = () => {
                                         ?.message
                                     }
                                     registration={{
-                                      ...register(`academics.${index}.startDate`),
+                                      ...register(
+                                        `academics.${index}.startDate`
+                                      ),
                                     }}
                                   />
                                 </td>
@@ -746,7 +742,8 @@ const ApplicantFormPage = () => {
                                     placeholder="End Date"
                                     type="date"
                                     error={
-                                      errors.academics?.[index]?.endDate?.message
+                                      errors.academics?.[index]?.endDate
+                                        ?.message
                                     }
                                     registration={{
                                       ...register(`academics.${index}.endDate`),
@@ -772,7 +769,8 @@ const ApplicantFormPage = () => {
                                     placeholder="Country"
                                     type="text"
                                     error={
-                                      errors.academics?.[index]?.country?.message
+                                      errors.academics?.[index]?.country
+                                        ?.message
                                     }
                                     registration={{
                                       ...register(`academics.${index}.country`),
@@ -805,9 +803,9 @@ const ApplicantFormPage = () => {
                             country: "",
                           })
                         }
-                        className="text-sm bg-[#222222] text-white hover:bg-transparent hover:text-[#222222] border border-[#222222] px-4 p-2 rounded-full"
+                        className="text-xs bg-[#222222] text-white hover:bg-transparent hover:text-[#222222] border border-[#222222] px-3 p-1 rounded-full"
                       >
-                        + Add Experience
+                        <CirclePlus className="inline-block w-3 h-3" /> Add
                       </button>
                     </div>
                     <div className="overflow-x-auto">
@@ -815,25 +813,25 @@ const ApplicantFormPage = () => {
                         <table className="w-full font-normal">
                           <thead>
                             <tr className="bg-white rounded-md text-[#222222]">
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Action
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Employer
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Designation
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Start Date
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 End Date
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 City
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Country
                               </th>
                             </tr>
@@ -911,7 +909,9 @@ const ApplicantFormPage = () => {
                                         ?.message
                                     }
                                     registration={{
-                                      ...register(`experiences.${index}.endDate`),
+                                      ...register(
+                                        `experiences.${index}.endDate`
+                                      ),
                                     }}
                                   />
                                 </td>
@@ -938,7 +938,9 @@ const ApplicantFormPage = () => {
                                         ?.message
                                     }
                                     registration={{
-                                      ...register(`experiences.${index}.country`),
+                                      ...register(
+                                        `experiences.${index}.country`
+                                      ),
                                     }}
                                   />
                                 </td>
@@ -957,9 +959,9 @@ const ApplicantFormPage = () => {
                       <button
                         type="button"
                         onClick={appendNewSkill}
-                        className="text-sm bg-[#222222] text-white px-4 p-2 hover:bg-transparent hover:text-[#222222] border border-[#222222] rounded-full"
+                        className="text-xs bg-[#222222] text-white text-center px-3 p-1 hover:bg-transparent hover:text-[#222222] border border-[#222222] rounded-full"
                       >
-                        + Add Skill
+                        <CirclePlus className="inline-block w-3 h-3" /> Add
                       </button>
                     </div>
                     <div className="overflow-x-auto">
@@ -967,25 +969,25 @@ const ApplicantFormPage = () => {
                         <table className="w-full">
                           <thead className="rounded-xl">
                             <tr className="bg-white text-[#222222]">
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Action
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Skill Name
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Details
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Start Date
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 End Date
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Rating
                               </th>
-                              <th className="px-4 py-2 text-left text-sm">
+                              <th className="px-4 py-2 text-left text-sm font-normal">
                                 Certification
                               </th>
                             </tr>
@@ -1061,10 +1063,14 @@ const ApplicantFormPage = () => {
                                   <StarRating
                                     value={watch(`skills.${index}.rating`) ?? 1}
                                     onChange={(value) => {
-                                      setValue(`skills.${index}.rating`, value, {
-                                        shouldValidate: true,
-                                        shouldDirty: true,
-                                      });
+                                      setValue(
+                                        `skills.${index}.rating`,
+                                        value,
+                                        {
+                                          shouldValidate: true,
+                                          shouldDirty: true,
+                                        }
+                                      );
                                     }}
                                     error={
                                       errors.skills?.[index]?.rating?.message
@@ -1096,35 +1102,35 @@ const ApplicantFormPage = () => {
                   </div>
 
                   {/* Upload CV */}
-                  <div className="py-6">
-                    <h2 className="text-xl font-medium text-[#222222] mb-4">
-                      Upload Your Updated CV
-                    </h2>
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      className="hidden"
-                      id="cv-upload"
-                    />
-                    <label
-                      htmlFor="cv-upload"
-                      className="text-sm bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-4 p-2 rounded-full cursor-pointer inline-flex items-center py-2 "
-                    >
-                      Choose File
-                    </label>
-                    <p className="mt-2 text-sm text-gray-500">
-                      Upload your CV in PDF, DOC, or DOCX format
-                    </p>
-                  </div>
 
                   {/* Submit Button */}
-                  <div className="flex justify-end">
+                  <div className="flex justify-between items-center">
+                    <div className="py-6">
+                      <h2 className="text-xl font-medium text-[#222222] mb-4">
+                        Upload Your Updated CV
+                      </h2>
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        className="hidden"
+                        id="cv-upload"
+                      />
+                      <label
+                        htmlFor="cv-upload"
+                        className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-4 p-2 rounded-full cursor-pointer inline-flex items-center py-2 "
+                      >
+                        Choose File
+                      </label>
+                      <p className="mt-2 text-xs text-gray-500">
+                        Upload your CV in .PDF, .DOC, or .DOCX format
+                      </p>
+                    </div>
                     <button
                       type="submit"
-                      className="px-8 disabled:opacity-50 hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-4 rounded-full font-medium hover:bg-black transition-colors"
+                      className="px-4 disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "Submitting..." : "Submit Application"}
+                      {isSubmitting ? "Submitting..." : "Submit"}
                     </button>
                   </div>
                 </form>
@@ -1132,11 +1138,14 @@ const ApplicantFormPage = () => {
             </div>
 
             {/* Progress Sidebar */}
-            <div className="max-sm:m-auto lg:col-span-1">
-              <div className="sticky top-8">
-                <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 mb-4">
-                  <div className="text-center mb-6">
-                    <div className="w-32 h-32 rounded-full mb-2 flex items-center justify-center overflow-hidden">
+            <div className="justify-self-center order-1 lg:order-2 sm:justify-self-end lg:col-span-1">
+              <div className="sticky top-8 flex flex-row gap-2 sm:gap-4 sm:flex-col">
+                <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 ">
+                  <p className="text-black text-sm text-center mb-4">
+                    Profile Picture
+                  </p>
+                  <div className="text-center">
+                    <div className="w-20 h-20 sm:w-32 mx-auto sm:h-32 rounded-full mb-2 flex items-center justify-center overflow-hidden">
                       {photo ? (
                         <img
                           src={photo}
@@ -1144,7 +1153,7 @@ const ApplicantFormPage = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <CircleUserRound className="w-32 h-32" />
+                        <CircleUserRound className="w-20 h-20 sm:w-32 sm:h-32 stroke-[1.4]" />
                       )}
                     </div>
                     <input
@@ -1162,10 +1171,13 @@ const ApplicantFormPage = () => {
                     </label>
                   </div>
                 </div>
-                <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 mb-4">
+                <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 ">
+                  <p className="text-black text-sm text-center mb-4">
+                    Profile Status
+                  </p>
                   <div className="flex flex-col items-center">
                     <div
-                      className={`w-32 h-32 rounded-full flex items-center justify-center mb-2 ${
+                      className={`w-20 h-20 sm:w-32 sm:h-32 rounded-full flex items-center justify-center mb-2 ${
                         completionPercentage <= 40
                           ? "bg-[#E23F35]"
                           : completionPercentage <= 60

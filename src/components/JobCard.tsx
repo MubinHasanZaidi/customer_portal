@@ -47,7 +47,7 @@ const JobCard: React.FC<JobCardProps> = ({
         <div className="flex flex-col sm:items-end gap-4">
           <Link
             to={`/job-detail/${id}`}
-            className="inline-flex items-center tex justify-start px-4 py-2 border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
+            className="inline-flex hover:underline items-center tex justify-start px-4 py-2 border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
           >
             View Details
             <ArrowRight className="w-6 h-6 -rotate-45 ml-2" />

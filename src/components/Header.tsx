@@ -92,7 +92,7 @@ const Header = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <CircleUserRound className="w-5 h-5 rounded-full object-cover" />
+                    <CircleUserRound className="w-5 h-5 rounded-full object-cover stroke-[1.2]" />
                   )}
                 </button>
               </div>

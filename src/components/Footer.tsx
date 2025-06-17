@@ -5,7 +5,7 @@ const Footer = () => {
     <footer>
       <div className="flex flex-col sm:flex-row 2xl:max-w-[85vw] gap-4 mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">
         <div className="flex-1 space-y-2">
-          <h5 className="text-lg sm:text-xl font-semibold text-[#0093DD]">How's it work?</h5>
+          <h5 className="text-lg sm:text-xl font-semibold text-[#0093DD]">How it works?</h5>
           <p className="text-xs mt-2 text-[#222222]">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
@@ -23,7 +23,7 @@ const Footer = () => {
           </p>
         </div>
       </div>
-      <div className="bg-white border-t mt-auto">
+      <div className="bg-white mt-auto">
         <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">

@@ -3,11 +3,11 @@ import { UseFormRegisterReturn } from "react-hook-form";
 import { ChevronDown, X } from "lucide-react";
 
 interface MultiSelectProps {
- 
   error?: string;
   options: { value: string; label: string }[];
   registration?: UseFormRegisterReturn;
   value?: string[];
+  placeholder?: string;
   onChange?: (values: string[]) => void;
   className?: string;
 }
@@ -16,6 +16,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   error,
   options,
   registration,
+  placeholder,
   value = [],
   onChange,
   className = "",
@@ -103,7 +104,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                 </div>
               ))
             ) : (
-              <span className="text-sm text-[#222222]">Select options</span>
+              <span className="text-sm text-[#222222]">
+                Select {placeholder}
+              </span>
             )}
           </div>
           <div className="flex my-0 items-center">
@@ -121,14 +124,14 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           </div>
         </div>
         {isOpen && (
-          <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100">
+          <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="p-2">
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search..."
-                className="w-full px-2 py-1 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#0093DD]"
+                className="w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b-[#222222] border-gray-200 rounded-lg focus:outline-none focus:border-[#0093DD]"
               />
             </div>
             <div className="max-h-56 overflow-y-auto m-0">

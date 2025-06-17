@@ -87,11 +87,11 @@ const JobsPage = () => {
         <section className="pt-10">
           <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 pb-5 sm:pb-10 space-y-6  md:space-y-14">
             <div className="text-left">
-              <p className="text-[#000000] text-xs sm:text-sm">
+              <p className="text-[#222222] text-xs sm:text-sm">
                 Join a team that values innovation, collaboration, and
                 continuous growth!
               </p>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#000000] mt-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#222222] mt-3">
                 Your next career move starts here.
               </h1>
             </div>
@@ -100,7 +100,7 @@ const JobsPage = () => {
                 id="job-keyword"
                 placeholder="Job keyword"
                 value={searchTerm}
-                rightIcon={<Search className="w-4 h-4 text-[#000000]" />}
+                rightIcon={<Search className="w-4 h-4 text-[#222222]" />}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <MultiSelect
@@ -115,6 +115,7 @@ const JobsPage = () => {
                   { value: "ras al khaimah", label: "Ras Al Khaimah" },
                   { value: "umm al quwain", label: "Umm Al Quwain" },
                 ]}
+                placeholder={"location"}
                 value={searchLocation}
                 onChange={(values) => setSearchLocation(values)}
               />
