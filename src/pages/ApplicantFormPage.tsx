@@ -447,7 +447,7 @@ const ApplicantFormPage = () => {
                       Current Address and Contact Information
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="country"
                           placeholder="Country"
@@ -458,7 +458,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="city"
                           placeholder="City"
@@ -469,7 +469,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1 md:col-span-2">
                         <InputArea
                           id="address"
                           placeholder="Address"
@@ -480,7 +480,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="mobileWithCountryCode"
                           placeholder="Mobile with country code"
@@ -491,7 +491,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="landlineWithCountryCode"
                           placeholder="Landline with country code"
@@ -502,7 +502,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1 md:col-span-2">
                         <InputArea
                           id="emailAddress"
                           placeholder="Email Address"
@@ -521,7 +521,7 @@ const ApplicantFormPage = () => {
                       General Information
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="tenativeDaysOfJoining"
                           placeholder="Tenative Days of Joining"
@@ -532,7 +532,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="currentDesignation"
                           placeholder="Current Designation"
@@ -543,7 +543,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1 md:col-span-2">
                         <InputArea
                           id="currentEmployer"
                           placeholder="Current Employer"
@@ -554,7 +554,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="currentSalary"
                           placeholder="Current Salary"
@@ -565,7 +565,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div >
                         <InputArea
                           id="expectedSalaryRangeFrom"
                           placeholder="Expected Salary Range From"
@@ -576,7 +576,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1 md:col-span-2">
                         <InputArea
                           id="expectedSalaryRangeTo"
                           placeholder="Expected Salary Range To"
@@ -587,7 +587,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div className="col-span-4">
+                      <div className="col-span-1 md:col-span-4">
                         <TextArea
                           id="anyOtherRelevantInformationYouWishToShare"
                           placeholder="Enter any other relevant information you wish to share"
@@ -1104,7 +1104,7 @@ const ApplicantFormPage = () => {
                   {/* Upload CV */}
 
                   {/* Submit Button */}
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col md:flex-row justify-between md:items-center">
                     <div className="py-6">
                       <h2 className="text-xl font-medium text-[#222222] mb-4">
                         Upload Your Updated CV

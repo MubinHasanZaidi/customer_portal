@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import JobsPage from "./pages/JobsPage";
@@ -10,6 +10,8 @@ import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/jobs" replace />} />
+      <Route path="*" element={<Navigate to="/jobs" replace />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route
         path="/reset-password"
@@ -30,7 +32,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<JobsPage />} />
+      <Route path="*"  element={<JobsPage />} />
     </Routes>
   );
 }
