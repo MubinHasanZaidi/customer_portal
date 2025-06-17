@@ -1138,8 +1138,8 @@ const ApplicantFormPage = () => {
             </div>
 
             {/* Progress Sidebar */}
-            <div className="justify-self-center order-1 lg:order-2 sm:justify-self-end lg:col-span-1">
-              <div className="sticky top-8 flex flex-row gap-2 sm:gap-4 sm:flex-col">
+            <div className="justify-self-center order-1 lg:order-2 lg:justify-self-end lg:col-span-1">
+              <div className="sticky top-8 flex flex-row gap-2 lg:gap-4 lg:flex-col">
                 <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 ">
                   <p className="text-black text-sm text-center mb-4">
                     Profile Picture
