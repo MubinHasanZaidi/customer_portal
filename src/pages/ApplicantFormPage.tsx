@@ -263,7 +263,6 @@ const ApplicantFormPage = () => {
 
     // Simulate API call
     setTimeout(() => {
-      console.log("Form submitted:", data);
       setIsSubmitting(false);
       setSubmitSuccess(true);
     }, 2000);

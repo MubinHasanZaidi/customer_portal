@@ -23,7 +23,6 @@ const CompanyConfigProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const config = localStorage.getItem("companyConfig");
     const userConfig = localStorage.getItem("user");
-    console.log("userConfig", userConfig);
     if (!config) {
       navigate("/not-found", { replace: true });
     } else {

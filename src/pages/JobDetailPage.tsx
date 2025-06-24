@@ -25,7 +25,6 @@ const JobDetailPage = () => {
     }
   }, [dispatch, id]);
 
-  console.log("selectedJobselectedJob", selectedJob);
 
   if (isLoading) {
     return (
