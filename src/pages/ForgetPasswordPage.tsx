@@ -11,8 +11,8 @@ import {
 } from "../store/slices/authSlice";
 import type { RootState } from "../store";
 import loginIllustration from "../assets/login-illustration.png";
-import logo from "../assets/logo.png";
 import InputArea from "../components/Inputarea";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 const resetPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -21,6 +21,9 @@ const resetPasswordSchema = z.object({
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const ForgetPasswordPage = () => {
+  const { companyConfig } = useCompanyConfig();
+  const { company, themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const [resetSuccess, setResetSuccess] = useState(false);
@@ -62,16 +65,12 @@ const ForgetPasswordPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <img
-                src={logo}
-                alt="Dynasoft Cloud"
+                src={company?.Logo}
+                alt={company?.name}
                 className="h-16 mx-auto mb-4"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "https://via.placeholder.com/200x60?text=Dynasoft+Cloud";
-                }}
               />
               <h2 className="text-xl font-medium text-gray-900">
-                Welcome to Dynasoft Cloud
+                Welcome to {company?.name}
               </h2>
               <p className="text-sm text-gray-600">Careers Portal</p>
             </div>
@@ -124,7 +123,8 @@ const ForgetPasswordPage = () => {
                 <div className="text-center">
                   <Link
                     to="/auth"
-                    className="text-sm text-[#0093DD] hover:underline"
+                    style={{ color: primary_color }}
+                    className={`text-sm hover:underline`}
                   >
                     Back to Login
                   </Link>

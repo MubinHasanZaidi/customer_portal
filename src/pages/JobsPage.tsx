@@ -1,87 +1,85 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchJobsStart,
-  fetchJobsSuccess,
-  fetchJobsFailure,
-} from "../store/slices/jobsSlice";
-import type { RootState } from "../store";
+  fetchJobDepartments,
+  fetchJobLocations,
+  fetchJobs,
+} from "../store/actions/jobActions";
+import type { RootState, AppDispatch } from "../store";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { mockJobs } from "../data/mockData";
 import InputArea from "../components/Inputarea";
 import { Search } from "lucide-react";
 import JobCard from "../components/JobCard";
 import MultiSelect from "../components/MultiSelect";
-
-interface Job {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  type: string;
-  description: string;
-  postedAt: string;
-}
+import useCompanyConfig from "../hooks/useCompanyConfig";
+import { format } from "date-fns";
 
 const JobsPage = () => {
-  const dispatch = useDispatch();
-  const { jobs, isLoading, error } = useSelector(
+  /// comapny Config
+  const { companyConfig } = useCompanyConfig();
+  const { company, themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
+  /// redux related
+  const dispatch = useDispatch<AppDispatch>();
+  const { jobs, isLoading, error, locations, departments, count } = useSelector(
     (state: RootState) => state.jobs
   );
+  // internal states
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchLocation, setSearchLocation] = useState<string[]>([]);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
+  const [selectedDept, setSelectedDept] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 5;
 
-  useEffect(() => {
-    dispatch(fetchJobsStart());
+  const jobListRef = useRef<HTMLDivElement>(null);
 
-    // Simulate API call with mock data
-    setTimeout(() => {
-      try {
-        dispatch(fetchJobsSuccess(mockJobs));
-      } catch (err) {
-        dispatch(fetchJobsFailure("Failed to fetch jobs"));
-      }
-    }, 1000);
-  }, [dispatch]);
-
-  const handleFilterClick = (filter: string) => {
-    setActiveFilter(filter);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to the job list
+    jobListRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const filteredJobs = jobs.filter((job) => {
-    // Filter by search term
-    const matchesSearchTerm =
-      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchTerm.toLowerCase());
+  useEffect(() => {
+    dispatch(fetchJobLocations(company?.Id));
+    dispatch(fetchJobDepartments(company?.Id));
+  }, []);
 
-    // Filter by location
-    const matchesLocation =
-      searchLocation.length === 0 ||
-      searchLocation.some((location) =>
-        job.location.toLowerCase().includes(location.toLowerCase())
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedLocation, selectedDept]);
+
+  useEffect(() => {
+    if (company?.Id) {
+      dispatch(
+        fetchJobs({
+          companyId: company.Id,
+          currentPage,
+          jobsPerPage,
+          searchTerm,
+          selectedLocation,
+          selectedDept,
+        })
       );
+      window.scrollTo(0, 0);
+    }
+  }, [
+    dispatch,
+    company?.Id,
+    currentPage,
+    jobsPerPage,
+    searchTerm,
+    selectedLocation,
+    selectedDept,
+  ]);
 
-    // Filter by job type
-    const matchesFilter =
-      activeFilter === "all" ||
-      job.title.toLowerCase().includes(activeFilter.toLowerCase());
-
-    return matchesSearchTerm && matchesLocation && matchesFilter;
-  });
-
-  const filterOptions = [
-    { id: "all", label: "View All" },
-    { id: "functional consultant", label: "Functional Consultant" },
-    { id: "technical manager", label: "Technical Manager" },
-    { id: "software engineer", label: "Software Engineer" },
-    { id: "admin officer", label: "Admin Officer" },
-    { id: "accountant", label: "Accountant" },
-  ];
+  const totalPages = Math.max(1, Math.ceil(count / jobsPerPage) || 1);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#E6F8FF]">
+    <div
+      style={{ background: secondary_color }}
+      className={`min-h-screen flex flex-col`}
+    >
       <Header />
       <main className="flex-1">
         <section className="pt-10">
@@ -104,33 +102,35 @@ const JobsPage = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <MultiSelect
-                options={[
-                  { value: "karachi", label: "Karachi" },
-                  { value: "lahore", label: "Lahore" },
-                  { value: "dubai", label: "Dubai" },
-                  { value: "abu dhabi", label: "Abu Dhabi" },
-                  { value: "sharjah", label: "Sharjah" },
-                  { value: "ajman", label: "Ajman" },
-                  { value: "fujairah", label: "Fujairah" },
-                  { value: "ras al khaimah", label: "Ras Al Khaimah" },
-                  { value: "umm al quwain", label: "Umm Al Quwain" },
-                ]}
+                options={locations}
                 placeholder={"location"}
-                value={searchLocation}
-                onChange={(values) => setSearchLocation(values)}
+                value={selectedLocation}
+                onChange={(values) => setSelectedLocation(values)}
               />
             </div>
             <div className="flex overflow-x-auto pb-4 hide-scrollbar">
               <div className="flex flex-wrap gap-2">
-                {filterOptions.map((filter) => (
+                <button
+                  className={`px-4 py-2 text-xs rounded-3xl whitespace-nowrap ${
+                    selectedDept === ""
+                      ? `bg-[#222222] text-white`
+                      : "bg-transparent text-[#222222] border border-[#222222]"
+                  }`}
+                  onClick={() => setSelectedDept("")}
+                >
+                  View All
+                </button>
+                {departments.map((filter) => (
                   <button
-                    key={filter.id}
+                    key={filter.value}
                     className={`px-4 py-2 text-xs rounded-3xl whitespace-nowrap ${
-                      activeFilter === filter.id
-                        ? "bg-[#222222] text-[#E6F8FF]"
+                      selectedDept === filter.value
+                        ? `bg-[#222222] text-white`
                         : "bg-transparent text-[#222222] border border-[#222222]"
                     }`}
-                    onClick={() => handleFilterClick(filter.id)}
+                    onClick={() => {
+                      setSelectedDept(filter.value);
+                    }}
                   >
                     {filter.label}
                   </button>
@@ -141,7 +141,7 @@ const JobsPage = () => {
           </div>
         </section>
 
-        <section className="py-2">
+        <section className="py-2" ref={jobListRef}>
           <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8">
             {isLoading ? (
               <div className="flex justify-center py-12">
@@ -151,40 +151,86 @@ const JobsPage = () => {
               <div className="text-center py-12">
                 <p className="text-red-500">{error}</p>
                 <button
-                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+                  className="mt-4 px-4 py-2 bg-transparent text-sm border-[#000000] border rounded-full text-[#00000]"
                   onClick={() => {
-                    dispatch(fetchJobsStart());
-                    setTimeout(() => {
-                      dispatch(fetchJobsSuccess(mockJobs));
-                    }, 1000);
+                    dispatch(
+                      fetchJobs({
+                        companyId: company.Id,
+                        currentPage,
+                        jobsPerPage,
+                        searchTerm,
+                        selectedLocation,
+                        selectedDept,
+                      })
+                    );
                   }}
                 >
                   Try Again
                 </button>
               </div>
-            ) : filteredJobs.length === 0 ? (
+            ) : jobs.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500">
                   No jobs found matching your criteria.
                 </p>
               </div>
             ) : (
-              <div className="space-y-6 pb-6 sm:pb-12 lg:pb-28">
-                {filteredJobs.map((job) => (
+              <div className="space-y-12 pb-6 sm:pb-12 lg:pb-28">
+                {jobs.map((job) => (
                   <JobCard
-                    key={job.id}
-                    id={job.id}
-                    title={job.title}
-                    location={job.location}
-                    type={job.type}
-                    postedAt={job.postedAt}
-                    description={job.description}
+                    key={job.Id}
+                    id={job.Id}
+                    title={job.Designation?.formName || ""}
+                    location={(job.Locations || []).join(",  ")}
+                    type={job.JobPreference?.formName || ""}
+                    postedAt={
+                      format(new Date(job.jobPostingDateTo), "dd-MMM-yyyy") ||
+                      ""
+                    }
+                    workExpFrom={job?.workExpFrom}
+                    workExpTo={job?.workExpTo}
+                    description={job?.jobSummary || ""}
                   />
                 ))}
               </div>
             )}
           </div>
         </section>
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mb-12 space-x-2">
+            <button
+              type="submit"
+              onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+            {[...Array(totalPages)].map((_, idx) => (
+              <button
+                key={idx + 1}
+                type="submit"
+                onClick={() => handlePageChange(idx + 1)}
+                className={`px-3 py-1 border rounded ${
+                  currentPage === idx + 1 ? "bg-[#222222] text-white" : ""
+                }`}
+              >
+                {idx + 1}
+              </button>
+            ))}
+            <button
+              type="submit"
+              onClick={() =>
+                handlePageChange(Math.min(currentPage + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </main>
       <Footer />
     </div>

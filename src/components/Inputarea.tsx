@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 interface InputAreaProps {
   id: string;
@@ -26,6 +27,10 @@ const InputArea: React.FC<InputAreaProps> = ({
   className = "",
   rightIcon,
 }) => {
+  const { companyConfig } = useCompanyConfig();
+  const { themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
+  const [isFocused, setIsFocused] = useState(false);
   const inputProps = registration ? { ...registration } : { value, onChange };
 
   return (
@@ -39,9 +44,14 @@ const InputArea: React.FC<InputAreaProps> = ({
         <input
           id={id}
           type={type}
-          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:border-b-[#0093DD] focus:ring-0 placeholder:text-[#222222] ${className} ${
+          style={{
+            borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+          }}
+          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${className} ${
             rightIcon ? "pr-8" : ""
           }`}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           placeholder={type === "date" ? "YYYY-MM-DD" : placeholder}
           step={type === "number" ? "any" : undefined}
           {...inputProps}

@@ -1,17 +1,19 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
-  id: string
-  name: string
-  email: string
-  profileImage?: string
+  id: string;
+  name: string;
+  email: string;
+  profileImage?: string;
 }
 
 interface AuthState {
-  user: User | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  error: string | null
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+  companyConfig: any;
+  error_company: string | null;
 }
 
 const initialState: AuthState = {
@@ -19,62 +21,72 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
-}
+  companyConfig: null,
+  error_company: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     loginStart: (state) => {
-      state.isLoading = true
-      state.error = null
+      state.isLoading = true;
+      state.error = null;
     },
     loginSuccess: (state, action: PayloadAction<User>) => {
-      state.isLoading = false
-      state.isAuthenticated = true
-      state.user = action.payload
-      state.error = null
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.error = null;
     },
     loginFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false
-      state.error = action.payload
+      state.isLoading = false;
+      state.error = action.payload;
     },
     logout: (state) => {
-      state.isAuthenticated = false
-      state.user = null
-      state.error = null
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = null;
     },
     signupStart: (state) => {
-      state.isLoading = true
-      state.error = null
+      state.isLoading = true;
+      state.error = null;
     },
     signupSuccess: (state, action: PayloadAction<User>) => {
-      state.isLoading = false
-      state.isAuthenticated = true
-      state.user = action.payload
-      state.error = null
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.error = null;
     },
     signupFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false
-      state.error = action.payload
+      state.isLoading = false;
+      state.error = action.payload;
     },
     resetPasswordStart: (state) => {
-      state.isLoading = true
-      state.error = null
+      state.isLoading = true;
+      state.error = null;
     },
     resetPasswordSuccess: (state) => {
-      state.isLoading = false
-      state.error = null
+      state.isLoading = false;
+      state.error = null;
     },
     resetPasswordFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false
-      state.error = action.payload
+      state.isLoading = false;
+      state.error = action.payload;
     },
     rehydrate: (state, action: PayloadAction<AuthState>) => {
-      return { ...state, ...action.payload }
+      return { ...state, ...action.payload };
+    },
+    companyConfigSuccess: (state, action: PayloadAction<any>) => {
+      state.companyConfig = action.payload;
+      state.error_company = null;
+    },
+    companyConfigFailure: (state, action: PayloadAction<any>) => {
+      state.companyConfig = null;
+      state.error_company = action.payload;
     },
   },
-})
+});
 
 export const {
   loginStart,
@@ -87,7 +99,9 @@ export const {
   resetPasswordStart,
   resetPasswordSuccess,
   resetPasswordFailure,
+  companyConfigFailure,
+  companyConfigSuccess,
   rehydrate,
-} = authSlice.actions
+} = authSlice.actions;
 
-export default authSlice.reducer
+export default authSlice.reducer;

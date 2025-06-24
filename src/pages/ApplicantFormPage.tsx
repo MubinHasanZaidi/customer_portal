@@ -15,6 +15,7 @@ import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
 import { CirclePlus, CircleUserRound, MinusCircle } from "lucide-react";
 import StarRating from "../components/StarRating";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 // Define the schema for the form
 const applicantFormSchema = z.object({
@@ -98,6 +99,9 @@ const applicantFormSchema = z.object({
 type ApplicantFormData = z.infer<typeof applicantFormSchema>;
 
 const ApplicantFormPage = () => {
+  const { companyConfig } = useCompanyConfig();
+  const { company, themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -289,7 +293,10 @@ const ApplicantFormPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#E6F8FF]">
+    <div
+      style={{ background: secondary_color }}
+      className={`min-h-screen flex flex-col`}
+    >
       <Header />
       <main className="flex-1 py-8">
         <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8">
@@ -447,7 +454,7 @@ const ApplicantFormPage = () => {
                       Current Address and Contact Information
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <div >
+                      <div>
                         <InputArea
                           id="country"
                           placeholder="Country"
@@ -458,7 +465,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div >
+                      <div>
                         <InputArea
                           id="city"
                           placeholder="City"
@@ -480,7 +487,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div >
+                      <div>
                         <InputArea
                           id="mobileWithCountryCode"
                           placeholder="Mobile with country code"
@@ -491,7 +498,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div >
+                      <div>
                         <InputArea
                           id="landlineWithCountryCode"
                           placeholder="Landline with country code"
@@ -521,7 +528,7 @@ const ApplicantFormPage = () => {
                       General Information
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                      <div >
+                      <div>
                         <InputArea
                           id="tenativeDaysOfJoining"
                           placeholder="Tenative Days of Joining"
@@ -532,7 +539,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div >
+                      <div>
                         <InputArea
                           id="currentDesignation"
                           placeholder="Current Designation"
@@ -554,7 +561,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div >
+                      <div>
                         <InputArea
                           id="currentSalary"
                           placeholder="Current Salary"
@@ -565,7 +572,7 @@ const ApplicantFormPage = () => {
                           }}
                         />
                       </div>
-                      <div >
+                      <div>
                         <InputArea
                           id="expectedSalaryRangeFrom"
                           placeholder="Expected Salary Range From"

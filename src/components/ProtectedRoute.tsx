@@ -1,20 +1,56 @@
-import type React from "react"
-import { Navigate } from "react-router-dom"
-import { useSelector } from "react-redux"
-import type { RootState } from "../store"
+import type React from "react";
+import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authAPI } from "../services/api";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />
+  useEffect(() => {
+    const validateUserToken = async () => {
+      const refresh = localStorage.getItem("refresh");
+      if (!refresh) {
+        setIsAuthenticated(false);
+        localStorage.removeItem("user");
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        setLoading(false);
+        navigate("/auth", { replace: true });
+        return;
+      }
+      try {
+        const result = await authAPI.refreshToken(refresh);
+        localStorage.setItem("refresh", result?.data);
+        setIsAuthenticated(true);
+      } catch (error) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        setIsAuthenticated(false);
+        navigate("/auth", { replace: true });
+      } finally {
+        setLoading(false);
+      }
+    };
+    validateUserToken();
+  }, [navigate]);
+
+  if (loading) {
+    return null;
   }
 
-  return <>{children}</>
-}
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
 
-export default ProtectedRoute
+  return <>{children}</>;
+};
+
+export default ProtectedRoute;

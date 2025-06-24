@@ -1,43 +1,31 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
-import {
-  fetchJobDetailStart,
-  fetchJobDetailSuccess,
-  fetchJobDetailFailure,
-} from "../store/slices/jobsSlice";
-import type { RootState } from "../store";
+import { fetchJobDetail } from "../store/actions/jobActions";
+import type { RootState, AppDispatch } from "../store";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { mockJobs } from "../data/mockData";
 import { ArrowRight, Briefcase, Calendar, MapPin } from "lucide-react";
+import useCompanyConfig from "../hooks/useCompanyConfig";
+import { format } from "date-fns";
 
 const JobDetailPage = () => {
+  const { companyConfig } = useCompanyConfig();
+  const { company, themeConfig, jobDetailConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { selectedJob, isLoading, error } = useSelector(
     (state: RootState) => state.jobs
   );
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchJobDetailStart());
-
-      // Simulate API call with mock data
-      setTimeout(() => {
-        try {
-          const job = mockJobs.find((job) => job.id === id);
-          if (job) {
-            dispatch(fetchJobDetailSuccess(job));
-          } else {
-            dispatch(fetchJobDetailFailure("Job not found"));
-          }
-        } catch (err) {
-          dispatch(fetchJobDetailFailure("Failed to fetch job details"));
-        }
-      }, 1000);
+      dispatch(fetchJobDetail(id));
     }
   }, [dispatch, id]);
+
+  console.log("selectedJobselectedJob", selectedJob);
 
   if (isLoading) {
     return (
@@ -59,7 +47,7 @@ const JobDetailPage = () => {
           <p className="text-red-500 mb-4">{error || "Job not found"}</p>
           <Link
             to="/jobs"
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            className="mt-4 px-4 py-2 bg-transparent text-sm border-[#000000] border rounded-full text-[#00000]"
           >
             Back to Jobs
           </Link>
@@ -70,7 +58,10 @@ const JobDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#E6F8FF]">
+    <div
+      style={{ background: secondary_color }}
+      className={`min-h-screen flex flex-col `}
+    >
       <Header />
 
       <main className="flex-1 py-8">
@@ -82,22 +73,42 @@ const JobDetailPage = () => {
                   Position available
                 </div>
                 <h1 className="text-xl sm:text-3xl font-bold text-[#222222]">
-                  {selectedJob.title}
+                  {selectedJob?.Designation?.formName}
                 </h1>
-                <div className="flex flex-wrap gap-4 mt-4">
-                  <div className="flex items-center text-sm text-[#222222] gap-2">
-                    <Calendar className="w-4 h-4" />
-                    Apply by: {selectedJob.applyBy}
-                  </div>
-
-                  <div className="flex items-center text-sm text-[#222222] gap-2">
+                <div className="flex flex-wrap gap-3 sm:gap-8 mt-4">
+                  <div
+                    title="Location"
+                    className="flex items-center text-sm text-[#222222] gap-2"
+                  >
                     <MapPin className="w-4 h-4" />
-                    {selectedJob.location}
+                    {selectedJob.Locations.map((e: any) => e?.formName).join(
+                      ", "
+                    )}
                   </div>
-
-                  <div className="flex items-center text-sm text-[#222222] gap-2">
+                  <div
+                    title="Job type"
+                    className="flex items-center text-sm text-[#222222] gap-2"
+                  >
                     <Briefcase className="w-4 h-4" />
-                    {selectedJob.type}
+                    {selectedJob.JobPreference?.formName}
+                  </div>
+                  <div
+                    title="Experience"
+                    className="flex items-center text-sm text-[#222222]"
+                  >
+                    <Briefcase className="w-4 h-4 mr-1" />
+                    {selectedJob?.workExpFrom} to {selectedJob?.workExpTo} Year
+                  </div>
+                  <div
+                    title="Last date of application"
+                    className="flex items-center text-sm text-[#222222] gap-2"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Apply by:{" "}
+                    {format(
+                      new Date(selectedJob.jobPostingDateTo),
+                      "dd-MMM-yyyy"
+                    )}
                   </div>
                 </div>
               </div>
@@ -120,63 +131,363 @@ const JobDetailPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
               <div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Department:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.department}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Job type:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.jobType}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Career level:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.level}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Experience:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.experience}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Salary range:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.salary}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Last date to apply:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.applyBy}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-xs font-bold text-[#222222] w-32">
-                      Total positions:
-                    </h3>
-                    <p className="text-xs text-[#222222]">
-                      {selectedJob.positions}
-                    </p>
-                  </div>
+                <div className="flex flex-col gap-3">
+                  {/* Job Code: */}
+                  {jobDetailConfig?.job_code && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Job Code:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.jobCode ? selectedJob?.jobCode : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Job Date: */}
+                  {jobDetailConfig?.job_publishing_date && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Job Date:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.jobDate
+                          ? format(
+                              new Date(selectedJob?.jobDate),
+                              "dd-MMM-yyyy"
+                            )
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Job Title: */}
+                  {jobDetailConfig?.job_title && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Job Title:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.jobTitle ? selectedJob?.jobTitle : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Grade: */}
+                  {jobDetailConfig?.grade && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Grade:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.Grade?.formName
+                          ? selectedJob?.Grade?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Country: */}
+                  {jobDetailConfig?.country && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Country:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.Country?.name
+                          ? selectedJob?.Country?.name
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Cities: */}
+                  {jobDetailConfig?.city && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Cities:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.Cities?.length > 0
+                          ? selectedJob?.Cities.map((el: any) => el?.name).join(
+                              ",  "
+                            )
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Employee Type: */}
+                  {jobDetailConfig?.employee_type && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Employee Type:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.EmployeeType?.formName
+                          ? selectedJob?.EmployeeType?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Employee Status: */}
+                  {jobDetailConfig?.employee_status && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Employee Status:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.EmployeeStatus?.formName
+                          ? selectedJob?.EmployeeStatus?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Department: */}
+                  {jobDetailConfig?.department && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Department:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.Department?.deptName
+                          ? selectedJob.Department?.deptName
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+                  {/* Last date to apply: */}
+                  {jobDetailConfig?.jobPostingDateTo && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Last date to apply:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.jobPostingDateTo
+                          ? format(
+                              new Date(selectedJob.jobPostingDateTo),
+                              "dd-MMM-yyyy"
+                            )
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Report To: */}
+                  {jobDetailConfig?.report_to && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Report To:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.ReportToDesignation?.formName
+                          ? selectedJob.ReportToDesignation?.formName
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+                  {/* Total positions: */}
+                  {jobDetailConfig?.no_of_vacancies && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Total positions:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.noOfPosition
+                          ? selectedJob?.noOfPosition
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+                  {/* Job type: */}
+                  {jobDetailConfig?.job_prefrences && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Job type:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.JobPreference?.formName
+                          ? selectedJob.JobPreference?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Job Period: */}
+                  {jobDetailConfig?.job_prefrences && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Job Period:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.jobPeriodStart
+                          ? format(
+                              new Date(selectedJob?.jobPeriodStart),
+                              "dd-MMM-yyyy"
+                            )
+                          : "N/A"}{" "}
+                        to
+                        {selectedJob?.jobPeriodStart
+                          ? format(
+                              new Date(selectedJob?.jobPeriodEnd),
+                              "dd-MMM-yyyy"
+                            )
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Date Of Appointment: */}
+                  {jobDetailConfig?.desire_date_of_apointment && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Date Of Appointment:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.desireDateOfApp
+                          ? format(
+                              new Date(selectedJob?.desireDateOfApp),
+                              "dd-MMM-yyyy"
+                            )
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Appointment Type: */}
+                  {jobDetailConfig?.appointment_type && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Appointment Type:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.AppointmentType?.formName
+                          ? selectedJob.AppointmentType?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Priority: */}
+                  {jobDetailConfig?.priority && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Priority:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.PriorityType?.formName
+                          ? selectedJob.PriorityType?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Age: */}
+                  {jobDetailConfig?.preferred_age_range && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Age:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.preferredAgeFrom
+                          ? selectedJob.preferredAgeFrom
+                          : "N/A"}{" "}
+                        to{" "}
+                        {selectedJob.preferredAgeTo
+                          ? selectedJob.preferredAgeTo
+                          : "N/A"} Year(s)
+                      </p>
+                    </div>
+                  )}
+                  {/* Qualification: */}
+                  {jobDetailConfig?.preferred_qualification && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Qualification:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.PreferredQualification?.formName
+                          ? selectedJob.PreferredQualification?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Shifts: */}
+                  {jobDetailConfig?.preferred_shift && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Shifts:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.PreferedShift?.length > 0
+                          ? selectedJob?.PreferedShift.map(
+                              (el: any) => el?.formName
+                            ).join(",  ")
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Gender: */}
+                  {jobDetailConfig?.preferred_gender && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Gender:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.Gender?.length > 0
+                          ? selectedJob?.Gender.map(
+                              (el: any) => el?.formName
+                            ).join(",  ")
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Preferred Skills: */}
+                  {jobDetailConfig?.preferred_job_skills && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Preferred Skills:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.PreferedSkills?.length > 0
+                          ? selectedJob?.PreferedSkills.map(
+                              (el: any) => el?.formName
+                            ).join(",  ")
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Preferred Industry: */}
+                  {jobDetailConfig?.preferred_job_industry && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Preferred Industry:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob?.PreferredJobIndustry?.formName
+                          ? selectedJob?.PreferredJobIndustry?.formName
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
+                  {/* Experience: */}
+                  {jobDetailConfig?.work_experience_range && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Experience:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.workExpFrom && selectedJob.workExpTo
+                          ? `${selectedJob.workExpFrom} to ${selectedJob.workExpTo} Year(s)`
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+                  {/* Salary range: */}
+                  {jobDetailConfig?.salary_range && (
+                    <div className="flex items-center">
+                      <h3 className="text-xs font-bold text-[#222222] w-40">
+                        Salary range:
+                      </h3>
+                      <p className="text-xs text-[#222222]">
+                        {selectedJob.salaryRangeFrom &&
+                        selectedJob.salaryRangeTo
+                          ? `${Number(
+                              selectedJob.salaryRangeFrom
+                            ).toLocaleString()} to
+                      ${Number(selectedJob.salaryRangeTo).toLocaleString()}`
+                          : "N/A"}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -186,62 +497,51 @@ const JobDetailPage = () => {
             <div className="py-3 text-[#222222]">
               <h2 className="text-lg font-medium ">Description</h2>
               <div className="mt-4 max-w-none  text-sm">
-                <p>
-                  Dynasoft Cloud is seeking a {selectedJob.title} with a passion
-                  for developing high-quality software solutions for HRMS,
-                  Payroll, and ERP systems to join our team.
-                </p>
-                <p className="mt-4">
-                  The ideal candidate should have strong expertise in MERN stack
-                  technologies (Express.js, React.js, and Node.js) along with a
-                  solid understanding of databases, Object-Oriented Programming
-                  (OOP), and data structures. Experience with HRMS, Payroll, or
-                  ERP systems is a plus.
-                </p>
+                {jobDetailConfig?.job_summary && (
+                  <div>
+                    <h5 className="text-md font-medium my-2 underline ">
+                      Summary
+                    </h5>
+                    <p>{selectedJob?.jobSummary || ""}</p>
+                  </div>
+                )}
+                {jobDetailConfig?.work_experience_detail && (
+                  <div>
+                    <h5 className="text-md font-medium my-2 underline ">
+                      Experience Detail
+                    </h5>
+                    <p className="mt-4">{selectedJob?.workExpDetail || ""}</p>
+                  </div>
+                )}
+                {jobDetailConfig?.incentive_package && (
+                  <div>
+                    <h5 className="text-md font-medium my-2 underline ">
+                      Incentive
+                    </h5>
+                    <p className="mt-4">
+                      {selectedJob?.incentivePackages || ""}
+                    </p>
+                  </div>
+                )}
+                {jobDetailConfig?.other_benefits && (
+                  <div>
+                    <h5 className="text-md font-medium my-2 underline ">
+                      Benefits
+                    </h5>
+                    <p className="mt-4">{selectedJob?.otherBenefits || ""}</p>
+                  </div>
+                )}
+                {jobDetailConfig?.comments && (
+                  <div>
+                    <h5 className="text-md font-medium my-2 underline ">
+                      Remarks
+                    </h5>
+                    <p className="mt-4">{selectedJob?.comment || ""}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-
-          <div className="py-3 text-[#222222] m-2 md:m-6">
-            <h2 className="text-lg font-medium ">Heading One</h2>
-            <ul className="mt-4 space-y-2 list-disc list-inside text-sm">
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-              <li>
-                Sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua
-              </li>
-              <li>
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              </li>
-              <li>
-                Duis aute irure dolor in reprehenderit in voluptate velit esse
-              </li>
-              <li>
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa
-              </li>
-            </ul>
-          </div>
-
-          <div className="py-3 text-[#222222] m-2 md:m-6">
-            <h2 className="text-lg font-medium">Heading Two</h2>
-            <ul className="mt-4 space-y-2 list-disc list-inside text-sm">
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
-              <li>
-                Sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua
-              </li>
-              <li>
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              </li>
-              <li>
-                Duis aute irure dolor in reprehenderit in voluptate velit esse
-              </li>
-              <li>
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa
-              </li>
-            </ul>
-          </div>
-
         </div>
       </main>
 

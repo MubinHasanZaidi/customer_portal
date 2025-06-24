@@ -7,34 +7,32 @@ import { logout } from "../store/slices/authSlice";
 import logo from "../assets/logo.png";
 import { useState, useEffect, useRef } from "react";
 import { CircleUserRound } from "lucide-react";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 const Header = () => {
+  const { companyConfig, userConfig, setUserConfig } = useCompanyConfig();
+  const { company, themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const dispatch = useDispatch();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth
-  );
 
   useEffect(() => {
     // Check for persisted user data on component mount
-    const persistedUser = localStorage.getItem("user");
-    if (persistedUser) {
-      const userData = JSON.parse(persistedUser);
-      if (userData && !isAuthenticated) {
-        // If we have persisted user data but not authenticated, rehydrate the state
-        dispatch({
-          type: "auth/rehydrate",
-          payload: {
-            user: userData,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          },
-        });
-      }
+    let access = localStorage.getItem("access");
+    let refresh = localStorage.getItem("refresh");
+    if (userConfig && access && refresh) {
+      dispatch({
+        type: "auth/rehydrate",
+        payload: {
+          user: userConfig,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        },
+      });
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, userConfig]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -53,8 +51,10 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    // Clear persisted user data
     localStorage.removeItem("user");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setUserConfig(null);
     setIsDropdownOpen(false);
   };
 
@@ -63,31 +63,34 @@ const Header = () => {
       <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 flex justify-between items-center">
         <Link to="/jobs" className="flex items-end lg:items-center">
           <img
-            src={logo}
-            alt="Dynasoft Cloud"
+            src={company?.Logo}
+            alt={company?.name}
             className="h-8 lg:h-14 mx-auto mb-4"
           />
         </Link>
         <div className="flex items-center space-x-4">
-          {isAuthenticated && user ? (
+          {userConfig ? (
             <div className="relative" ref={dropdownRef}>
               <div className="flex items-center space-x-2">
                 <span
                   className="text-xs text-[#222222] truncate max-w-[150px]"
-                  title={`Welcome, ${user.name}`}
+                  title={`Welcome, ${userConfig?.firstName}`}
                 >
                   Welcome,{" "}
-                  <span className="font-medium text-[#0093DD]">
-                    {user.name}
+                  <span
+                    style={{ color: primary_color }}
+                    className={`font-medium `}
+                  >
+                    {userConfig?.firstName}
                   </span>
                 </span>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center focus:outline-none"
                 >
-                  {user.profileImage ? (
+                  {userConfig?.profile_image ? (
                     <img
-                      src={user.profileImage}
+                      src={userConfig?.profile_image}
                       alt="User"
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -108,7 +111,10 @@ const Header = () => {
                     >
                       Edit Profile
                     </Link>
-                    <div className="border-t border-[#E6F8FF] text-center my-1" />
+                    <div
+                      style={{ borderColor: secondary_color }}
+                      className={`border-t text-center my-1`}
+                    />
                     <Link
                       to="/reset-password"
                       className="block px-4 py-1 text-xs text-[#222222] transition-colors"
@@ -116,7 +122,10 @@ const Header = () => {
                     >
                       Reset Password
                     </Link>
-                    <div className="border-t border-[#E6F8FF] text-center my-1" />
+                    <div
+                      style={{ borderColor: secondary_color }}
+                      className={`border-t  text-center my-1`}
+                    />
                     <button
                       onClick={handleLogout}
                       className="block w-full text-left px-4 py-1 text-xs text-[#222222] transition-colors"
@@ -131,7 +140,8 @@ const Header = () => {
             <>
               <Link
                 to={"/auth"}
-                className={`py-2 px-4 text-xs rounded-full bg-[#0093DD] text-white`}
+                style={{ background: primary_color }}
+                className={`py-2 px-4 text-xs rounded-full text-white`}
               >
                 Sign up
               </Link>
@@ -139,7 +149,8 @@ const Header = () => {
                 Already have account?{"  "}
                 <Link
                   to="/auth"
-                  className="text-xs text-[#0093DD] hover:underline"
+                  style={{ color: primary_color }}
+                  className={`text-xs hover:underline`}
                 >
                   Sign in
                 </Link>

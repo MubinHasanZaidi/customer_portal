@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 interface TextAreaProps {
   id: string;
@@ -24,9 +25,13 @@ const TextArea: React.FC<TextAreaProps> = ({
   className = "",
   rows = 3,
 }) => {
+  const { companyConfig } = useCompanyConfig();
+  const { themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const textAreaProps = registration
     ? { ...registration }
     : { value, onChange };
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <div className="relative">
@@ -39,7 +44,12 @@ const TextArea: React.FC<TextAreaProps> = ({
         <textarea
           id={id}
           rows={rows}
-          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:border-b-[#0093DD] focus:ring-0 placeholder:text-[#222222] resize-none ${className}`}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 bg-transparent focus:ring-0 placeholder:text-[#222222] resize-none ${className}`}
+          style={{
+            borderBottom: `2px solid ${isFocused ? primary_color : "#707070"}`,
+          }}
           placeholder={placeholder}
           {...textAreaProps}
         />

@@ -9,6 +9,8 @@ interface JobCardProps {
   type: string;
   postedAt: string;
   description: string;
+  workExpFrom?: string;
+  workExpTo?: string
 }
 
 const JobCard: React.FC<JobCardProps> = ({
@@ -18,36 +20,54 @@ const JobCard: React.FC<JobCardProps> = ({
   type,
   postedAt,
   description,
+  workExpFrom,
+  workExpTo
 }) => {
   return (
     <div className="border-b-[#707070] border-b py-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-4">
+        <div className="space-y-2 w-full">
           <div>
             <h3 className="text-lg font-semibold text-[#222222]">{title}</h3>
           </div>
           <p className="mt-4 text-sm text-[#222222] line-clamp-2">
             {description}
           </p>
-          <div className="flex flex-wrap sm:gap-6 gap-3">
-            <div className="flex items-center text-sm text-[#222222]">
+          <div className="grid grid-cols-4 gap-3 w-full">
+            <div
+              title="Location"
+              className="col-span-1 flex items-center text-sm text-[#222222]"
+            >
               <MapPin className="w-4 h-4 mr-1" />
               {location}
             </div>
-            <div className="flex items-center text-sm text-[#222222]">
+            <div
+              title="Job type"
+              className="col-span-1 flex items-center text-sm text-[#222222]"
+            >
               <Briefcase className="w-4 h-4 mr-1" />
               {type}
             </div>
-            <div className="flex items-center text-sm text-[#222222]">
+            <div
+              title="Experience"
+              className="col-span-1 flex items-center text-sm text-[#222222]"
+            >
+              <Briefcase className="w-4 h-4 mr-1" />
+              {workExpFrom} to {workExpTo} Year
+            </div>
+            <div
+              title="Last date of application"
+              className="col-span-1 flex items-center text-sm text-[#222222]"
+            >
               <Calendar className="w-4 h-4 mr-1" />
               {postedAt}
             </div>
           </div>
         </div>
-        <div className="flex flex-col sm:items-end gap-4">
+        <div className="flex flex-col sm:items-end gap-2">
           <Link
             to={`/job-detail/${id}`}
-            className="inline-flex hover:underline items-center tex justify-start px-4 py-2 border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
+            className="inline-flex items-center min-w-max hover:underline px-4 p-2 border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
           >
             View Details
             <ArrowRight className="w-6 h-6 -rotate-45 ml-2" />

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { ChevronDown, X } from "lucide-react";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 interface MultiSelectProps {
   error?: string;
@@ -21,6 +22,12 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   onChange,
   className = "",
 }) => {
+  const { companyConfig } = useCompanyConfig();
+  const { themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
+  const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[]>(value);
@@ -84,7 +91,20 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
       <div ref={dropdownRef} className="relative m-0">
         <div
           onClick={() => setIsOpen(!isOpen)}
-          className={`form-input mt-[3px] cursor-pointer flex items-center justify-between px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] bg-transparent focus:border-b-2 focus:border-b-[#0093DD] focus:ring-0 min-h-[38px] ${className}`}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          tabIndex={0}
+          style={{
+            borderBottom: `2px solid ${
+              isFocused || isHovered ? primary_color : "#707070"
+            }`,
+            background: "transparent",
+            cursor: "pointer",
+            minHeight: "38px",
+          }}
+          className={`form-input mt-[3px] flex items-center justify-between px-1 border-x-0 border-t-0 focus:ring-0 ${className}`}
         >
           <div className="flex flex-wrap gap-1 flex-1">
             {selectedValues.length > 0 ? (
@@ -131,7 +151,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search..."
-                className="w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b-[#222222] border-gray-200 rounded-lg focus:outline-none focus:border-[#0093DD]"
+                className={`w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b-[#222222] border-gray-200 rounded-lg focus:outline-none`}
               />
             </div>
             <div className="max-h-56 overflow-y-auto m-0">

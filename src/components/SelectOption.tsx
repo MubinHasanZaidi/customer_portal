@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UseFormRegisterReturn, useFormContext } from "react-hook-form";
 import { ChevronDown, X } from "lucide-react";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 interface SelectOptionProps {
   error?: string;
@@ -17,11 +18,16 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   registration,
   className = "",
 }) => {
+  const { companyConfig } = useCompanyConfig();
+  const { themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { watch, setValue } = useFormContext();
   const currentValue = watch(registration.name);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const filteredOptions = options.filter((option) =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -43,10 +49,10 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   const handleSelect = (optionValue: string) => {
     setIsOpen(false);
     setSearchTerm("");
-    setValue(registration.name, optionValue, { 
+    setValue(registration.name, optionValue, {
       shouldValidate: true,
       shouldDirty: true,
-      shouldTouch: true 
+      shouldTouch: true,
     });
   };
 
@@ -55,7 +61,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
     setValue(registration.name, "", {
       shouldValidate: true,
       shouldDirty: true,
-      shouldTouch: true
+      shouldTouch: true,
     });
   };
 
@@ -67,7 +73,12 @@ const SelectOption: React.FC<SelectOptionProps> = ({
       <div ref={dropdownRef} className="relative m-0">
         <div
           onClick={() => setIsOpen(!isOpen)}
-          className={`form-input mt-[3px] cursor-pointer flex items-center justify-between px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:border-b-[#0093DD] focus:ring-0 ${className}`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`form-input mt-[3px] cursor-pointer flex items-center justify-between px-1 border-x-0 border-t-0 border-b-2 bg-transparent focus:ring-0 ${className}`}
+          style={{
+            borderBottom: `2px solid ${isHovered ? primary_color : ""}`,
+          }}
         >
           <span className="text-sm my-0 text-[#222222]">{selectedLabel}</span>
           <div className="flex my-0 items-center">
@@ -92,7 +103,15 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search..."
-                className="w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b-[#222222] border-gray-200 rounded-lg focus:outline-none focus:border-[#0093DD]"
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                className="w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b rounded-lg focus:outline-none"
+                style={{
+                  borderBottom: `2px solid ${
+                    isFocused ? primary_color : "#222222"
+                  }`,
+                  borderColor: isFocused ? primary_color : "#222222",
+                }}
               />
             </div>
             <div className="max-h-56 overflow-y-auto m-0">
@@ -100,11 +119,13 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                 <div
                   key={option.value}
                   onClick={() => handleSelect(option.value)}
-                  className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-50 ${
-                    option.value === currentValue
-                      ? "bg-[#E6F8FF] text-[#0093DD]"
-                      : "text-[#222222]"
-                  }`}
+                  style={{
+                    background:
+                      option.value === currentValue ? secondary_color : "",
+                    color:
+                      option.value === currentValue ? primary_color : "#222222",
+                  }}
+                  className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-50 `}
                 >
                   {option.label}
                 </div>

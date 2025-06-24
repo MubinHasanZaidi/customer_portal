@@ -4,18 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-  signupStart,
-  signupSuccess,
-  signupFailure,
-} from "../store/slices/authSlice";
-import type { RootState } from "../store";
+import { login, signup } from "../store/actions/authActions";
+import type { RootState, AppDispatch } from "../store";
 import loginIllustration from "../assets/login-illustration.png";
-import logo from "../assets/logo.png";
+import dy_logo from "../assets/dy_logo.png";
 import InputArea from "../components/Inputarea";
+import useCompanyConfig from "../hooks/useCompanyConfig";
 
 // Login schema
 const loginSchema = z.object({
@@ -42,15 +36,18 @@ type LoginFormData = z.infer<typeof loginSchema>;
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const AuthPage = () => {
+  const { companyConfig } = useCompanyConfig();
+  const { company, themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
   const [isLogin, setIsLogin] = useState(true);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
-
   // Login form
   const {
     register: loginRegister,
     handleSubmit: handleLoginSubmit,
+    reset: resetLogin,
     formState: { errors: loginErrors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -60,55 +57,42 @@ const AuthPage = () => {
   const {
     register: signupRegister,
     handleSubmit: handleSignupSubmit,
+    reset: resetSignup,
     formState: { errors: signupErrors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
 
-  const onLoginSubmit = (data: LoginFormData) => {
-    dispatch(loginStart());
-
-    // Simulate API call
-    setTimeout(() => {
-      try {
-        // Mock successful login
-        const userData = {
-          id: "1",
-          name: "John Doe",
+  const onLoginSubmit = async (data: LoginFormData) => {
+    try {
+      await dispatch(
+        login({
           email: data.email,
-        };
-        dispatch(loginSuccess(userData));
-        // Store user data in localStorage for persistence
-        localStorage.setItem("user", JSON.stringify(userData));
-        navigate("/jobs");
-      } catch (err) {
-        dispatch(loginFailure("Invalid email or password"));
-      }
-    }, 1000);
+          password: data.password,
+          companyId: company?.Id,
+        })
+      ).unwrap();
+      navigate("/jobs");
+    } catch (err) {
+      // Error is already handled in the action creator
+    }
   };
 
-  const onSignupSubmit = (data: SignupFormData) => {
-    dispatch(signupStart());
-
-    // Simulate API call
-    setTimeout(() => {
-      try {
-        // Mock successful signup
-        const userData = {
-          id: "1",
+  const onSignupSubmit = async (data: SignupFormData) => {
+    try {
+      await dispatch(
+        signup({
           name: data.name,
           email: data.email,
-        };
-        dispatch(signupSuccess(userData));
-        // Store user data in localStorage for persistence
-        localStorage.setItem("user", JSON.stringify(userData));
-        navigate("/jobs");
-      } catch (err) {
-        dispatch(signupFailure("Failed to create account"));
-      }
-    }, 1000);
+          password: data.password,
+          companyId: company?.Id,
+        })
+      ).unwrap();
+      navigate("/jobs");
+    } catch (err) {
+      // Error is already handled in the action creator
+    }
   };
-
   return (
     <div
       className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
@@ -123,16 +107,12 @@ const AuthPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <img
-                src={logo}
-                alt="Dynasoft Cloud"
+                src={company?.Logo}
+                alt={company?.name}
                 className="h-16 mx-auto mb-4"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "https://via.placeholder.com/200x60?text=Dynasoft+Cloud";
-                }}
               />
               <h2 className="text-xl font-medium text-gray-900">
-                Welcome to Dynasoft Cloud
+                Welcome to {company?.name}
               </h2>
               <p className="text-sm text-gray-600">Careers Portal</p>
             </div>
@@ -140,22 +120,26 @@ const AuthPage = () => {
             {/* Tabs */}
             <div className="flex justify-center mb-12">
               <button
-                className={`py-4 px-10 text-md rounded-full font-medium ${
-                  isLogin
-                    ? "bg-[#0093DD] text-white"
-                    : "bg-[#E6F8FF] text-[#0093DD]"
-                }`}
-                onClick={() => setIsLogin(true)}
+                style={{
+                  background: isLogin ? primary_color : secondary_color,
+                  color: isLogin ? "#ffffff" : primary_color,
+                }}
+                className={`py-4 px-10 text-md rounded-full font-medium`}
+                onClick={() => {
+                  resetLogin(), setIsLogin(true);
+                }}
               >
                 Sign in
               </button>
               <button
-                className={`py-4 px-10 text-md rounded-full font-medium ${
-                  !isLogin
-                    ? "bg-[#0093DD] text-white"
-                    : "bg-[#E6F8FF] text-[#0093DD]"
-                }`}
-                onClick={() => setIsLogin(false)}
+                className={`py-4 px-10 text-md rounded-full font-medium`}
+                style={{
+                  background: isLogin ? secondary_color : primary_color,
+                  color: isLogin ? primary_color : "#ffffff",
+                }}
+                onClick={() => {
+                  resetSignup(), setIsLogin(false);
+                }}
               >
                 Sign up
               </button>
@@ -204,11 +188,15 @@ const AuthPage = () => {
                 </button>
                 <div className="text-center">
                   <Link
+                    style={{ color: primary_color }}
                     to="/forget-password"
-                    className="text-sm text-[#0093DD] hover:underline"
+                    className={`text-sm hover:underline`}
                   >
                     Forgot Password
                   </Link>
+                </div>
+                <div>
+                  <img className="mx-auto mt-10" src={dy_logo} />
                 </div>
               </form>
             ) : (
@@ -264,8 +252,9 @@ const AuthPage = () => {
                 </button>
                 <div className="text-center">
                   <Link
+                    style={{ color: primary_color }}
                     to="/forget-password"
-                    className="text-sm text-[#0093DD] hover:underline"
+                    className={`text-sm hover:underline`}
                   >
                     Forgot Password?
                   </Link>

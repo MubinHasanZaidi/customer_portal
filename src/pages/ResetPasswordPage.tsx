@@ -13,6 +13,9 @@ import type { RootState } from "../store";
 import InputArea from "../components/Inputarea";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import useCompanyConfig from "../hooks/useCompanyConfig";
+import { resetPassword } from "../store/actions/authActions";
+import type { AppDispatch } from "../store";
 
 const resetPasswordSchema = z
   .object({
@@ -32,35 +35,41 @@ const resetPasswordSchema = z
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const ResetPasswordPage = () => {
-  const dispatch = useDispatch();
+  const { companyConfig } = useCompanyConfig();
+  const { company, themeConfig } = companyConfig;
+  const { primary_color, secondary_color } = themeConfig;
+  const dispatch = useDispatch<AppDispatch>();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const [resetSuccess, setResetSuccess] = useState(false);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
   });
 
   const onSubmit = (data: ResetPasswordFormData) => {
-    dispatch(resetPasswordStart());
-
     // Simulate API call
-    setTimeout(() => {
-      try {
-        // Mock successful password reset
-        dispatch(resetPasswordSuccess());
-        setResetSuccess(true);
-      } catch (err) {
-        dispatch(resetPasswordFailure("Failed to reset password"));
-      }
-    }, 1000);
+    try {
+      // Mock successful password reset
+      dispatch(
+        resetPassword({
+          previousPassword: data.previousPassword,
+          newPassword: data.newPassword,
+        })
+      );
+      setResetSuccess(true);
+      reset();
+    } catch (err) {
+      dispatch(resetPasswordFailure("Failed to reset password"));
+    }
   };
 
   return (
-    <>
+    <div style={{ background: secondary_color }} className={`flex flex-col`}>
       <Header />
       <div className="flex flex-col min-h-screen">
         <div className="flex flex-1">
@@ -80,16 +89,16 @@ const ResetPasswordPage = () => {
               )}
 
               {/* Success message */}
-              {resetSuccess ? (
+              {resetSuccess && !error ? (
                 <div className="text-center">
                   <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-md">
                     Password has been reset successfully.
                   </div>
                   <Link
-                    to="/auth"
+                    to="/jobs"
                     className="w-full bg-[#222222] text-white py-2 px-6 text-sm mt-4 rounded-full font-medium hover:bg-black transition-colors"
                   >
-                    Go to Login
+                    Go to Jobs
                   </Link>
                 </div>
               ) : (
@@ -136,7 +145,7 @@ const ResetPasswordPage = () => {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
