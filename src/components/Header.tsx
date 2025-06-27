@@ -1,19 +1,21 @@
 "use client";
 
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "../store";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
-import logo from "../assets/logo.png";
 import { useState, useEffect, useRef } from "react";
 import { CircleUserRound } from "lucide-react";
 import useCompanyConfig from "../hooks/useCompanyConfig";
+import { getUploadUrl } from "../../lib/utils";
 
 const Header = () => {
   const { companyConfig, userConfig, setUserConfig } = useCompanyConfig();
   const { company, themeConfig } = companyConfig;
   const { primary_color, secondary_color } = themeConfig;
+
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +58,7 @@ const Header = () => {
     localStorage.removeItem("refresh");
     setUserConfig(null);
     setIsDropdownOpen(false);
+    navigate("/jobs");
   };
 
   return (
@@ -90,7 +93,7 @@ const Header = () => {
                 >
                   {userConfig?.profile_image ? (
                     <img
-                      src={userConfig?.profile_image}
+                      src={getUploadUrl(userConfig?.profile_image)}
                       alt="User"
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -107,7 +110,10 @@ const Header = () => {
                     <Link
                       to="/applicant-form"
                       className="block px-4 py-1 text-xs text-[#222222] transition-colors"
-                      onClick={() => setIsDropdownOpen(false)}
+                      onClick={() => {
+                        localStorage.setItem("jobId", "none");
+                        setIsDropdownOpen(false);
+                      }}
                     >
                       Edit Profile
                     </Link>

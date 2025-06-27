@@ -17,7 +17,7 @@ import { format } from "date-fns";
 
 const JobsPage = () => {
   /// comapny Config
-  const { companyConfig } = useCompanyConfig();
+  const { companyConfig, userConfig } = useCompanyConfig();
   const { company, themeConfig } = companyConfig;
   const { primary_color, secondary_color } = themeConfig;
   /// redux related
@@ -58,6 +58,7 @@ const JobsPage = () => {
           jobsPerPage,
           searchTerm,
           selectedLocation,
+          applicantId: userConfig?.Id,
           selectedDept,
         })
       );
@@ -156,6 +157,7 @@ const JobsPage = () => {
                     dispatch(
                       fetchJobs({
                         companyId: company.Id,
+                        applicantId: userConfig?.Id,
                         currentPage,
                         jobsPerPage,
                         searchTerm,
@@ -190,6 +192,8 @@ const JobsPage = () => {
                     workExpFrom={job?.workExpFrom}
                     workExpTo={job?.workExpTo}
                     description={job?.jobSummary || ""}
+                    isAppliedForJob={job?.isAppliedForJob}
+                    applicant={userConfig}
                   />
                 ))}
               </div>

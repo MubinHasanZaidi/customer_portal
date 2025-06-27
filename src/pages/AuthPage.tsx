@@ -66,13 +66,16 @@ const AuthPage = () => {
   const onLoginSubmit = async (data: LoginFormData) => {
     try {
       await dispatch(
-        login({
-          email: data.email,
-          password: data.password,
-          companyId: company?.Id,
-        })
+        login(
+          {
+            email: data.email,
+            password: data.password,
+            companyId: company?.Id,
+            navigate
+          },
+        )
       ).unwrap();
-      navigate("/jobs");
+
     } catch (err) {
       // Error is already handled in the action creator
     }

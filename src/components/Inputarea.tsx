@@ -13,6 +13,7 @@ interface InputAreaProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   rightIcon?: React.ReactNode;
+  max?: string;
 }
 
 const InputArea: React.FC<InputAreaProps> = ({
@@ -21,6 +22,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   type = "text",
   error,
   registration,
+  max,
   value,
   onChange,
   placeholder,
@@ -50,6 +52,7 @@ const InputArea: React.FC<InputAreaProps> = ({
           className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${className} ${
             rightIcon ? "pr-8" : ""
           }`}
+          max={type === "date" && max ? max : ""}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={type === "date" ? "YYYY-MM-DD" : placeholder}

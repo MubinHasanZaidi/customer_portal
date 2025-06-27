@@ -1,18 +1,13 @@
 import axios from "axios";
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/apis";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/apis`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // Do not set default Content-Type here; let Axios handle it per request
 });
 const apiAuth = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // Do not set default Content-Type here; let Axios handle it per request
 });
 
 // Add a request interceptor
@@ -32,11 +27,11 @@ apiAuth.interceptors.request.use(
 // Auth APIs
 export const authAPI = {
   login: async (email: string, password: string, companyId: string) => {
-    const response = await api.post("/career/login", {
-      email,
-      password,
-      companyId,
-    });
+    const response = await api.post(
+      "/career/login",
+      { email, password, companyId },
+      { headers: { "Content-Type": "application/json" } }
+    );
     return response.data;
   },
 
@@ -46,22 +41,26 @@ export const authAPI = {
     password: string,
     companyId: string
   ) => {
-    const response = await api.post("/career/register", {
-      name,
-      email,
-      password,
-      companyId,
-    });
+    const response = await api.post(
+      "/career/register",
+      { name, email, password, companyId },
+      { headers: { "Content-Type": "application/json" } }
+    );
     return response.data;
   },
 
-  resetPassword: async (
-    { previousPassword, newPassword }: { previousPassword: string; newPassword: string }
-  ) => {
-    const response = await apiAuth.post("/career/reset_password", {
-      previousPassword,
-      newPassword,
-    });
+  resetPassword: async ({
+    previousPassword,
+    newPassword,
+  }: {
+    previousPassword: string;
+    newPassword: string;
+  }) => {
+    const response = await apiAuth.post(
+      "/career/reset_password",
+      { previousPassword, newPassword },
+      { headers: { "Content-Type": "application/json" } }
+    );
     return response.data;
   },
 
@@ -71,7 +70,11 @@ export const authAPI = {
   },
 
   refreshToken: async (refresh: string) => {
-    const response = await apiAuth.post("/career/refresh_token", { refresh });
+    const response = await apiAuth.post(
+      "/career/refresh_token",
+      { refresh },
+      { headers: { "Content-Type": "application/json" } }
+    );
     return response.data;
   },
 };
@@ -79,7 +82,9 @@ export const authAPI = {
 // Jobs APIs
 export const jobsAPI = {
   getJobs: async (body: any) => {
-    const response = await api.post("/career/jobs", body);
+    const response = await api.post("/career/jobs", body, {
+      headers: { "Content-Type": "application/json" },
+    });
     return response.data;
   },
 
@@ -94,5 +99,33 @@ export const jobsAPI = {
   getDepartmentByCompanyId: async (companyId: string) => {
     const response = await api.get(`/career/departments/${companyId}`);
     return response.data;
+  },
+  getFormOption: async (parentId: string) => {
+    const response = await apiAuth.post(
+      "/career/form_option",
+      { parentId },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  },
+  getCountryOption: async () => {
+    const response = await apiAuth.get("/career/country_option");
+    return response.data;
+  },
+  getCityOption: async (countryId?: number) => {
+    const response = await apiAuth.get(`/career/city_option/${countryId}`);
+    return response.data;
+  },
+  applicantFormSubmit: async (body?: any) => {
+    const response = await apiAuth.post(`/career/applicant`, body);
+    return response.data;
+  },
+  getApplicantForm: async () => {
+    const response = await apiAuth.get(`/career/applicant`);
+    return response.data;
+  },
+  uploadFile: async (body: any) => {
+    // Do not set Content-Type; let Axios handle FormData
+    return api.post(`/file-upload`, body);
   },
 };

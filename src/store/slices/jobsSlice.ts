@@ -3,16 +3,19 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 interface JobsState {
   jobs: any[];
   selectedJob: any | null;
+  applicantData: any | null;
   isLoading: boolean;
   error: string | null;
   locations: any[];
   departments: any[];
   count: number;
+  [key: string]: any;
 }
 
 const initialState: JobsState = {
   jobs: [],
   selectedJob: null,
+  applicantData: null,
   isLoading: false,
   error: null,
   locations: [],
@@ -60,6 +63,19 @@ const jobsSlice = createSlice({
     fetchDepartmentList: (state, action: PayloadAction<any[]>) => {
       state.departments = action.payload;
     },
+    fetchFormOptionStart: (state) => {
+      state.isLoading = true;
+    },
+    fetchFormOption: (state, action: PayloadAction<any>) => {
+      state[action.payload.key] = action.payload.data;
+      state.isLoading = false;
+    },
+    fetchFormOptionFailure: (state) => {
+      state.isLoading = false;
+    },
+    fetchApplicantData: (state, action: PayloadAction<any>) => {
+      state.applicantData = action.payload;
+    },
   },
 });
 
@@ -72,6 +88,10 @@ export const {
   fetchJobDetailFailure,
   fetchLocationList,
   fetchDepartmentList,
+  fetchFormOption,
+  fetchFormOptionStart,
+  fetchFormOptionFailure,
+  fetchApplicantData,
 } = jobsSlice.actions;
 
 export default jobsSlice.reducer;

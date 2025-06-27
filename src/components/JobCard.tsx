@@ -1,6 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Briefcase, ArrowRight, Calendar } from "lucide-react";
+import {
+  MapPin,
+  Briefcase,
+  ArrowRight,
+  Calendar,
+  ThumbsUp,
+} from "lucide-react";
 
 interface JobCardProps {
   id: string;
@@ -10,7 +16,9 @@ interface JobCardProps {
   postedAt: string;
   description: string;
   workExpFrom?: string;
-  workExpTo?: string
+  workExpTo?: string;
+  isAppliedForJob?: boolean;
+  applicant?: any;
 }
 
 const JobCard: React.FC<JobCardProps> = ({
@@ -21,7 +29,9 @@ const JobCard: React.FC<JobCardProps> = ({
   postedAt,
   description,
   workExpFrom,
-  workExpTo
+  workExpTo,
+  isAppliedForJob,
+  applicant,
 }) => {
   return (
     <div className="border-b-[#707070] border-b py-6">
@@ -65,13 +75,20 @@ const JobCard: React.FC<JobCardProps> = ({
           </div>
         </div>
         <div className="flex flex-col sm:items-end gap-2">
-          <Link
-            to={`/job-detail/${id}`}
-            className="inline-flex items-center min-w-max hover:underline px-4 p-2 border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
-          >
-            View Details
-            <ArrowRight className="w-6 h-6 -rotate-45 ml-2" />
-          </Link>
+          {isAppliedForJob && applicant?.Id ? (
+            <span className="inline-flex items-center min-w-max px-4 p-2 border border-transparent text-lg font-medium rounded-md text-[#34B9A3] focus:ring-2 focus:ring-offset-2">
+              Applied
+              <ThumbsUp className="w-6 h-6 ml-2" />
+            </span>
+          ) : (
+            <Link
+              to={`/job-detail/${id}`}
+              className="inline-flex items-center min-w-max hover:underline px-4 p-2 border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
+            >
+              View Details
+              <ArrowRight className="w-6 h-6 -rotate-45 ml-2" />
+            </Link>
+          )}
         </div>
       </div>
     </div>

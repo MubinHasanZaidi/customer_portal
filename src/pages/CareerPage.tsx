@@ -16,8 +16,9 @@ const CareerPage = () => {
   useEffect(() => {
     if (companyConfig) {
       let encrpytValue = encrypt(JSON.stringify(companyConfig));
+      localStorage.clear();
       localStorage.setItem("companyConfig", encrpytValue);
-      navigate("/jobs")
+      navigate("/jobs");
     }
   }, [companyConfig, navigate]);
 

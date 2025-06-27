@@ -9,8 +9,12 @@ import {
   fetchJobDetailFailure,
   fetchLocationList,
   fetchDepartmentList,
+  fetchFormOption,
+  fetchFormOptionFailure,
+  fetchFormOptionStart,
+  fetchApplicantData,
 } from "../slices/jobsSlice";
-import { string } from "zod";
+import { encrypt } from "../../utils/crypto";
 
 // Add this type above your thunk
 interface FetchJobsParams {
@@ -20,6 +24,7 @@ interface FetchJobsParams {
   searchTerm?: string;
   selectedLocation?: string[];
   selectedDept?: string;
+  applicantId?: any;
 }
 
 export const fetchJobs = createAsyncThunk(
@@ -87,6 +92,127 @@ export const fetchJobDepartments = createAsyncThunk(
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch location";
       dispatch(fetchDepartmentList([]));
+      throw error;
+    }
+  }
+);
+
+export const fetchFormOptionAction = createAsyncThunk(
+  "job/fetchFormOption",
+  async (
+    { parentId, key }: { parentId: string; key: string },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(fetchFormOptionStart());
+      const result = await jobsAPI.getFormOption(parentId);
+      dispatch(fetchFormOption({ key, data: result?.data || [] }));
+      return result;
+    } catch (error) {
+      dispatch(fetchFormOptionFailure());
+      const errorMessage =
+        error instanceof Error ? error.message : `Failed to fetch ${key}`;
+      throw error;
+    }
+  }
+);
+
+export const fetchCountryOptionAction = createAsyncThunk(
+  "job/fetchCountryOption",
+  async ({ key }: { key: string }, { dispatch }) => {
+    try {
+      dispatch(fetchFormOptionStart());
+      const result = await jobsAPI.getCountryOption();
+      dispatch(fetchFormOption({ key, data: result?.data || [] }));
+      return result;
+    } catch (error) {
+      dispatch(fetchFormOptionFailure());
+      const errorMessage =
+        error instanceof Error ? error.message : `Failed to fetch ${key}`;
+      throw error;
+    }
+  }
+);
+
+export const fetchCityOptionAction = createAsyncThunk(
+  "job/fetchCityOption",
+  async (
+    { key, countryId }: { key: string; countryId?: number },
+    { dispatch }
+  ) => {
+    try {
+      // dispatch(fetchFormOptionStart());
+      const result = await jobsAPI.getCityOption(countryId);
+      dispatch(fetchFormOption({ key, data: result?.data || [] }));
+      return result;
+    } catch (error) {
+      dispatch(fetchFormOptionFailure());
+      const errorMessage =
+        error instanceof Error ? error.message : `Failed to fetch ${key}`;
+      throw error;
+    }
+  }
+);
+
+export const uploadFiles = async (file: any) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return await jobsAPI
+    .uploadFile(formData)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      error.clientMessage = "File not Uploaded";
+      // dispatch(actions.catchError({ error, callType: callTypes.list }));
+    });
+};
+
+export const applicatFormSubmit = createAsyncThunk(
+  "job/uploadApplicantForm",
+  async (
+    {
+      data,
+      setIsSubmitting,
+      setSubmitSuccess,
+      setError,
+    }: {
+      data: any;
+      setIsSubmitting?: any;
+      setSubmitSuccess: any;
+      setError: any;
+    },
+    { dispatch }
+  ) => {
+    try {
+      const result = await jobsAPI.applicantFormSubmit(data);
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setError(null);
+      const encryptedUser = encrypt(JSON.stringify(result?.data));
+      localStorage.setItem("user", encryptedUser);
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : `Failed to submit Form`;
+      setError(errorMessage);
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      throw error;
+    }
+  }
+);
+
+export const fetchApplicant = createAsyncThunk(
+  "job/fetchApplicantData",
+  async (_: void, { dispatch }) => {
+    try {
+      const result = await jobsAPI.getApplicantForm();
+      dispatch(fetchApplicantData(result?.data));
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : `Failed to submit Form`;
       throw error;
     }
   }

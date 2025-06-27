@@ -25,7 +25,6 @@ const JobDetailPage = () => {
     }
   }, [dispatch, id]);
 
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -113,6 +112,9 @@ const JobDetailPage = () => {
               </div>
               <div className="mt-4 md:mt-0 flex flex-col gap-2">
                 <Link
+                  onClick={(e) =>
+                    localStorage.setItem("jobId", selectedJob?.Id)
+                  }
                   to="/applicant-form"
                   className="inline-flex hover:underline items-center justify-start md:justify-end border border-transparent text-lg font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
                 >
@@ -382,7 +384,8 @@ const JobDetailPage = () => {
                         to{" "}
                         {selectedJob.preferredAgeTo
                           ? selectedJob.preferredAgeTo
-                          : "N/A"} Year(s)
+                          : "N/A"}{" "}
+                        Year(s)
                       </p>
                     </div>
                   )}
@@ -477,6 +480,7 @@ const JobDetailPage = () => {
                         Salary range:
                       </h3>
                       <p className="text-xs text-[#222222]">
+                        {selectedJob?.currency || " "}{" "}
                         {selectedJob.salaryRangeFrom &&
                         selectedJob.salaryRangeTo
                           ? `${Number(

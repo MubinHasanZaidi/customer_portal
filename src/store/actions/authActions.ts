@@ -22,7 +22,8 @@ export const login = createAsyncThunk(
       email,
       password,
       companyId,
-    }: { email: string; password: string; companyId: string },
+      navigate,
+    }: { email: string; password: string; companyId: string; navigate: any },
     { dispatch }
   ) => {
     try {
@@ -34,6 +35,7 @@ export const login = createAsyncThunk(
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("user", encryptedUser);
+      navigate("/jobs");
       return userData;
     } catch (error) {
       const errorMessage =
