@@ -217,3 +217,12 @@ export const fetchApplicant = createAsyncThunk(
     }
   }
 );
+
+export const fetchJobMandatorySkills = async (jobId: string) => {
+  try {
+    const result = await jobsAPI.getJobMandaotrySkills(jobId);
+    return result?.data;
+  } catch (error) {
+    throw error;
+  }
+};

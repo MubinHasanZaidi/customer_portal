@@ -34,7 +34,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="relative">
+    <div data-title={placeholder} className="relative">
       {label && (
         <label htmlFor={id} className="form-label">
           {label}
@@ -59,4 +59,4 @@ const TextArea: React.FC<TextAreaProps> = ({
   );
 };
 
-export default TextArea; 
+export default TextArea;

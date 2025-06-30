@@ -128,4 +128,8 @@ export const jobsAPI = {
     // Do not set Content-Type; let Axios handle FormData
     return api.post(`/file-upload`, body);
   },
+  getJobMandaotrySkills: async (jboId: string) => {
+    const response = await apiAuth.get(`/career/mandatory_skills/${jboId}`);
+    return response.data;
+  },
 };

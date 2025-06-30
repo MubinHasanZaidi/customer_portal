@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import useCompanyConfig from "../hooks/useCompanyConfig";
+import CurrencyInput from "react-currency-input-field";
 
 interface InputAreaProps {
   id: string;
@@ -14,6 +15,8 @@ interface InputAreaProps {
   className?: string;
   rightIcon?: React.ReactNode;
   max?: string;
+  disable?: boolean;
+  amountFormat?: boolean;
 }
 
 const InputArea: React.FC<InputAreaProps> = ({
@@ -27,38 +30,69 @@ const InputArea: React.FC<InputAreaProps> = ({
   onChange,
   placeholder,
   className = "",
+  disable = false,
+  amountFormat = false,
   rightIcon,
 }) => {
   const { companyConfig } = useCompanyConfig();
   const { themeConfig } = companyConfig;
-  const { primary_color, secondary_color } = themeConfig;
+  const { primary_color } = themeConfig;
   const [isFocused, setIsFocused] = useState(false);
-  const inputProps = registration ? { ...registration } : { value, onChange };
+
+  // Handler for CurrencyInput to work with react-hook-form registration
+  const handleCurrencyChange = (val: string | undefined) => {
+    if (registration && registration.onChange) {
+      registration.onChange({ target: { value: val } });
+    } else if (onChange) {
+      // fallback for non-hook-form usage
+      onChange({ target: { value: val } } as any);
+    }
+  };
 
   return (
-    <div className="relative">
+    <div data-title={placeholder} className="relative">
       {label && (
         <label htmlFor={id} className="form-label">
           {label}
         </label>
       )}
       <div className="relative">
-        <input
-          id={id}
-          type={type}
-          style={{
-            borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
-          }}
-          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${className} ${
-            rightIcon ? "pr-8" : ""
-          }`}
-          max={type === "date" && max ? max : ""}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder={type === "date" ? "YYYY-MM-DD" : placeholder}
-          step={type === "number" ? "any" : undefined}
-          {...inputProps}
-        />
+        {amountFormat ? (
+          <CurrencyInput
+            id={id}
+            value={value}
+            onValueChange={handleCurrencyChange}
+            disabled={disable}
+            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
+              disable ? "text-[#6f6f6f]" : "text-[#222222]"
+            } ${className} ${rightIcon ? "pr-8" : ""}`}
+            style={{
+              borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+            }}
+            onFocus={() => setIsFocused(true)}
+            placeholder={placeholder}
+            step={"any" as any}
+            decimalsLimit={2}
+            {...(registration ? { name: registration.name } : {})}
+          />
+        ) : (
+          <input
+            id={id}
+            type={type}
+            disabled={disable}
+            style={{
+              borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+            }}
+            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
+              disable ? "text-[#6f6f6f]" : "text-[#222222]"
+            } ${className} ${rightIcon ? "pr-8" : ""}`}
+            max={type === "date" && max ? max : ""}
+            onFocus={() => setIsFocused(true)}
+            placeholder={type === "date" ? "YYYY-MM-DD" : placeholder}
+            step={type === "number" ? "any" : undefined}
+            {...(registration ? { ...registration } : { value, onChange })}
+          />
+        )}
         {rightIcon && (
           <div className="absolute right-0 top-1/2 -translate-y-1/2">
             {rightIcon}

@@ -13,6 +13,7 @@ import { Search } from "lucide-react";
 import JobCard from "../components/JobCard";
 import MultiSelect from "../components/MultiSelect";
 import useCompanyConfig from "../hooks/useCompanyConfig";
+import useDebounce from "../hooks/useDebounce";
 import { format } from "date-fns";
 
 const JobsPage = () => {
@@ -32,6 +33,9 @@ const JobsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
 
+  // Debounced search term to prevent excessive API calls
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const jobListRef = useRef<HTMLDivElement>(null);
 
   const handlePageChange = (page: number) => {
@@ -47,7 +51,7 @@ const JobsPage = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedLocation, selectedDept]);
+  }, [debouncedSearchTerm, selectedLocation, selectedDept]);
 
   useEffect(() => {
     if (company?.Id) {
@@ -56,7 +60,7 @@ const JobsPage = () => {
           companyId: company.Id,
           currentPage,
           jobsPerPage,
-          searchTerm,
+          searchTerm: debouncedSearchTerm,
           selectedLocation,
           applicantId: userConfig?.Id,
           selectedDept,
@@ -69,9 +73,10 @@ const JobsPage = () => {
     company?.Id,
     currentPage,
     jobsPerPage,
-    searchTerm,
+    debouncedSearchTerm,
     selectedLocation,
     selectedDept,
+    userConfig,
   ]);
 
   const totalPages = Math.max(1, Math.ceil(count / jobsPerPage) || 1);
@@ -160,7 +165,7 @@ const JobsPage = () => {
                         applicantId: userConfig?.Id,
                         currentPage,
                         jobsPerPage,
-                        searchTerm,
+                        searchTerm: debouncedSearchTerm,
                         selectedLocation,
                         selectedDept,
                       })

@@ -4,6 +4,7 @@ import {
   useFieldArray,
   SubmitHandler,
   FormProvider,
+  Controller,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,6 +23,7 @@ import {
   fetchCityOptionAction,
   fetchCountryOptionAction,
   fetchFormOptionAction,
+  fetchJobMandatorySkills,
   uploadFiles,
 } from "../store/actions/jobActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -120,7 +122,10 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
     institutionId: num("academic_info"),
     degreeId: num("academic_info"),
     gpa: academicRequired
-      ? z.coerce.number().min(1, "Required").max(4, "GPA must be between 1 and 4")
+      ? z.coerce
+          .number()
+          .min(1, "Required")
+          .max(4, "GPA must be between 1 and 4")
       : z.coerce.number().optional(),
     startDate: str("academic_info"),
     endDate: str("academic_info"),
@@ -142,6 +147,7 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
   // Skills Table
   const skillsRequired = !!applicantFormConfig?.skills_info;
   const skillObj = z.object({
+    isReq: z.boolean().optional(),
     skill: str("skills_info"),
     description: str("skills_info"),
     startDate: str("skills_info"),
@@ -241,6 +247,7 @@ const ApplicantFormPage = () => {
   const [error, setError] = useState(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [cvFileName, setCvFileName] = useState<string>("");
+  const jobId = localStorage.getItem("jobId");
 
   // Build schema dynamically
   const applicantFormSchema = buildApplicantFormSchema(applicantFormConfig);
@@ -258,6 +265,7 @@ const ApplicantFormPage = () => {
     handleSubmit,
     control,
     setValue,
+    getValues,
     watch,
     formState: { errors },
   } = methods;
@@ -294,6 +302,7 @@ const ApplicantFormPage = () => {
 
   const appendNewSkill = () => {
     appendSkill({
+      isReq: false,
       skill: "",
       description: "",
       startDate: "",
@@ -406,7 +415,7 @@ const ApplicantFormPage = () => {
         data.profile_image = e?.data?.filename;
       });
     }
-    let jobId = localStorage.getItem("jobId");
+
     const payload = {
       ...data,
       jobId: jobId !== "none" ? jobId : null,
@@ -459,6 +468,33 @@ const ApplicantFormPage = () => {
     }
   }, [countryId]);
 
+  useEffect(() => {
+    // Only run if jobId and applicantData are loaded
+    if (jobId && jobStates?.applicantData) {
+      fetchJobMandatorySkills(jobId).then((res) => {
+        // Get current skills from form
+        const currentSkills = methods.getValues("skills") || [];
+        res.forEach((e: any) => {
+          // Check if skill already exists
+          const exists = currentSkills.some(
+            (s) => s.skill === e?.formName && s.isReq
+          );
+          if (!exists) {
+            appendSkill({
+              isReq: true,
+              skill: e?.formName,
+              description: "",
+              startDate: "",
+              endDate: "",
+              ratingScale: 0,
+            });
+          }
+        });
+      });
+    }
+    // eslint-disable-next-line
+  }, [jobId, jobStates?.applicantData]);
+
   if (submitSuccess && error === null) {
     return (
       <div
@@ -485,6 +521,7 @@ const ApplicantFormPage = () => {
       </div>
     );
   }
+
   if (error) {
     return (
       <div
@@ -807,14 +844,20 @@ const ApplicantFormPage = () => {
                             />
                           </div>
                           <div>
-                            <InputArea
-                              id="lastDawnSalary"
-                              placeholder="Current Salary"
-                              type="number"
-                              error={errors.lastDawnSalary?.message}
-                              registration={{
-                                ...register("lastDawnSalary"),
-                              }}
+                            <Controller
+                              control={control}
+                              name="lastDawnSalary"
+                              render={({ field }) => (
+                                <InputArea
+                                  id="lastDawnSalary"
+                                  amountFormat={true}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Current Salary"
+                                  type="number"
+                                  error={errors.lastDawnSalary?.message}
+                                />
+                              )}
                             />
                           </div>
                           <div>
@@ -843,25 +886,37 @@ const ApplicantFormPage = () => {
                             />
                           </div>
                           <div>
-                            <InputArea
-                              id="expectedSalaryRangeFrom"
-                              placeholder="Expected Salary Range From"
-                              type="number"
-                              error={errors.expectedSalaryRangeFrom?.message}
-                              registration={{
-                                ...register("expectedSalaryRangeFrom"),
-                              }}
+                            <Controller
+                              control={control}
+                              name="expectedSalaryRangeFrom"
+                              render={({ field }) => (
+                                <InputArea
+                                  id="expectedSalaryRangeFrom"
+                                  amountFormat={true}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Expected Salary Range From"
+                                  type="number"
+                                  error={errors.expectedSalaryRangeFrom?.message}
+                                />
+                              )}
                             />
                           </div>
                           <div className="col-span-1 md:col-span-1">
-                            <InputArea
-                              id="expectedSalaryRangeTo"
-                              placeholder="Expected Salary Range To"
-                              type="number"
-                              error={errors.expectedSalaryRangeTo?.message}
-                              registration={{
-                                ...register("expectedSalaryRangeTo"),
-                              }}
+                            <Controller
+                              control={control}
+                              name="expectedSalaryRangeTo"
+                              render={({ field }) => (
+                                <InputArea
+                                  id="expectedSalaryRangeTo"
+                                  amountFormat={true}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Expected Salary Range To"
+                                  type="number"
+                                  error={errors.expectedSalaryRangeTo?.message}
+                                />
+                              )}
                             />
                           </div>
                           <div className="col-span-1 md:col-span-4">
@@ -1349,8 +1404,13 @@ const ApplicantFormPage = () => {
                                     <td>
                                       <button
                                         type="button"
+                                        disabled={field?.isReq}
                                         onClick={() => removeSkill(index)}
-                                        className="text-red-500 hover:text-red-600"
+                                        className={
+                                          field?.isReq
+                                            ? "text-red-200 hover:text-red-300 cursor-not-allowed"
+                                            : "text-red-500 hover:text-red-600 cursor-pointer"
+                                        }
                                       >
                                         <MinusCircle className="w-4 h-4" />
                                       </button>
@@ -1358,6 +1418,7 @@ const ApplicantFormPage = () => {
                                     <td className="p-1">
                                       <InputArea
                                         id="skill"
+                                        disable={field?.isReq}
                                         placeholder="Skill Name"
                                         type="text"
                                         error={

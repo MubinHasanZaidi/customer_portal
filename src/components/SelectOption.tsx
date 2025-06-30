@@ -98,7 +98,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
     `${placeholder}`;
   return (
     <>
-      <div ref={dropdownRef} className="relative m-0">
+      <div data-title={placeholder} ref={dropdownRef} className="relative m-0">
         <div
           onClick={() => {
             if (!disable) setIsOpen(!isOpen);
