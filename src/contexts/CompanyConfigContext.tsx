@@ -6,7 +6,8 @@ import { decrypt } from "../utils/crypto";
 type CompanyConfigContextType = {
   companyConfig: any;
   userConfig: any; // Consider replacing 'any' with a proper type
-  setUserConfig : any;
+  setUserConfig: any;
+  subsidiary?: any;
 };
 
 export const CompanyConfigContext = createContext<
@@ -39,7 +40,9 @@ const CompanyConfigProvider: React.FC<{ children: React.ReactNode }> = ({
   if (!companyConfig) return null;
 
   return (
-    <CompanyConfigContext.Provider value={{ companyConfig, userConfig , setUserConfig}}>
+    <CompanyConfigContext.Provider
+      value={{ companyConfig, userConfig, setUserConfig }}
+    >
       {children}
     </CompanyConfigContext.Provider>
   );

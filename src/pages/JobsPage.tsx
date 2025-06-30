@@ -182,7 +182,7 @@ const JobsPage = () => {
                 </p>
               </div>
             ) : (
-              <div className="space-y-12 pb-6 sm:pb-12 lg:pb-28">
+              <div className=" space-y-3 sm:space-y-12 pb-6 sm:pb-12 lg:pb-28">
                 {jobs.map((job) => (
                   <JobCard
                     key={job.Id}

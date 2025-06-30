@@ -9,6 +9,9 @@ import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import CareerPage from "./pages/CareerPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CompanyConfigProvider from "./contexts/CompanyConfigContext";
+import HowItWorkPage from "./pages/HowItWorkPage";
+import DisclaimerPage from "./pages/DisclaimerPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
 function App() {
   return (
@@ -30,6 +33,9 @@ function App() {
                 }
               />
               <Route path="/jobs" element={<JobsPage />} />
+              <Route path="/how-it-work" element={<HowItWorkPage />} />
+              <Route path="/disclaimer" element={<DisclaimerPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/forget-password" element={<ForgetPasswordPage />} />
               <Route path="/job-detail/:id" element={<JobDetailPage />} />
               <Route

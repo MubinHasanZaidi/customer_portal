@@ -143,7 +143,7 @@ const Header = () => {
               )}
             </div>
           ) : (
-            <>
+            <div className="flex flex-col sm:flex-row items-start gap-1 sm:items-center space-x-2">
               <Link
                 to={"/auth"}
                 style={{ background: primary_color }}
@@ -161,7 +161,7 @@ const Header = () => {
                   Sign in
                 </Link>
               </span>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -225,6 +225,9 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
     skills: skillsRequired
       ? z.array(skillObj).min(1, "At least one skill is required")
       : z.array(skillObj).optional(),
+
+    // Add notification boolean
+    isNotifiedForJobPosting: z.boolean().optional(),
   });
 }
 
@@ -897,7 +900,9 @@ const ApplicantFormPage = () => {
                                   onChange={field.onChange}
                                   placeholder="Expected Salary Range From"
                                   type="number"
-                                  error={errors.expectedSalaryRangeFrom?.message}
+                                  error={
+                                    errors.expectedSalaryRangeFrom?.message
+                                  }
                                 />
                               )}
                             />
@@ -1511,44 +1516,54 @@ const ApplicantFormPage = () => {
                       {/* Upload CV */}
 
                       {/* Submit Button */}
-                      <div className="flex flex-col md:flex-row justify-between md:items-center">
-                        <div className="py-6">
-                          <h2 className="text-xl font-medium text-[#222222] mb-4">
-                            Upload Your Updated CV
-                          </h2>
+                      <div>
+                        <label className="flex items-center gap-2 mb-4">
                           <input
-                            type="file"
-                            accept=".pdf,.doc,.docx"
-                            onChange={(event) => {
-                              const file = event.target.files?.[0];
-                              setValue("file", file as any);
-                              setCvFileName(file?.name || "");
-                            }}
-                            className="hidden"
-                            id="cv-upload"
+                            type="checkbox"
+                            {...register("isNotifiedForJobPosting")}
+                            defaultChecked={false}
                           />
-                          <label
-                            htmlFor="cv-upload"
-                            className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-4 p-2 rounded-full cursor-pointer inline-flex items-center py-2 "
+                          <span className="text-xs text-[#222222]">Receive new job posting notification</span>
+                        </label>
+                        <div className="flex flex-col md:flex-row justify-between md:items-center">
+                          <div className="py-6">
+                            <h2 className="text-xl font-medium text-[#222222] mb-4">
+                              Upload Your Updated CV
+                            </h2>
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx"
+                              onChange={(event) => {
+                                const file = event.target.files?.[0];
+                                setValue("file", file as any);
+                                setCvFileName(file?.name || "");
+                              }}
+                              className="hidden"
+                              id="cv-upload"
+                            />
+                            <label
+                              htmlFor="cv-upload"
+                              className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-4 p-2 rounded-full cursor-pointer inline-flex items-center py-2 "
+                            >
+                              Choose File
+                            </label>
+                            {cvFileName && (
+                              <span className="ml-2 text-sm text-gray-700">
+                                {cvFileName}
+                              </span>
+                            )}
+                            <p className="mt-2 text-xs text-gray-500">
+                              Upload your CV in .PDF, .DOC, or .DOCX format
+                            </p>
+                          </div>
+                          <button
+                            type="submit"
+                            className="px-4 disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
+                            disabled={isSubmitting}
                           >
-                            Choose File
-                          </label>
-                          {cvFileName && (
-                            <span className="ml-2 text-sm text-gray-700">
-                              {cvFileName}
-                            </span>
-                          )}
-                          <p className="mt-2 text-xs text-gray-500">
-                            Upload your CV in .PDF, .DOC, or .DOCX format
-                          </p>
+                            {isSubmitting ? "Submitting..." : "Submit"}
+                          </button>
                         </div>
-                        <button
-                          type="submit"
-                          className="px-4 disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? "Submitting..." : "Submit"}
-                        </button>
                       </div>
                     </form>
                   </FormProvider>

@@ -1,64 +1,143 @@
 import { Link } from "react-router-dom";
 import dy_logo from "../assets/dy_logo.png";
 import useCompanyConfig from "../hooks/useCompanyConfig";
-import { EditIcon } from "lucide-react";
+import {
+  EditIcon,
+  UserPlus,
+  LogIn,
+  Briefcase,
+  Upload,
+  CheckCircle,
+} from "lucide-react";
 
 const Footer = () => {
   const { companyConfig } = useCompanyConfig();
-  const { themeConfig } = companyConfig;
+  const { themeConfig, subsidiary } = companyConfig;
   const { primary_color } = themeConfig;
+  console.log("companyConfigcompanyConfig", subsidiary);
   return (
-    <footer>
-      <div className="grid grid-cols-1 md:grid-cols-5 2xl:max-w-[85vw] gap-4 mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">
+    <footer className="bg-white">
+      <div className="grid grid-cols-1 md:grid-cols-5 2xl:max-w-[85vw] gap-4 mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4 ">
         <div className="col-span-2 space-y-2">
           <h5
             style={{ color: primary_color }}
-            className={`text-lg sm:text-xl font-semibold `}
+            className={`text-lg sm:text-xl hover:underline font-semibold `}
           >
-            How it works?
             <Link
-              to={"https://dynasoftcloud.com/contact-us.php"}
-              target="_blank"
+              to={"/how-it-work"}
+              // target="_blank"
             >
-              <EditIcon className="w-4 h-4 inline-block ml-2" />
+              How it works?
             </Link>
           </h5>
-          <p className="text-xs mt-2 text-[#222222]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
+          <ul className="mt-4 space-y-2">
+            <li className="flex items-center gap-3">
+              <UserPlus className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <span className="text-xs text-[#222222]">
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  Register{" "}
+                </span>{" "}
+                yourself by clicking on Login button
+              </span>
+            </li>
+            <li className="flex items-center gap-3">
+              <LogIn className="w-4 h-4 text-green-600 flex-shrink-0" />
+              <span className="text-xs text-[#222222]">
+                Once registered{" "}
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  Login
+                </span>{" "}
+                with user id
+              </span>
+            </li>
+            <li className="flex items-center gap-3">
+              <Briefcase className="w-4 h-4 text-yellow-600 flex-shrink-0" />
+              <span className="text-xs text-[#222222]">
+                Select the{" "}
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  Job{" "}
+                </span>{" "}
+                in which you are interested
+              </span>
+            </li>
+            <li className="flex items-center gap-3">
+              <Upload className="w-4 h-4 text-purple-600 flex-shrink-0" />
+              <span className="text-xs text-[#222222]">
+                Enter your{" "}
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  {" "}
+                  profile
+                </span>{" "}
+                and{" "}
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  upload
+                </span>{" "}
+                the CV
+              </span>
+            </li>
+            <li className="flex items-center gap-3">
+              <CheckCircle className="w-4 h-4 text-teal-600 flex-shrink-0" />
+              <span className="text-xs text-[#222222]">
+                Once{" "}
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  submitted
+                </span>
+                , Job request is{" "}
+                <span style={{ color: primary_color, fontWeight: 600 }}>
+                  applied
+                </span>
+                .
+              </span>
+            </li>
+          </ul>
         </div>
         <div className="col-span-2 flex-1">
           <h5
             style={{ color: primary_color }}
-            className={`text-lg sm:text-xl font-semibold`}
+            className={`text-lg sm:text-xl font-semibold hover:underline`}
           >
-            Contact us
             <Link
               to={"https://dynasoftcloud.com/contact-us.php"}
               target="_blank"
             >
-              <EditIcon className="w-4 h-4 inline-block ml-2" />
+              Contact us
             </Link>
           </h5>
-          <div className="grid grid-cols-3 sm:grid-cols-5 sm:gap-x-1 mt-2">
-            <p className="text-xs text-[#222222] font-bold">Dubai : </p>
-            <Link className="text-xs text-[#222222]" to={"tel:+971 527 566 567"}>+971 527 566 567</Link>
-            <Link className="text-xs text-[#222222] col-span-1 sm:col-span-3" to={"mailto:biz@dynasoft.ae"}>biz@dynasoft.ae</Link>
-            <p className="text-xs text-[#222222] font-bold">Lahore : </p>
-            <Link className="text-xs text-[#222222]" to={"tel:+92 42 3640 0400"}>+92 42 3640 0400</Link>
-            <Link className="text-xs text-[#222222] col-span-1 sm:col-span-3" to={"mailto:info@dynasoftcloud.com"}>info@dynasoftcloud.com</Link>
-            <p className="text-xs text-[#222222] font-bold">Karachi : </p>
-            <Link className="text-xs text-[#222222]" to={"tel:+92 21 3432 1067"}>+92 21 3432 1067</Link>
-            <Link className="text-xs text-[#222222] col-span-1 sm:col-span-3" to={"mailto:info@dynasoftcloud.com"}>info@dynasoftcloud.com</Link>
+          <div className="mt-2 space-y-3">
+            {subsidiary?.length > 0 &&
+              subsidiary.map((e: any) => {
+                return (
+                  <div>
+                    <p className="text-xs text-[#222222] font-bold mb-1">
+                      {e?.name || ""}
+                    </p>
+                    {e?.phone && e?.email && (
+                      <div className="flex flex-wrap items-center gap-1 text-xs text-[#222222]">
+                        <Link
+                          to={`tel:${e?.phone}`}
+                          className="hover:underline"
+                        >
+                          {e?.phone || ""}
+                        </Link>
+                        <span className="mx-1">|</span>
+                        <Link
+                          to={`mailto:${e?.email}`}
+                          className="hover:underline"
+                        >
+                          {e?.email || ""}
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
         <div className="col-span-1">
-          <img className="mx-auto mt-4" src={dy_logo} />
+          <img className="sm:mx-auto mt-4" src={dy_logo} />
         </div>
       </div>
+      <hr />
       <div className="bg-white mt-auto">
         <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -77,13 +156,13 @@ const Footer = () => {
                 About Dynasoft Cloud
               </Link>
               <Link
-                to="#"
+                to="/privacy-policy"
                 className="text-xs text-[#263238] hover:text-gray-700"
               >
                 Privacy Policy
               </Link>
               <Link
-                to="#"
+                to="/disclaimer"
                 className="text-xs text-[#263238] hover:text-gray-700"
               >
                 Disclaimer
