@@ -174,7 +174,7 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
     nic_no: str("nic_no"),
     passportNo: str("passportNo"),
     relation_name: str("relation_name"),
-    nationality: str("nationality"),
+    nationality: num("nationality"),
     gender: str("gender"),
     maritalStatus: num("maritalStatus"),
     lastDawnSalaryCurrencyId: num("current_salary"),
@@ -661,7 +661,7 @@ const ApplicantFormPage = () => {
                                   ? jobStates.nationalityList.map((e) => {
                                       return {
                                         label: e?.label,
-                                        value: e?.label,
+                                        value: e?.value,
                                       };
                                     })
                                   : []
