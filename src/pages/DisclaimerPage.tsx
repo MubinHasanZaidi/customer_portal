@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import useCompanyConfig from "../hooks/useCompanyConfig";
@@ -7,6 +7,10 @@ const DisclaimerPage = () => {
   const { companyConfig } = useCompanyConfig();
   const { themeConfig } = companyConfig;
   const { secondary_color } = themeConfig;
+
+  useEffect(() => {
+   window.scrollTo(0, 0)
+  }, []);
   return (
     <div style={{ background: secondary_color }}>
       <Header />

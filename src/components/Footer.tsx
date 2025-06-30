@@ -14,7 +14,9 @@ const Footer = () => {
   const { companyConfig } = useCompanyConfig();
   const { themeConfig, subsidiary } = companyConfig;
   const { primary_color } = themeConfig;
-  console.log("companyConfigcompanyConfig", subsidiary);
+
+  
+
   return (
     <footer className="bg-white">
       <div className="grid grid-cols-1 md:grid-cols-5 2xl:max-w-[85vw] gap-4 mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4 ">
