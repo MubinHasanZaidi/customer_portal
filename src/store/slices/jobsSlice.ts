@@ -10,6 +10,7 @@ interface JobsState {
   departments: any[];
   count: number;
   [key: string]: any;
+  activeVacancy: any;
 }
 
 const initialState: JobsState = {
@@ -21,6 +22,7 @@ const initialState: JobsState = {
   locations: [],
   departments: [],
   count: 0,
+  activeVacancy: null,
 };
 
 const jobsSlice = createSlice({
@@ -76,6 +78,9 @@ const jobsSlice = createSlice({
     fetchApplicantData: (state, action: PayloadAction<any>) => {
       state.applicantData = action.payload;
     },
+    fetchActiveVacancy: (state, action: PayloadAction<any>) => {
+      state.activeVacancy = action.payload;
+    },
   },
 });
 
@@ -92,6 +97,7 @@ export const {
   fetchFormOptionStart,
   fetchFormOptionFailure,
   fetchApplicantData,
+  fetchActiveVacancy
 } = jobsSlice.actions;
 
 export default jobsSlice.reducer;

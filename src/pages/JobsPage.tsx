@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchActiveVacancyAction,
   fetchJobDepartments,
   fetchJobLocations,
   fetchJobs,
@@ -9,23 +10,37 @@ import type { RootState, AppDispatch } from "../store";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import InputArea from "../components/Inputarea";
-import { Search } from "lucide-react";
+import {
+  AccessibilityIcon,
+  Check,
+  Cross,
+  Search,
+  Upload,
+  X,
+} from "lucide-react";
 import JobCard from "../components/JobCard";
 import MultiSelect from "../components/MultiSelect";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import useDebounce from "../hooks/useDebounce";
 import { format } from "date-fns";
+import ActiveVacancy from "../components/ActiveVacancy";
 
 const JobsPage = () => {
   /// comapny Config
   const { companyConfig, userConfig } = useCompanyConfig();
-  const { company, themeConfig } = companyConfig;
+  const { company, themeConfig, applicantStatuses } = companyConfig;
   const { primary_color, secondary_color } = themeConfig;
   /// redux related
   const dispatch = useDispatch<AppDispatch>();
-  const { jobs, isLoading, error, locations, departments, count } = useSelector(
-    (state: RootState) => state.jobs
-  );
+  const {
+    jobs,
+    isLoading,
+    error,
+    locations,
+    departments,
+    count,
+    activeVacancy,
+  } = useSelector((state: RootState) => state.jobs);
   // internal states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
@@ -79,6 +94,12 @@ const JobsPage = () => {
     userConfig,
   ]);
 
+  useEffect(() => {
+    if (userConfig) {
+      dispatch(fetchActiveVacancyAction());
+    }
+  }, [userConfig]);
+
   const totalPages = Math.max(1, Math.ceil(count / jobsPerPage) || 1);
 
   return (
@@ -90,29 +111,43 @@ const JobsPage = () => {
       <main className="flex-1">
         <section className="pt-10">
           <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 pb-5 sm:pb-10 space-y-6  md:space-y-14">
-            <div className="text-left">
-              <p className="text-[#222222] text-xs sm:text-sm">
-                Join a team that values innovation, collaboration, and
-                continuous growth!
-              </p>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#222222] mt-3">
-                Your next career move starts here.
-              </h1>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
-              <InputArea
-                id="job-keyword"
-                placeholder="Job keyword"
-                value={searchTerm}
-                rightIcon={<Search className="w-4 h-4 text-[#222222]" />}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <MultiSelect
-                options={locations}
-                placeholder={"location"}
-                value={selectedLocation}
-                onChange={(values) => setSelectedLocation(values)}
-              />
+            <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between">
+              <div className="flex-1 space-y-6  md:space-y-14">
+                <div className="text-left w-fit">
+                  <p className="text-[#222222] text-xs sm:text-sm">
+                    Join a team that values innovation, collaboration, and
+                    continuous growth!
+                  </p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-[#222222] mt-3">
+                    Your next career move starts here.
+                  </h1>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+                  <InputArea
+                    id="job-keyword"
+                    placeholder="Job keyword"
+                    value={searchTerm}
+                    rightIcon={<Search className="w-4 h-4 text-[#222222]" />}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <MultiSelect
+                    options={locations}
+                    placeholder={"location"}
+                    value={selectedLocation}
+                    onChange={(values) => setSelectedLocation(values)}
+                  />
+                </div>
+              </div>
+              <div className="flex-1">
+                <ActiveVacancy
+                  primary_color={primary_color}
+                  secondary_color={secondary_color}
+                  company={company}
+                  activeVacancy={activeVacancy}
+                  userConfig={userConfig}
+                  applicantStatuses={applicantStatuses}
+                />
+              </div>
             </div>
             <div className="flex overflow-x-auto pb-4 hide-scrollbar">
               <div className="flex flex-wrap gap-2">

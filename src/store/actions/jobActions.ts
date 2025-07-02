@@ -13,8 +13,10 @@ import {
   fetchFormOptionFailure,
   fetchFormOptionStart,
   fetchApplicantData,
+  fetchActiveVacancy,
 } from "../slices/jobsSlice";
 import { encrypt } from "../../utils/crypto";
+import { toast } from "react-toastify";
 
 // Add this type above your thunk
 interface FetchJobsParams {
@@ -226,3 +228,54 @@ export const fetchJobMandatorySkills = async (jobId: string) => {
     throw error;
   }
 };
+
+export const fetchActiveVacancyAction = createAsyncThunk(
+  "job/fetchActiveVacancy",
+  async (_: void, { dispatch }) => {
+    try {
+      const result = await jobsAPI.getActiveVacancy();
+      dispatch(fetchActiveVacancy(result?.data));
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : `Failed to submit Form`;
+      throw error;
+    }
+  }
+);
+
+export const downloadOfferLetter = () => async () => {
+  return jobsAPI
+    .downloadOfferLetter()
+    .then((res: any) => {
+      const pdfBlob = new Blob([res], { type: "application/pdf" });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.setAttribute("download", "job_offer_letter.pdf");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })
+    .catch((error) => {
+      toast.error(error?.response?.data?.message || "Not found");
+    });
+};
+
+export const handleJobOffer = createAsyncThunk(
+  "job/fetchActiveVacancy",
+  async (body: any, { dispatch }) => {
+    try {
+      const response = await jobsAPI.handleOfferLetter(body);
+      if (response) {
+        dispatch(fetchActiveVacancy(response?.data));
+        toast.success("Vacancy Updated Successfully");
+        return response;
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+      throw error; // rethrow so thunk status reflects error
+    }
+  }
+);

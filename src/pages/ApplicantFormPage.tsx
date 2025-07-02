@@ -29,6 +29,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store";
 import { getUploadUrl } from "../../lib/utils";
+import useHandleNavigation from "../hooks/useHandleNavigation";
+import InputDate from "../components/InputDate";
 
 // Utility to convert '26-Feb-1999' to '1999-02-26'
 function convertDateString(dateStr: string): string {
@@ -98,7 +100,12 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
   // Helper to decide required/optional string
   const str = (key: string) =>
     applicantFormConfig?.[key]
-      ? z.string().min(1, "Required")
+      ? z
+          .string()
+          .nullable()
+          .refine((val) => val !== null && val.trim() !== "", {
+            message: "Required",
+          })
       : z.string().optional();
   // Helper to decide required/optional number
   const num = (key: string) =>
@@ -113,7 +120,14 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
   // Helper for email
   const email = (key: string) =>
     applicantFormConfig?.[key]
-      ? z.string().email("Invalid")
+      ? z
+          .string()
+          .refine((val) => val !== null && val.trim() !== "", {
+            message: "Required",
+          })
+          .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+            message: "Invalid",
+          })
       : z.string().optional();
 
   // Academic Table
@@ -132,16 +146,16 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
     cityId: num("academic_info"),
     countryId: num("academic_info"),
   });
-
+  console.log("applicantFormConfigapplicantFormConfig", applicantFormConfig);
   // Experience Table
   const experienceRequired = !!applicantFormConfig?.experience_info;
   const experienceObj = z.object({
-    companyName: str("professional_info"),
-    positionHeld: str("professional_info"),
-    startDate: str("professional_info"),
-    endDate: str("professional_info"),
-    cityId: num("professional_info"),
-    countryId: num("professional_info"),
+    companyName: str("experience_info"),
+    positionHeld: str("experience_info"),
+    startDate: str("experience_info"),
+    endDate: str("experience_info"),
+    cityId: num("experience_info"),
+    countryId: num("experience_info"),
   });
 
   // Skills Table
@@ -157,78 +171,126 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
       : z.number().optional(),
   });
 
-  return z.object({
-    // Basic Information
-    title: str("title"),
-    firstName: str("firstName"),
-    middleName: str("middleName"),
-    lastName: str("lastName"),
+  return z
+    .object({
+      // Basic Information
+      title: str("title"),
+      firstName: str("firstName"),
+      middleName: str("middleName"),
+      lastName: str("lastName"),
 
-    // Personal Information
-    dateOfBirth: str("dateOfBirth").refine((date) => {
-      if (!date) return true;
-      const today = new Date();
-      const birthDate = new Date(date);
-      return birthDate <= today;
-    }, "Date of birth cannot be in the future"),
-    nic_no: str("nic_no"),
-    passportNo: str("passportNo"),
-    relation_name: str("relation_name"),
-    nationality: num("nationality"),
-    gender: str("gender"),
-    maritalStatus: num("maritalStatus"),
-    lastDawnSalaryCurrencyId: num("current_salary"),
-    expectedSalaryCurrencyId: num("expected_salary"),
-    religionId: num("religion"),
+      // Personal Information
+      dateOfBirth: applicantFormConfig?.["dateOfBirth"]
+        ? z
+            .string()
+            .nullable()
+            .refine((val) => val !== null && val.trim() !== "", {
+              message: "Required",
+            })
+            .refine((date) => {
+              if (!date) return true;
+              const today = new Date();
+              const birthDate = new Date(date);
+              return birthDate <= today;
+            }, "Date of birth cannot be in the future")
+        : z.string().optional(),
+      nic_no: applicantFormConfig?.["nic_no"]
+        ? z
+            .string()
+            .regex(/^\d{5}-\d{7}-\d{1}$/, "Format: 12345-1234567-1")
+            .nullable()
+            .refine((val) => val !== null && val.trim() !== "", {
+              message: "Required",
+            })
+        : z.string().optional(),
+      passportNo: str("passportNo"),
+      relation_name: str("relation_name"),
+      nationality: num("nationality"),
+      gender: str("gender"),
+      maritalStatus: num("maritalStatus"),
+      lastDawnSalaryCurrencyId: num("current_salary"),
+      expectedSalaryCurrencyId: num("expected_salary"),
+      religionId: num("religion"),
 
-    // Contact Information
-    countryId: num("countryId"),
-    cityId: num("cityId"),
-    additional_summary: str("address"),
-    phone_cell: str("phone_cell"),
-    phone_official: str("phone_official"),
-    email_personal: email("email_personal"),
+      // Contact Information
+      countryId: num("countryId"),
+      cityId: num("cityId"),
+      additional_summary: str("address"),
+      phone_cell: str("phone_cell"),
+      phone_official: str("phone_official"),
+      email_personal: email("email_personal"),
 
-    // General Information
-    applicantCanJoin: num("applicantCanJoin"),
-    currentDesignation: str("currentDesignation"),
-    lastDawnSalary: num("current_salary"),
-    expectedSalaryRangeFrom: num("expected_salary"),
-    expectedSalaryRangeTo: num("expected_salary"),
-    otherInformation: str("otherInformation"),
-    profile_image: applicantFormConfig?.profile_image
-      ? z
-          .union([z.string(), z.instanceof(File)])
-          .nullable()
-          .optional()
-      : z.any().optional(),
-    file: applicantFormConfig?.file
-      ? z
-          .union([z.string(), z.instanceof(File)])
-          .nullable()
-          .optional()
-      : z.any().optional(),
+      // General Information
+      applicantCanJoin: num("applicantCanJoin"),
+      currentDesignation: str("currentDesignation"),
+      lastDawnSalary: num("current_salary"),
+      expectedSalaryRangeFrom: num("expected_salary"),
+      expectedSalaryRangeTo: num("expected_salary"),
+      otherInformation: str("otherInformation"),
+      profile_image: applicantFormConfig?.profile_image
+        ? z
+            .union([z.string(), z.instanceof(File)])
+            .nullable()
+            .optional()
+        : z.any().optional(),
+      file: applicantFormConfig?.file
+        ? z
+            .union([z.string(), z.instanceof(File)])
+            .nullable()
+            .optional()
+        : z.any().optional(),
 
-    // Academic Information
-    academics: academicRequired
-      ? z.array(academicObj).min(1, "At least one academic record is required")
-      : z.array(academicObj).optional(),
+      // Academic Information
+      academics: academicRequired
+        ? z
+            .array(academicObj)
+            .min(1, "At least one academic record is required")
+        : z.array(academicObj).optional(),
 
-    // Professional Experience
-    experiences: experienceRequired
-      ? z
-          .array(experienceObj)
-          .min(1, "At least one experience record is required")
-      : z.array(experienceObj).optional(),
+      // Professional Experience
+      experiences: experienceRequired
+        ? z
+            .array(experienceObj)
+            .min(1, "At least one experience record is required")
+        : z.array(experienceObj).optional(),
 
-    // Skills
-    skills: skillsRequired
-      ? z.array(skillObj).min(1, "At least one skill is required")
-      : z.array(skillObj).optional(),
+      // Skills
+      skills: skillsRequired
+        ? z.array(skillObj).min(1, "At least one skill record is required")
+        : z.array(skillObj).optional(),
 
-    // Add notification boolean
-    isNotifiedForJobPosting: z.boolean().optional(),
-  });
+      // Add notification boolean
+      isNotifiedForJobPosting: z.boolean().optional(),
+    })
+    .refine(
+      (data) =>
+        !data.expectedSalaryRangeFrom ||
+        !data.expectedSalaryRangeTo ||
+        Number(data.expectedSalaryRangeFrom) <=
+          Number(data.expectedSalaryRangeTo),
+      {
+        path: ["expectedSalaryRangeTo"],
+        message:
+          "Expected salary range To must be greater than From",
+      }
+    );
+}
+
+// Helper to safely get error messages for dynamic fields
+function getFieldError<T = any>(
+  errors: Record<number, any> | undefined,
+  index: number,
+  key: keyof T
+) {
+  if (
+    errors &&
+    typeof errors === "object" &&
+    errors[index] &&
+    errors[index][key]
+  ) {
+    return (errors[index][key] as any).message;
+  }
+  return undefined;
 }
 
 const ApplicantFormPage = () => {
@@ -268,10 +330,13 @@ const ApplicantFormPage = () => {
     handleSubmit,
     control,
     setValue,
-    getValues,
     watch,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = methods;
+
+  if (dirtyFields) {
+    useHandleNavigation();
+  }
 
   // Watch all form fields for changes
   const formValues = watch();
@@ -381,17 +446,24 @@ const ApplicantFormPage = () => {
     }
 
     // Academic Info (20%)
-    if (formValues.academics && formValues.academics.length > 0) {
+    const academicsArr = Array.isArray(formValues.academics)
+      ? formValues.academics
+      : [];
+    if (academicsArr.length > 0) {
       completion += Number(applicant_form_percent_config?.academic_info_perc);
     }
     // Experience Info
-    if (formValues.experiences && formValues.experiences.length > 0) {
+    const experiencesArr = Array.isArray(formValues.experiences)
+      ? formValues.experiences
+      : [];
+    if (experiencesArr.length > 0) {
       completion += Number(
         applicant_form_percent_config?.professional_info_perc
       );
     }
     // skills Info
-    if (formValues.skills && formValues.skills.length > 0) {
+    const skillsArr = Array.isArray(formValues.skills) ? formValues.skills : [];
+    if (skillsArr.length > 0) {
       completion += Number(applicant_form_percent_config?.skills_info_perc);
     }
 
@@ -480,7 +552,7 @@ const ApplicantFormPage = () => {
         res.forEach((e: any) => {
           // Check if skill already exists
           const exists = currentSkills.some(
-            (s) => s.skill === e?.formName && s.isReq
+            (s: any) => s.skill === e?.formName && s.isReq
           );
           if (!exists) {
             appendSkill({
@@ -525,28 +597,7 @@ const ApplicantFormPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div
-        style={{ background: secondary_color }}
-        className="min-h-screen flex flex-col"
-      >
-        <Header />
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="text-center">
-            <div className="mb-4 p-4  text-red-700 rounded-md">{error}</div>
-            <Link
-              to="/jobs"
-              className="mt-4 px-4 py-2 bg-transparent text-sm border-[#000000] border rounded-full text-[#00000]"
-            >
-              Back to Jobs
-            </Link>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  console.log("errr", errors);
 
   return (
     <>
@@ -628,16 +679,23 @@ const ApplicantFormPage = () => {
                           Personal Information
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <InputArea
-                            id="dateOfBirth"
-                            placeholder="Date of Birth"
-                            type="date"
-                            max={new Date().toISOString().split("T")[0]}
-                            error={errors.dateOfBirth?.message}
-                            registration={{
-                              ...register("dateOfBirth"),
-                            }}
+                          <Controller
+                            control={control}
+                            name="dateOfBirth"
+                            render={({ field }) => (
+                              <InputDate
+                                id="dateOfBirth"
+                                max={new Date().toDateString()}
+                                placeholder="Date of Birth"
+                                value={field.value || undefined}
+                                onChange={field.onChange}
+                                error={errors?.dateOfBirth?.message}
+                                popperClassName="z-[9999]"
+                                portalId="root-portal"
+                              />
+                            )}
                           />
+
                           <InputArea
                             id="nic_no"
                             placeholder="Id Card No"
@@ -943,7 +1001,7 @@ const ApplicantFormPage = () => {
                           <h2 className="text-xl font-medium text-[#222222]">
                             Academic
                             <span className="text-xs font-normal ml-2 text-red-600">
-                              {errors.academics?.root?.message}
+                              {errors.academics?.message || ""}
                             </span>
                           </h2>
                           <button
@@ -1022,10 +1080,11 @@ const ApplicantFormPage = () => {
                                                 ? jobStates.insitutionList
                                                 : []
                                             }
-                                            error={
-                                              errors.academics?.[index]
-                                                ?.institutionId?.message
-                                            }
+                                            error={getFieldError(
+                                              errors.academics,
+                                              index,
+                                              "institutionId"
+                                            )}
                                             registration={{
                                               ...register(
                                                 `academics.${index}.institutionId`
@@ -1045,10 +1104,11 @@ const ApplicantFormPage = () => {
                                                 ? jobStates.qualificationList
                                                 : []
                                             }
-                                            error={
-                                              errors.academics?.[index]
-                                                ?.degreeId?.message
-                                            }
+                                            error={getFieldError(
+                                              errors.academics,
+                                              index,
+                                              "degreeId"
+                                            )}
                                             registration={{
                                               ...register(
                                                 `academics.${index}.degreeId`
@@ -1062,10 +1122,11 @@ const ApplicantFormPage = () => {
                                           id="gpa"
                                           placeholder="CGPA"
                                           type="number"
-                                          error={
-                                            errors.academics?.[index]?.gpa
-                                              ?.message
-                                          }
+                                          error={getFieldError(
+                                            errors.academics,
+                                            index,
+                                            "gpa"
+                                          )}
                                           registration={{
                                             ...register(
                                               `academics.${index}.gpa`
@@ -1074,38 +1135,47 @@ const ApplicantFormPage = () => {
                                         />
                                       </td>
                                       <td className="p-1">
-                                        <InputArea
-                                          id="startDate"
-                                          placeholder="Start Date"
-                                          type="date"
-                                          error={
-                                            errors.academics?.[index]?.startDate
-                                              ?.message
-                                          }
-                                          registration={{
-                                            ...register(
-                                              `academics.${index}.startDate`
-                                            ),
-                                          }}
+                                        <Controller
+                                          control={control}
+                                          name={`academics.${index}.startDate`}
+                                          render={({ field }) => (
+                                            <InputDate
+                                              id="startDate"
+                                              placeholder="Start Date"
+                                              value={field.value || undefined}
+                                              onChange={field.onChange}
+                                              error={getFieldError(
+                                                errors.academics,
+                                                index,
+                                                "startDate"
+                                              )}
+                                              popperClassName="z-[9999]"
+                                              portalId="root-portal"
+                                            />
+                                          )}
                                         />
                                       </td>
                                       <td className="p-1">
-                                        <InputArea
-                                          id="endDate"
-                                          placeholder="End Date"
-                                          type="date"
-                                          error={
-                                            errors.academics?.[index]?.endDate
-                                              ?.message
-                                          }
-                                          registration={{
-                                            ...register(
-                                              `academics.${index}.endDate`
-                                            ),
-                                          }}
+                                        <Controller
+                                          control={control}
+                                          name={`academics.${index}.endDate`}
+                                          render={({ field }) => (
+                                            <InputDate
+                                              id="endDate"
+                                              placeholder="End Date"
+                                              value={field.value || undefined}
+                                              onChange={field.onChange}
+                                              error={getFieldError(
+                                                errors.academics,
+                                                index,
+                                                "endDate"
+                                              )}
+                                              popperClassName="z-[9999]"
+                                              portalId="root-portal"
+                                            />
+                                          )}
                                         />
                                       </td>
-
                                       <td className="p-1">
                                         <SelectOption
                                           placeholder="Country"
@@ -1116,10 +1186,11 @@ const ApplicantFormPage = () => {
                                               ? jobStates.countryList
                                               : []
                                           }
-                                          error={
-                                            errors.academics?.[index]?.countryId
-                                              ?.message
-                                          }
+                                          error={getFieldError(
+                                            errors.academics,
+                                            index,
+                                            "countryId"
+                                          )}
                                           registration={{
                                             ...register(
                                               `academics.${index}.countryId`
@@ -1148,10 +1219,11 @@ const ApplicantFormPage = () => {
                                                 )
                                               : []
                                           }
-                                          error={
-                                            errors.academics?.[index]?.cityId
-                                              ?.message
-                                          }
+                                          error={getFieldError(
+                                            errors.academics,
+                                            index,
+                                            "cityId"
+                                          )}
                                           registration={{
                                             ...register(
                                               `academics.${index}.cityId`
@@ -1174,7 +1246,7 @@ const ApplicantFormPage = () => {
                           <h2 className="text-xl font-medium text-[#222222]">
                             Professional
                             <span className="text-xs font-normal ml-2 text-red-600">
-                              {errors.experiences?.root?.message}
+                              {errors.experiences?.message || ""}
                             </span>
                           </h2>
                           <button
@@ -1242,10 +1314,11 @@ const ApplicantFormPage = () => {
                                         id="companyName"
                                         placeholder="Employer"
                                         type="text"
-                                        error={
-                                          errors.experiences?.[index]
-                                            ?.companyName?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.experiences,
+                                          index,
+                                          "companyName"
+                                        )}
                                         registration={{
                                           ...register(
                                             `experiences.${index}.companyName`
@@ -1258,10 +1331,11 @@ const ApplicantFormPage = () => {
                                         id="positionHeld"
                                         placeholder="Designation"
                                         type="text"
-                                        error={
-                                          errors.experiences?.[index]
-                                            ?.positionHeld?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.experiences,
+                                          index,
+                                          "positionHeld"
+                                        )}
                                         registration={{
                                           ...register(
                                             `experiences.${index}.positionHeld`
@@ -1270,35 +1344,45 @@ const ApplicantFormPage = () => {
                                       />
                                     </td>
                                     <td className="p-1">
-                                      <InputArea
-                                        id="startDate"
-                                        placeholder="Start Date"
-                                        type="date"
-                                        error={
-                                          errors.experiences?.[index]?.startDate
-                                            ?.message
-                                        }
-                                        registration={{
-                                          ...register(
-                                            `experiences.${index}.startDate`
-                                          ),
-                                        }}
+                                      <Controller
+                                        control={control}
+                                        name={`experiences.${index}.startDate`}
+                                        render={({ field }) => (
+                                          <InputDate
+                                            id="startDate"
+                                            placeholder="Start Date"
+                                            value={field.value || undefined}
+                                            onChange={field.onChange}
+                                            error={getFieldError(
+                                              errors.experiences,
+                                              index,
+                                              "startDate"
+                                            )}
+                                            popperClassName="z-[9999]"
+                                            portalId="root-portal"
+                                          />
+                                        )}
                                       />
                                     </td>
                                     <td className="p-1">
-                                      <InputArea
-                                        id="endDate"
-                                        placeholder="End Date"
-                                        type="date"
-                                        error={
-                                          errors.experiences?.[index]?.endDate
-                                            ?.message
-                                        }
-                                        registration={{
-                                          ...register(
-                                            `experiences.${index}.endDate`
-                                          ),
-                                        }}
+                                      <Controller
+                                        control={control}
+                                        name={`experiences.${index}.endDate`}
+                                        render={({ field }) => (
+                                          <InputDate
+                                            id="endDate"
+                                            placeholder="End Date"
+                                            value={field.value || undefined}
+                                            onChange={field.onChange}
+                                            error={getFieldError(
+                                              errors.experiences,
+                                              index,
+                                              "endDate"
+                                            )}
+                                            popperClassName="z-[9999]"
+                                            portalId="root-portal"
+                                          />
+                                        )}
                                       />
                                     </td>
                                     <td className="p-1">
@@ -1309,10 +1393,11 @@ const ApplicantFormPage = () => {
                                             ? jobStates.countryList
                                             : []
                                         }
-                                        error={
-                                          errors.experiences?.[index]?.countryId
-                                            ?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.experiences,
+                                          index,
+                                          "countryId"
+                                        )}
                                         registration={{
                                           ...register(
                                             `experiences.${index}.countryId`
@@ -1339,10 +1424,11 @@ const ApplicantFormPage = () => {
                                               )
                                             : []
                                         }
-                                        error={
-                                          errors.experiences?.[index]?.cityId
-                                            ?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.experiences,
+                                          index,
+                                          "cityId"
+                                        )}
                                         registration={{
                                           ...register(
                                             `experiences.${index}.cityId`
@@ -1364,7 +1450,7 @@ const ApplicantFormPage = () => {
                           <h2 className="text-lg font-semibold">
                             Skills
                             <span className="text-xs font-normal ml-2 text-red-600">
-                              {errors.skills?.root?.message}
+                              {errors.skills?.message || ""}
                             </span>
                           </h2>
                           <button
@@ -1426,9 +1512,11 @@ const ApplicantFormPage = () => {
                                         disable={field?.isReq}
                                         placeholder="Skill Name"
                                         type="text"
-                                        error={
-                                          errors.skills?.[index]?.skill?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.skills,
+                                          index,
+                                          "skill"
+                                        )}
                                         registration={{
                                           ...register(`skills.${index}.skill`),
                                         }}
@@ -1439,10 +1527,11 @@ const ApplicantFormPage = () => {
                                         id="description"
                                         placeholder="Details"
                                         type="text"
-                                        error={
-                                          errors.skills?.[index]?.description
-                                            ?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.skills,
+                                          index,
+                                          "description"
+                                        )}
                                         registration={{
                                           ...register(
                                             `skills.${index}.description`
@@ -1451,35 +1540,45 @@ const ApplicantFormPage = () => {
                                       />
                                     </td>
                                     <td className="p-1">
-                                      <InputArea
-                                        id="startDate"
-                                        placeholder="Start Date"
-                                        type="date"
-                                        error={
-                                          errors.skills?.[index]?.startDate
-                                            ?.message
-                                        }
-                                        registration={{
-                                          ...register(
-                                            `skills.${index}.startDate`
-                                          ),
-                                        }}
+                                      <Controller
+                                        control={control}
+                                        name={`skills.${index}.startDate`}
+                                        render={({ field }) => (
+                                          <InputDate
+                                            id="startDate"
+                                            placeholder="Start Date"
+                                            value={field.value || undefined}
+                                            onChange={field.onChange}
+                                            error={getFieldError(
+                                              errors.skills,
+                                              index,
+                                              "startDate"
+                                            )}
+                                            popperClassName="z-[9999]"
+                                            portalId="root-portal"
+                                          />
+                                        )}
                                       />
                                     </td>
                                     <td className="p-1">
-                                      <InputArea
-                                        id="endDate"
-                                        placeholder="End Date"
-                                        type="date"
-                                        error={
-                                          errors.skills?.[index]?.endDate
-                                            ?.message
-                                        }
-                                        registration={{
-                                          ...register(
-                                            `skills.${index}.endDate`
-                                          ),
-                                        }}
+                                      <Controller
+                                        control={control}
+                                        name={`skills.${index}.endDate`}
+                                        render={({ field }) => (
+                                          <InputDate
+                                            id="endDate"
+                                            placeholder="End Date"
+                                            value={field.value || undefined}
+                                            onChange={field.onChange}
+                                            error={getFieldError(
+                                              errors.skills,
+                                              index,
+                                              "endDate"
+                                            )}
+                                            popperClassName="z-[9999]"
+                                            portalId="root-portal"
+                                          />
+                                        )}
                                       />
                                     </td>
                                     <td className="p-1">
@@ -1499,10 +1598,11 @@ const ApplicantFormPage = () => {
                                             }
                                           );
                                         }}
-                                        error={
-                                          errors.skills?.[index]?.ratingScale
-                                            ?.message
-                                        }
+                                        error={getFieldError(
+                                          errors.skills,
+                                          index,
+                                          "ratingScale"
+                                        )}
                                       />
                                     </td>
                                   </tr>
@@ -1523,7 +1623,9 @@ const ApplicantFormPage = () => {
                             {...register("isNotifiedForJobPosting")}
                             defaultChecked={false}
                           />
-                          <span className="text-xs text-[#222222]">Receive new job posting notification</span>
+                          <span className="text-xs text-[#222222]">
+                            Receive new job posting notification
+                          </span>
                         </label>
                         <div className="flex flex-col md:flex-row justify-between md:items-center">
                           <div className="py-6">
@@ -1564,6 +1666,11 @@ const ApplicantFormPage = () => {
                             {isSubmitting ? "Submitting..." : "Submit"}
                           </button>
                         </div>
+                        {error && (
+                          <div className="text-red-700 text-sm rounded-md">
+                            {error}
+                          </div>
+                        )}
                       </div>
                     </form>
                   </FormProvider>

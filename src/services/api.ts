@@ -132,4 +132,18 @@ export const jobsAPI = {
     const response = await apiAuth.get(`/career/mandatory_skills/${jboId}`);
     return response.data;
   },
+  getActiveVacancy: async () => {
+    const response = await apiAuth.get("/career/active-vacancy");
+    return response.data;
+  },
+  downloadOfferLetter: async () => {
+    const response = await apiAuth.get("/career/download-offer-letter", {
+      responseType: "blob",
+    });
+    return response.data;
+  },
+  handleOfferLetter: async (body: any) => {
+    const response = await apiAuth.post("/career/handle-offer", body);
+    return response.data;
+  },
 };
