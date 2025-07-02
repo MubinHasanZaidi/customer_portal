@@ -272,6 +272,7 @@ const ActiveVacancy = ({
                   <AlertDialogCancel onClick={handleDialogClose}>
                     Cancel
                   </AlertDialogCancel>
+                  
                   <AlertDialogAction onClick={handleDialogConfirm}>
                     Confirm
                   </AlertDialogAction>
