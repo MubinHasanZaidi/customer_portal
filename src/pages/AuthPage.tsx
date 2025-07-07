@@ -10,6 +10,7 @@ import loginIllustration from "../assets/login-illustration.png";
 import dy_logo from "../assets/dy_logo.png";
 import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
+import { resetError } from "../store/slices/authSlice";
 
 // Login schema
 const loginSchema = z.object({
@@ -66,16 +67,13 @@ const AuthPage = () => {
   const onLoginSubmit = async (data: LoginFormData) => {
     try {
       await dispatch(
-        login(
-          {
-            email: data.email,
-            password: data.password,
-            companyId: company?.Id,
-            navigate
-          },
-        )
+        login({
+          email: data.email,
+          password: data.password,
+          companyId: company?.Id,
+          navigate,
+        })
       ).unwrap();
-
     } catch (err) {
       // Error is already handled in the action creator
     }
@@ -129,7 +127,9 @@ const AuthPage = () => {
                 }}
                 className={`py-4 px-10 text-md rounded-full font-medium`}
                 onClick={() => {
-                  resetLogin(), setIsLogin(true);
+                  resetLogin();
+                  setIsLogin(true);
+                  dispatch(resetError());
                 }}
               >
                 Sign in
@@ -141,7 +141,9 @@ const AuthPage = () => {
                   color: isLogin ? primary_color : "#ffffff",
                 }}
                 onClick={() => {
-                  resetSignup(), setIsLogin(false);
+                  resetSignup();
+                  setIsLogin(false);
+                  dispatch(resetError());
                 }}
               >
                 Sign up

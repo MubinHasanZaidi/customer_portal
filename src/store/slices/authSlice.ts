@@ -43,6 +43,9 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
+    resetError: (state) => {
+      state.error = null;
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
@@ -102,6 +105,7 @@ export const {
   companyConfigFailure,
   companyConfigSuccess,
   rehydrate,
+  resetError,
 } = authSlice.actions;
 
 export default authSlice.reducer;

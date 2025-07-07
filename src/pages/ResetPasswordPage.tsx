@@ -21,15 +21,19 @@ const resetPasswordSchema = z
   .object({
     previousPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters"),
-    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+      .min(6, "Password must contain at least 6 characters"),
+    newPassword: z.string().min(6, "Password must contain at least 6 characters"),
     confirmPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters"),
+      .min(6, "Password must contain at least 6 characters"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
+  })
+  .refine((data) => data.previousPassword !== data.newPassword, {
+    message: "New password must different from current",
+    path: ["newPassword"],
   });
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
@@ -79,7 +83,7 @@ const ResetPasswordPage = () => {
                 Reset Password
               </h3>
               <p className="text-sm text-[#222222] font-medium text-center mb-6">
-                Enter your new password below.
+                Update your password below.
               </p>
               {/* Error message */}
               {error && (
@@ -107,7 +111,7 @@ const ResetPasswordPage = () => {
                     <InputArea
                       id="previousPassword"
                       type="password"
-                      placeholder="Previous Password"
+                      placeholder="Current Password"
                       error={errors.previousPassword?.message}
                       registration={register("previousPassword")}
                     />

@@ -13,7 +13,6 @@ const Header = () => {
   const { company, themeConfig } = companyConfig;
   const { primary_color, secondary_color } = themeConfig;
 
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -64,13 +63,19 @@ const Header = () => {
   return (
     <header className="bg-transparent">
       <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 flex justify-between items-center">
-        <Link to="/jobs" className="flex items-end lg:items-center">
+        <div
+          className="flex items-end lg:items-center cursor-pointer"
+          onClick={() => {
+            // window.location.href = "/jobs";
+            navigate("/jobs");
+          }}
+        >
           <img
             src={company?.Logo}
             alt={company?.name}
             className="h-8 lg:h-14 mx-auto mb-4"
           />
-        </Link>
+        </div>
         <div className="flex items-center space-x-4">
           {userConfig ? (
             <div className="relative" ref={dropdownRef}>
@@ -152,7 +157,7 @@ const Header = () => {
                 Sign up
               </Link>
               <span className="text-xs text-[#222222]">
-                Already have account?{"  "}
+                Already have an account?{"  "}
                 <Link
                   to="/auth"
                   style={{ color: primary_color }}
