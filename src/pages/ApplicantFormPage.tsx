@@ -561,7 +561,6 @@ const ApplicantFormPage = () => {
     // setIsSubmitting(true);
     if (data?.file && typeof data?.file === "object") {
       await uploadFiles(data?.file).then((e) => {
-        console.log("eeeee", e);
         data.file = e?.data?.filename;
       });
     }
@@ -678,7 +677,6 @@ const ApplicantFormPage = () => {
     );
   }
 
-  console.log("errr", errors);
 
   return (
     <>
@@ -1155,7 +1153,6 @@ const ApplicantFormPage = () => {
                                 <tbody>
                                   {academicFields.map((field, index) => {
                                     const academicList = watch("academics");
-                                    console.log("academicList", academicList);
                                     return (
                                       <tr
                                         key={field.id}

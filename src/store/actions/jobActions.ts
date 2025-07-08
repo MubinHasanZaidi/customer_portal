@@ -195,7 +195,6 @@ export const applicatFormSubmit = createAsyncThunk(
       localStorage.setItem("user", encryptedUser);
       return result;
     } catch (error) {
-      console.log("error", error);
       const errorMessage =
         (typeof error === "object" &&
           error !== null &&
