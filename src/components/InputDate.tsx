@@ -16,6 +16,7 @@ interface InputDateProps {
   className?: string;
   disable?: boolean;
   max?: string;
+  min?: string;
   rightIcon?: React.ReactNode;
   popperClassName?: string;
   portalId?: string;
@@ -32,6 +33,7 @@ const InputDate: React.FC<InputDateProps> = ({
   className = "",
   disable = false,
   max,
+  min,
   rightIcon,
   popperClassName,
   portalId,
@@ -64,7 +66,7 @@ const InputDate: React.FC<InputDateProps> = ({
   };
 
   return (
-    <div data-title={placeholder} className="relative">
+    <div data-title={placeholder} className="relative min-h-[6.28vh]">
       {label && (
         <label htmlFor={id} className="form-label">
           {label}
@@ -84,7 +86,7 @@ const InputDate: React.FC<InputDateProps> = ({
             dateFormat="dd-MMM-yyyy"
             disabled={disable}
             placeholderText={placeholder}
-            className={`form-input placeholder:text-sm px-1 w-full border-x-0 border-t-0  focus:border-y-0 bg-transparent  focus:ring-0 placeholder:text-[#222222] ${
+            className={`form-input2 placeholder:text-sm px-1 w-full border-x-0 border-t-0  focus:border-y-0 bg-transparent  focus:ring-0 placeholder:text-[#222222] ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
             onFocus={() => setIsFocused(true)}
@@ -93,6 +95,7 @@ const InputDate: React.FC<InputDateProps> = ({
               setTouched(true);
             }}
             maxDate={max ? new Date(max) : undefined}
+            minDate={min ? new Date(min) : undefined}
             {...(registration ? { name: registration.name } : {})}
             {...(popperClassName ? { popperClassName } : {})}
             {...(portalId ? { portalId } : {})}

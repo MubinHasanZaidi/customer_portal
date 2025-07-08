@@ -64,7 +64,7 @@ function convertApplicantDates(
   if (!data) return data;
   const newData = { ...data };
   if (newData?.profile_image) {
-    setPhoto(getUploadUrl(newData?.profile_image));
+    setPhoto(newData?.profile_image);
   }
   if (newData?.file) {
     setCvFileName(newData?.file);
@@ -132,45 +132,73 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
 
   // Academic Table
   const academicRequired = !!applicantFormConfig?.academic_info;
-  const academicObj = z.object({
-    institutionId: num("academic_info"),
-    degreeId: num("academic_info"),
-    gpa: academicRequired
-      ? z.coerce
-          .number()
-          .min(1, "Required")
-          .max(4, "GPA must be between 1 and 4")
-      : z.coerce.number().optional(),
-    startDate: str("academic_info"),
-    endDate: str("academic_info"),
-    cityId: num("academic_info"),
-    countryId: num("academic_info"),
-  });
-  console.log("applicantFormConfigapplicantFormConfig", applicantFormConfig);
+  const academicObj = z
+    .object({
+      institutionId: num("academic_info"),
+      degreeId: num("academic_info"),
+      gpa: academicRequired
+        ? z.coerce.number().min(1, "b/w 1 and 4").max(4, "b/w 1 and 4")
+        : z.coerce.number().optional(),
+      startDate: str("academic_info"),
+      endDate: str("academic_info"),
+      cityId: num("academic_info"),
+      countryId: num("academic_info"),
+    })
+    .refine(
+      (data) => {
+        if (!data.startDate || !data.endDate) return true;
+        return new Date(data.endDate) >= new Date(data.startDate);
+      },
+      {
+        message: "Invalid: End Date < Start Date.",
+        path: ["endDate"],
+      }
+    );
   // Experience Table
   const experienceRequired = !!applicantFormConfig?.experience_info;
-  const experienceObj = z.object({
-    companyName: str("experience_info"),
-    positionHeld: str("experience_info"),
-    startDate: str("experience_info"),
-    endDate: str("experience_info"),
-    cityId: num("experience_info"),
-    countryId: num("experience_info"),
-  });
+  const experienceObj = z
+    .object({
+      companyName: str("experience_info"),
+      positionHeld: str("experience_info"),
+      startDate: str("experience_info"),
+      endDate: str("experience_info"),
+      cityId: num("experience_info"),
+      countryId: num("experience_info"),
+    })
+    .refine(
+      (data) => {
+        if (!data.startDate || !data.endDate) return true;
+        return new Date(data.endDate) >= new Date(data.startDate);
+      },
+      {
+        message: "Invalid: End Date < Start Date.",
+        path: ["endDate"],
+      }
+    );
 
   // Skills Table
   const skillsRequired = !!applicantFormConfig?.skills_info;
-  const skillObj = z.object({
-    isReq: z.boolean().optional(),
-    skill: str("skills_info"),
-    description: str("skills_info"),
-    startDate: str("skills_info"),
-    endDate: str("skills_info"),
-    ratingScale: skillsRequired
-      ? z.number().min(0).max(5)
-      : z.number().optional(),
-  });
-
+  const skillObj = z
+    .object({
+      isReq: z.boolean().optional(),
+      skill: str("skills_info"),
+      description: str("skills_info"),
+      startDate: str("skills_info"),
+      endDate: str("skills_info"),
+      ratingScale: skillsRequired
+        ? z.number().min(0).max(5)
+        : z.number().optional(),
+    })
+    .refine(
+      (data) => {
+        if (!data.startDate || !data.endDate) return true;
+        return new Date(data.endDate) >= new Date(data.startDate);
+      },
+      {
+        message: "Invalid: End Date < Start Date.",
+        path: ["endDate"],
+      }
+    );
   return z
     .object({
       // Basic Information
@@ -216,8 +244,24 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
       countryId: num("countryId"),
       cityId: num("cityId"),
       additional_summary: str("address"),
-      phone_cell: str("phone_cell"),
-      phone_official: str("phone_official"),
+      phone_cell: applicantFormConfig?.["phone_cell"]
+        ? z
+            .string()
+            .regex(
+              /^0[0-9]{9,14}$/,
+              "Must start with 0 and contain only digits (10-15 digits)"
+            )
+            .refine((val) => val.trim() !== "", { message: "Required" })
+        : z.string().optional(),
+      phone_official: applicantFormConfig?.["phone_official"]
+        ? z
+            .string()
+            .regex(
+              /^0[0-9]{9,14}$/,
+              "Must start with 0 and contain only digits (10-15 digits)"
+            )
+            .refine((val) => val.trim() !== "", { message: "Required" })
+        : z.string().optional(),
       email_personal: email("email_personal"),
 
       // General Information
@@ -270,10 +314,45 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
           Number(data.expectedSalaryRangeTo),
       {
         path: ["expectedSalaryRangeTo"],
-        message:
-          "Expected salary range To must be greater than From",
+        message: "Expected salary range To must be greater than From",
       }
-    );
+    )
+    .superRefine((data, ctx) => {
+      if (data.title === "Mr." && data.gender !== "Male") {
+        ctx.addIssue({
+          path: ["gender"],
+          code: z.ZodIssueCode.custom,
+          message: "Mr. cannot be Female.",
+        });
+      }
+      if (
+        (data.title === "Mrs." || data.title === "Ms.") &&
+        data.gender !== "Female"
+      ) {
+        ctx.addIssue({
+          path: ["gender"],
+          code: z.ZodIssueCode.custom,
+          message: `${data.title} cannot be Male.`,
+        });
+      }
+      if (
+        data.title === "Mrs." &&
+        (data.maritalStatus === 266 || data.maritalStatus === 269)
+      ) {
+        ctx.addIssue({
+          path: ["maritalStatus"],
+          code: z.ZodIssueCode.custom,
+          message: `Mrs. cannot be Single or Divorced.`,
+        });
+      }
+      if (data.title === "Mr." && data.maritalStatus === 268) {
+        ctx.addIssue({
+          path: ["maritalStatus"],
+          code: z.ZodIssueCode.custom,
+          message: `Mr. cannot be Widow.`,
+        });
+      }
+    });
 }
 
 // Helper to safely get error messages for dynamic fields
@@ -482,12 +561,13 @@ const ApplicantFormPage = () => {
     // setIsSubmitting(true);
     if (data?.file && typeof data?.file === "object") {
       await uploadFiles(data?.file).then((e) => {
+        console.log("eeeee", e);
         data.file = e?.data?.filename;
       });
     }
     if (data?.profile_image && typeof data?.profile_image === "object") {
       await uploadFiles(data?.profile_image).then((e) => {
-        data.profile_image = e?.data?.filename;
+        data.profile_image = getUploadUrl(e?.data?.filename);
       });
     }
 
@@ -539,6 +619,7 @@ const ApplicantFormPage = () => {
   let countryId = watch("countryId");
   useEffect(() => {
     if (countryId) {
+      setValue("cityId", undefined);
       dispatch(fetchCityOptionAction({ key: "cityList", countryId }));
     }
   }, [countryId]);
@@ -685,7 +766,11 @@ const ApplicantFormPage = () => {
                             render={({ field }) => (
                               <InputDate
                                 id="dateOfBirth"
-                                max={new Date().toDateString()}
+                                max={new Date(
+                                  new Date().setFullYear(
+                                    new Date().getFullYear() - 15
+                                  )
+                                ).toDateString()}
                                 placeholder="Date of Birth"
                                 value={field.value || undefined}
                                 onChange={field.onChange}
@@ -709,6 +794,7 @@ const ApplicantFormPage = () => {
                             id="passportNo"
                             placeholder="Passport No"
                             type="text"
+                            max={15}
                             error={errors.passportNo?.message}
                             registration={{
                               ...register("passportNo"),
@@ -843,6 +929,7 @@ const ApplicantFormPage = () => {
                               id="phone_cell"
                               placeholder="Phone (Offical)"
                               type="tel"
+                              max={15}
                               error={errors.phone_cell?.message}
                               registration={{
                                 ...register("phone_cell"),
@@ -854,6 +941,7 @@ const ApplicantFormPage = () => {
                               id="phone_official"
                               placeholder="Cell No"
                               type="tel"
+                              max={15}
                               error={errors.phone_official?.message}
                               registration={{
                                 ...register("phone_official"),
@@ -880,14 +968,21 @@ const ApplicantFormPage = () => {
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                           <div>
-                            <InputArea
-                              id="applicantCanJoin"
-                              placeholder="Tenative Days of Joining"
-                              type="number"
-                              error={errors.applicantCanJoin?.message}
-                              registration={{
-                                ...register("applicantCanJoin"),
-                              }}
+                            <Controller
+                              control={control}
+                              name="applicantCanJoin"
+                              render={({ field }) => (
+                                <InputArea
+                                  id="applicantCanJoin"
+                                  amountFormat={true}
+                                  max={3}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  placeholder="Tenative Days of Joining"
+                                  type="number"
+                                  error={errors.applicantCanJoin?.message}
+                                />
+                              )}
                             />
                           </div>
                           <div>
@@ -912,6 +1007,7 @@ const ApplicantFormPage = () => {
                                 <InputArea
                                   id="lastDawnSalary"
                                   amountFormat={true}
+                                  max={10}
                                   value={field.value}
                                   onChange={field.onChange}
                                   placeholder="Current Salary"
@@ -954,6 +1050,7 @@ const ApplicantFormPage = () => {
                                 <InputArea
                                   id="expectedSalaryRangeFrom"
                                   amountFormat={true}
+                                  max={10}
                                   value={field.value}
                                   onChange={field.onChange}
                                   placeholder="Expected Salary Range From"
@@ -973,6 +1070,7 @@ const ApplicantFormPage = () => {
                                 <InputArea
                                   id="expectedSalaryRangeTo"
                                   amountFormat={true}
+                                  max={10}
                                   value={field.value}
                                   onChange={field.onChange}
                                   placeholder="Expected Salary Range To"
@@ -1055,184 +1153,217 @@ const ApplicantFormPage = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {academicFields.map((field, index) => (
-                                    <tr
-                                      key={field.id}
-                                      className="border-b text-[#222222] text-center"
-                                    >
-                                      <td>
-                                        <button
-                                          type="button"
-                                          onClick={() => removeAcademic(index)}
-                                          className="text-red-500 hover:text-red-600"
-                                        >
-                                          <MinusCircle className="w-4 h-4" />
-                                        </button>
-                                      </td>
-                                      <td className="p-1">
-                                        <div>
-                                          <SelectOption
-                                            placeholder="Institution"
-                                            options={
-                                              Array.isArray(
-                                                jobStates?.insitutionList
-                                              )
-                                                ? jobStates.insitutionList
-                                                : []
+                                  {academicFields.map((field, index) => {
+                                    const academicList = watch("academics");
+                                    console.log("academicList", academicList);
+                                    return (
+                                      <tr
+                                        key={field.id}
+                                        className="border-b text-[#222222] text-center"
+                                      >
+                                        <td>
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              removeAcademic(index)
                                             }
-                                            error={getFieldError(
-                                              errors.academics,
-                                              index,
-                                              "institutionId"
-                                            )}
-                                            registration={{
-                                              ...register(
-                                                `academics.${index}.institutionId`
-                                              ),
-                                            }}
-                                          />
-                                        </div>
-                                      </td>
-                                      <td className="p-1">
-                                        <div>
-                                          <SelectOption
-                                            placeholder="Qualification"
-                                            options={
-                                              Array.isArray(
-                                                jobStates?.qualificationList
-                                              )
-                                                ? jobStates.qualificationList
-                                                : []
-                                            }
-                                            error={getFieldError(
-                                              errors.academics,
-                                              index,
-                                              "degreeId"
-                                            )}
-                                            registration={{
-                                              ...register(
-                                                `academics.${index}.degreeId`
-                                              ),
-                                            }}
-                                          />
-                                        </div>
-                                      </td>
-                                      <td className="p-1">
-                                        <InputArea
-                                          id="gpa"
-                                          placeholder="CGPA"
-                                          type="number"
-                                          error={getFieldError(
-                                            errors.academics,
-                                            index,
-                                            "gpa"
-                                          )}
-                                          registration={{
-                                            ...register(
-                                              `academics.${index}.gpa`
-                                            ),
-                                          }}
-                                        />
-                                      </td>
-                                      <td className="p-1">
-                                        <Controller
-                                          control={control}
-                                          name={`academics.${index}.startDate`}
-                                          render={({ field }) => (
-                                            <InputDate
-                                              id="startDate"
-                                              placeholder="Start Date"
-                                              value={field.value || undefined}
-                                              onChange={field.onChange}
-                                              error={getFieldError(
-                                                errors.academics,
-                                                index,
-                                                "startDate"
-                                              )}
-                                              popperClassName="z-[9999]"
-                                              portalId="root-portal"
-                                            />
-                                          )}
-                                        />
-                                      </td>
-                                      <td className="p-1">
-                                        <Controller
-                                          control={control}
-                                          name={`academics.${index}.endDate`}
-                                          render={({ field }) => (
-                                            <InputDate
-                                              id="endDate"
-                                              placeholder="End Date"
-                                              value={field.value || undefined}
-                                              onChange={field.onChange}
-                                              error={getFieldError(
-                                                errors.academics,
-                                                index,
-                                                "endDate"
-                                              )}
-                                              popperClassName="z-[9999]"
-                                              portalId="root-portal"
-                                            />
-                                          )}
-                                        />
-                                      </td>
-                                      <td className="p-1">
-                                        <SelectOption
-                                          placeholder="Country"
-                                          options={
-                                            Array.isArray(
-                                              jobStates?.countryList
-                                            )
-                                              ? jobStates.countryList
-                                              : []
-                                          }
-                                          error={getFieldError(
-                                            errors.academics,
-                                            index,
-                                            "countryId"
-                                          )}
-                                          registration={{
-                                            ...register(
-                                              `academics.${index}.countryId`
-                                            ),
-                                          }}
-                                        />
-                                      </td>
-                                      <td className="p-1">
-                                        <SelectOption
-                                          disable={
-                                            !watch(
-                                              `academics.${index}.countryId`
-                                            )
-                                          }
-                                          placeholder="City"
-                                          options={
-                                            Array.isArray(
-                                              jobStates?.academicCityList
-                                            )
-                                              ? jobStates.academicCityList.filter(
-                                                  (e) =>
-                                                    e?.countryId ===
-                                                    watch(
-                                                      `academics.${index}.countryId`
-                                                    )
+                                            className="text-red-500 hover:text-red-600"
+                                          >
+                                            <MinusCircle className="w-4 h-4" />
+                                          </button>
+                                        </td>
+                                        <td className="p-1">
+                                          <div>
+                                            <SelectOption
+                                              placeholder="Institution"
+                                              options={
+                                                Array.isArray(
+                                                  jobStates?.insitutionList
                                                 )
-                                              : []
-                                          }
-                                          error={getFieldError(
-                                            errors.academics,
-                                            index,
-                                            "cityId"
-                                          )}
-                                          registration={{
-                                            ...register(
-                                              `academics.${index}.cityId`
-                                            ),
-                                          }}
-                                        />
-                                      </td>
-                                    </tr>
-                                  ))}
+                                                  ? jobStates.insitutionList
+                                                  : []
+                                              }
+                                              error={getFieldError(
+                                                errors.academics,
+                                                index,
+                                                "institutionId"
+                                              )}
+                                              registration={{
+                                                ...register(
+                                                  `academics.${index}.institutionId`
+                                                ),
+                                              }}
+                                            />
+                                          </div>
+                                        </td>
+                                        <td className="p-1">
+                                          <div>
+                                            <SelectOption
+                                              placeholder="Qualification"
+                                              options={
+                                                Array.isArray(
+                                                  jobStates?.qualificationList
+                                                )
+                                                  ? jobStates.qualificationList.map(
+                                                      (e) => {
+                                                        let find =
+                                                          academicList?.find(
+                                                            (el) =>
+                                                              el?.degreeId ===
+                                                              e.value
+                                                          );
+                                                        if (find) {
+                                                          return {
+                                                            ...e,
+                                                            disable: true,
+                                                          };
+                                                        }
+                                                        return e;
+                                                      }
+                                                    )
+                                                  : []
+                                              }
+                                              error={getFieldError(
+                                                errors.academics,
+                                                index,
+                                                "degreeId"
+                                              )}
+                                              registration={{
+                                                ...register(
+                                                  `academics.${index}.degreeId`
+                                                ),
+                                              }}
+                                            />
+                                          </div>
+                                        </td>
+                                        <td className="p-1">
+                                          <InputArea
+                                            id="gpa"
+                                            placeholder="CGPA"
+                                            type="number"
+                                            error={getFieldError(
+                                              errors.academics,
+                                              index,
+                                              "gpa"
+                                            )}
+                                            registration={{
+                                              ...register(
+                                                `academics.${index}.gpa`
+                                              ),
+                                            }}
+                                          />
+                                        </td>
+                                        <td className="p-1">
+                                          <Controller
+                                            control={control}
+                                            name={`academics.${index}.startDate`}
+                                            render={({ field }) => (
+                                              <InputDate
+                                                id="startDate"
+                                                placeholder="Start Date"
+                                                max={new Date().toDateString()}
+                                                value={field.value || undefined}
+                                                onChange={field.onChange}
+                                                error={getFieldError(
+                                                  errors.academics,
+                                                  index,
+                                                  "startDate"
+                                                )}
+                                                popperClassName="z-[9999]"
+                                                portalId="root-portal"
+                                              />
+                                            )}
+                                          />
+                                        </td>
+                                        <td className="p-1">
+                                          <Controller
+                                            control={control}
+                                            name={`academics.${index}.endDate`}
+                                            render={({ field }) => {
+                                              const startDateValue = watch(
+                                                `academics.${index}.startDate`
+                                              );
+                                              return (
+                                                <InputDate
+                                                  id="endDate"
+                                                  placeholder="End Date"
+                                                  value={
+                                                    field.value || undefined
+                                                  }
+                                                  min={
+                                                    startDateValue || undefined
+                                                  }
+                                                  onChange={field.onChange}
+                                                  error={getFieldError(
+                                                    errors.academics,
+                                                    index,
+                                                    "endDate"
+                                                  )}
+                                                  popperClassName="z-[9999]"
+                                                  portalId="root-portal"
+                                                />
+                                              );
+                                            }}
+                                          />
+                                        </td>
+                                        <td className="p-1">
+                                          <SelectOption
+                                            placeholder="Country"
+                                            options={
+                                              Array.isArray(
+                                                jobStates?.countryList
+                                              )
+                                                ? jobStates.countryList
+                                                : []
+                                            }
+                                            error={getFieldError(
+                                              errors.academics,
+                                              index,
+                                              "countryId"
+                                            )}
+                                            registration={{
+                                              ...register(
+                                                `academics.${index}.countryId`
+                                              ),
+                                            }}
+                                          />
+                                        </td>
+                                        <td className="p-1">
+                                          <SelectOption
+                                            disable={
+                                              !watch(
+                                                `academics.${index}.countryId`
+                                              )
+                                            }
+                                            placeholder="City"
+                                            options={
+                                              Array.isArray(
+                                                jobStates?.academicCityList
+                                              )
+                                                ? jobStates.academicCityList.filter(
+                                                    (e) =>
+                                                      e?.countryId ===
+                                                      watch(
+                                                        `academics.${index}.countryId`
+                                                      )
+                                                  )
+                                                : []
+                                            }
+                                            error={getFieldError(
+                                              errors.academics,
+                                              index,
+                                              "cityId"
+                                            )}
+                                            registration={{
+                                              ...register(
+                                                `academics.${index}.cityId`
+                                              ),
+                                            }}
+                                          />
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
                                 </tbody>
                               </table>
                             </div>
@@ -1347,42 +1478,51 @@ const ApplicantFormPage = () => {
                                       <Controller
                                         control={control}
                                         name={`experiences.${index}.startDate`}
-                                        render={({ field }) => (
-                                          <InputDate
-                                            id="startDate"
-                                            placeholder="Start Date"
-                                            value={field.value || undefined}
-                                            onChange={field.onChange}
-                                            error={getFieldError(
-                                              errors.experiences,
-                                              index,
-                                              "startDate"
-                                            )}
-                                            popperClassName="z-[9999]"
-                                            portalId="root-portal"
-                                          />
-                                        )}
+                                        render={({ field }) => {
+                                          return (
+                                            <InputDate
+                                              id="startDate"
+                                              placeholder="Start Date"
+                                              max={new Date().toDateString()}
+                                              value={field.value || undefined}
+                                              onChange={field.onChange}
+                                              error={getFieldError(
+                                                errors.experiences,
+                                                index,
+                                                "startDate"
+                                              )}
+                                              popperClassName="z-[9999]"
+                                              portalId="root-portal"
+                                            />
+                                          );
+                                        }}
                                       />
                                     </td>
                                     <td className="p-1">
                                       <Controller
                                         control={control}
                                         name={`experiences.${index}.endDate`}
-                                        render={({ field }) => (
-                                          <InputDate
-                                            id="endDate"
-                                            placeholder="End Date"
-                                            value={field.value || undefined}
-                                            onChange={field.onChange}
-                                            error={getFieldError(
-                                              errors.experiences,
-                                              index,
-                                              "endDate"
-                                            )}
-                                            popperClassName="z-[9999]"
-                                            portalId="root-portal"
-                                          />
-                                        )}
+                                        render={({ field }) => {
+                                          const startDateValue = watch(
+                                            `experiences.${index}.startDate`
+                                          );
+                                          return (
+                                            <InputDate
+                                              id="endDate"
+                                              placeholder="End Date"
+                                              value={field.value || undefined}
+                                              min={startDateValue || undefined}
+                                              onChange={field.onChange}
+                                              error={getFieldError(
+                                                errors.experiences,
+                                                index,
+                                                "endDate"
+                                              )}
+                                              popperClassName="z-[9999]"
+                                              portalId="root-portal"
+                                            />
+                                          );
+                                        }}
                                       />
                                     </td>
                                     <td className="p-1">
@@ -1547,6 +1687,7 @@ const ApplicantFormPage = () => {
                                           <InputDate
                                             id="startDate"
                                             placeholder="Start Date"
+                                            max={new Date().toDateString()}
                                             value={field.value || undefined}
                                             onChange={field.onChange}
                                             error={getFieldError(
@@ -1564,21 +1705,27 @@ const ApplicantFormPage = () => {
                                       <Controller
                                         control={control}
                                         name={`skills.${index}.endDate`}
-                                        render={({ field }) => (
-                                          <InputDate
-                                            id="endDate"
-                                            placeholder="End Date"
-                                            value={field.value || undefined}
-                                            onChange={field.onChange}
-                                            error={getFieldError(
-                                              errors.skills,
-                                              index,
-                                              "endDate"
-                                            )}
-                                            popperClassName="z-[9999]"
-                                            portalId="root-portal"
-                                          />
-                                        )}
+                                        render={({ field }) => {
+                                          const startDateValue = watch(
+                                            `skills.${index}.startDate`
+                                          );
+                                          return (
+                                            <InputDate
+                                              id="endDate"
+                                              placeholder="End Date"
+                                              min={startDateValue || undefined}
+                                              value={field.value || undefined}
+                                              onChange={field.onChange}
+                                              error={getFieldError(
+                                                errors.skills,
+                                                index,
+                                                "endDate"
+                                              )}
+                                              popperClassName="z-[9999]"
+                                              portalId="root-portal"
+                                            />
+                                          );
+                                        }}
                                       />
                                     </td>
                                     <td className="p-1">

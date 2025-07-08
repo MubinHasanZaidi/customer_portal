@@ -61,7 +61,6 @@
   background: #222222;
 }
 
-
 [data-title]:hover:after {
   opacity: 1;
   transition: all 0.1s ease 0.5s;
@@ -95,10 +94,22 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.react-datepicker-wrapper{
-  width:  100%;
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.form-input2 {
+  width: 100%;
+  border-radius: calc(var(--radius) - 2px);
+  border-width: 0px;
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }

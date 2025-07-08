@@ -14,6 +14,7 @@ import {
   resetPasswordFailure,
 } from "../slices/authSlice";
 import { encrypt } from "../../utils/crypto";
+import { toast } from "react-toastify";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -29,13 +30,14 @@ export const login = createAsyncThunk(
     try {
       dispatch(loginStart());
       const userData = await authAPI.login(email, password, companyId);
+      let jobId = localStorage.getItem("jobId");
       const { user, access, refresh } = userData?.data;
       const encryptedUser = encrypt(JSON.stringify(user));
       dispatch(signupSuccess(userData.data));
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("user", encryptedUser);
-      navigate("/jobs");
+      navigate(jobId && jobId !== "none" ? `/job-detail/${jobId}` : "/jobs");
       return userData;
     } catch (error) {
       const errorMessage =
@@ -61,12 +63,13 @@ export const signup = createAsyncThunk(
     try {
       dispatch(signupStart());
       const userData = await authAPI.signup(name, email, password, companyId);
-      const { user, access, refresh } = userData?.data;
-      const encryptedUser = encrypt(JSON.stringify(user));
-      dispatch(signupSuccess(userData.data));
-      localStorage.setItem("access", access);
-      localStorage.setItem("refresh", refresh);
-      localStorage.setItem("user", encryptedUser);
+      // const { user, access, refresh } = userData?.data;
+      // const encryptedUser = encrypt(JSON.stringify(user));
+      dispatch(signupSuccess(userData.data?.message));
+      toast.success(userData.data?.message);
+      // localStorage.setItem("access", access);
+      // localStorage.setItem("refresh", refresh);
+      // localStorage.setItem("user", encryptedUser);
       return userData;
     } catch (error) {
       const errorMessage =

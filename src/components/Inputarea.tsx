@@ -14,7 +14,7 @@ interface InputAreaProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   rightIcon?: React.ReactNode;
-  max?: string;
+  max?: any;
   disable?: boolean;
   amountFormat?: boolean;
 }
@@ -25,7 +25,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   type = "text",
   error,
   registration,
-  max,
+  max = '',
   value,
   onChange,
   placeholder,
@@ -50,7 +50,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   };
 
   return (
-    <div data-title={placeholder} className="relative">
+    <div data-title={placeholder} className="relative min-h-[6.28vh]">
       {label && (
         <label htmlFor={id} className="form-label">
           {label}
@@ -62,6 +62,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             id={id}
             value={value}
             onValueChange={handleCurrencyChange}
+            maxLength={max}
             disabled={disable}
             className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
@@ -86,7 +87,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
-            max={type === "date" && max ? max : ""}
+            maxLength={max}
             onFocus={() => setIsFocused(true)}
             placeholder={type === "date" ? "YYYY-MM-DD" : placeholder}
             step={type === "number" ? "any" : undefined}

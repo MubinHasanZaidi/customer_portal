@@ -46,7 +46,7 @@ const JobsPage = () => {
   const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
   const [selectedDept, setSelectedDept] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 5;
+  const jobsPerPage = 10;
 
   // Debounced search term to prevent excessive API calls
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -217,7 +217,7 @@ const JobsPage = () => {
                 </p>
               </div>
             ) : (
-              <div className=" space-y-3 sm:space-y-12 pb-6 sm:pb-12 lg:pb-28">
+              <div className=" pb-6 sm:pb-12 lg:pb-28">
                 {jobs.map((job) => (
                   <JobCard
                     key={job.Id}

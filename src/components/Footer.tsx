@@ -12,10 +12,8 @@ import {
 
 const Footer = () => {
   const { companyConfig } = useCompanyConfig();
-  const { themeConfig, subsidiary } = companyConfig;
+  const { themeConfig, subsidiary, company } = companyConfig;
   const { primary_color } = themeConfig;
-
-  
 
   return (
     <footer className="bg-white">
@@ -98,10 +96,7 @@ const Footer = () => {
             style={{ color: primary_color }}
             className={`text-lg sm:text-xl font-semibold hover:underline`}
           >
-            <Link
-              to={"https://dynasoftcloud.com/contact-us.php"}
-              target="_blank"
-            >
+            <Link to={company?.web || ""} target={company?.web && "_blank"}>
               Contact us
             </Link>
           </h5>
@@ -136,7 +131,9 @@ const Footer = () => {
           </div>
         </div>
         <div className="col-span-1">
-          <img className="sm:mx-auto mt-4" src={dy_logo} />
+          <Link to="https://dynasoftcloud.com" target="_blank">
+            <img className="sm:mx-auto mt-4" src={dy_logo} />
+          </Link>
         </div>
       </div>
       <hr />

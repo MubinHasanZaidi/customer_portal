@@ -89,7 +89,9 @@ const AuthPage = () => {
           companyId: company?.Id,
         })
       ).unwrap();
-      navigate("/jobs");
+      // navigate("/jobs");
+      setIsLogin(true);
+      resetLogin()
     } catch (err) {
       // Error is already handled in the action creator
     }

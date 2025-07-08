@@ -98,7 +98,7 @@ const Header = () => {
                 >
                   {userConfig?.profile_image ? (
                     <img
-                      src={getUploadUrl(userConfig?.profile_image)}
+                      src={userConfig?.profile_image}
                       alt="User"
                       className="w-10 h-10 rounded-full object-cover"
                     />

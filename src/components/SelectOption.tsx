@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 
 interface SelectOptionProps {
   error?: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; disable?: boolean }[];
   placeholder?: string;
   registration: UseFormRegisterReturn;
   className?: string;
@@ -97,20 +97,28 @@ const SelectOption: React.FC<SelectOptionProps> = ({
     options.find((opt) => opt.value === currentValue)?.label ||
     `${placeholder}`;
   return (
-    <>
-      <div data-title={placeholder} ref={dropdownRef} className="relative m-0">
+    <div className="min-h-[6.3vh]">
+      <div
+        data-title={placeholder}
+        ref={dropdownRef}
+        className="relative"
+      >
         <div
           onClick={() => {
             if (!disable) setIsOpen(!isOpen);
           }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`form-input mt-[3px] flex items-center justify-between px-1 border-x-0 border-t-0 border-b-2 bg-transparent focus:ring-0 ${className} ${disable ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          className={`form-input mt-[3px] flex items-center justify-between px-1 border-x-0 border-t-0 border-b-2 bg-transparent focus:ring-0 ${className} ${
+            disable ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+          }`}
           style={{
             borderBottom: `2px solid ${isHovered ? primary_color : ""}`,
           }}
         >
-          <span className="text-sm my-0 text-[#222222]">{selectedLabel}</span>
+          <span className="text-sm my-0 text-[#222222] line-clamp-1">
+            {selectedLabel}
+          </span>
           <div className="flex my-0 items-center">
             {currentValue && !disable && (
               <X
@@ -146,7 +154,9 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                 placeholder="Search..."
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                className={`w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b rounded-lg focus:outline-none ${disable ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b rounded-lg focus:outline-none ${
+                  disable ? "opacity-50 cursor-not-allowed" : ""
+                }`}
                 style={{
                   borderBottom: `2px solid ${
                     isFocused ? primary_color : "#222222"
@@ -166,8 +176,8 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                       option.value === currentValue ? secondary_color : "",
                     color:
                       option.value === currentValue ? primary_color : "#222222",
-                    pointerEvents: disable ? 'none' : 'auto',
-                    opacity: disable ? 0.5 : 1,
+                    pointerEvents: disable || option.disable ? "none" : "auto",
+                    opacity: disable || option.disable ? 0.5 : 1,
                   }}
                   className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-50 `}
                 >
@@ -184,7 +194,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
           document.body
         )}
       {error && <p className="form-error">{error}</p>}
-    </>
+    </div>
   );
 };
 

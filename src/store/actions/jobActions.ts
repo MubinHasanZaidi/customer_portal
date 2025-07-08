@@ -195,9 +195,15 @@ export const applicatFormSubmit = createAsyncThunk(
       localStorage.setItem("user", encryptedUser);
       return result;
     } catch (error) {
+      console.log("error", error);
       const errorMessage =
-        error instanceof Error ? error.message : `Failed to submit Form`;
+        (typeof error === "object" &&
+          error !== null &&
+          "response" in error &&
+          (error as any).response?.data?.message) ||
+        (error instanceof Error ? error.message : "Failed to submit Form");
       setError(errorMessage);
+      toast.error(errorMessage)
       setIsSubmitting(false);
       setSubmitSuccess(true);
       throw error;

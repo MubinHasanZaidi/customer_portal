@@ -12,6 +12,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  success?: string | null;
   companyConfig: any;
   error_company: string | null;
 }
@@ -21,6 +22,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  success: null,
   companyConfig: null,
   error_company: null,
 };
@@ -55,10 +57,10 @@ const authSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     },
-    signupSuccess: (state, action: PayloadAction<User>) => {
+    signupSuccess: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
       state.isAuthenticated = true;
-      state.user = action.payload;
+      state.success = action.payload;
       state.error = null;
     },
     signupFailure: (state, action: PayloadAction<string>) => {

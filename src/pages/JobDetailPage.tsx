@@ -201,7 +201,7 @@ const JobDetailPage = () => {
                   {jobDetailConfig?.city && (
                     <div className="flex items-center">
                       <h3 className="text-xs font-bold text-[#222222] w-40">
-                        Cities:
+                        City:
                       </h3>
                       <p className="text-xs text-[#222222]">
                         {selectedJob?.Cities?.length > 0
@@ -319,7 +319,7 @@ const JobDetailPage = () => {
                               "dd-MMM-yyyy"
                             )
                           : "N/A"}{" "}
-                        to
+                        to{" "}
                         {selectedJob?.jobPeriodStart
                           ? format(
                               new Date(selectedJob?.jobPeriodEnd),
