@@ -23,7 +23,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   onChange,
   placeholder,
   className = "",
-  rows = 3,
+  rows = 1,
 }) => {
   const { companyConfig } = useCompanyConfig();
   const { themeConfig } = companyConfig;
