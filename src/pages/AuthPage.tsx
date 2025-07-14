@@ -99,7 +99,10 @@ const AuthPage = () => {
   return (
     <div
       className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${loginIllustration})` }}
+      style={{
+        // background: `${secondary_color} url(${loginIllustration}) no-repeat center center / cover`
+        background: `white url(${loginIllustration}) no-repeat center center / cover`
+      }}
     >
       <div className="flex mt-[10%] max-lg:mt-0 max-lg:min-h-screen">
         {/* Left side - Empty space */}
@@ -203,7 +206,7 @@ const AuthPage = () => {
                   </Link>
                 </div>
                 <div>
-                  <img className="mx-auto mt-10" src={dy_logo} />
+                  <img className="mx-auto h-14 mt-10" src={dy_logo} />
                 </div>
               </form>
             ) : (

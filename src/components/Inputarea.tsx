@@ -64,6 +64,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             onValueChange={handleCurrencyChange}
             maxLength={max}
             disabled={disable}
+            allowNegativeValue={false}
             className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
@@ -100,7 +101,7 @@ const InputArea: React.FC<InputAreaProps> = ({
           </div>
         )}
       </div>
-      {error && <p className="form-error">{error}</p>}
+      {error && <p className="form-error text-left">{error}</p>}
     </div>
   );
 };
