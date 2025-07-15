@@ -69,29 +69,29 @@ function convertApplicantDates(
   if (newData?.file) {
     setCvFileName(newData?.file);
   }
-  if (newData.dateOfBirth)
-    newData.dateOfBirth = convertDateString(newData.dateOfBirth);
-  if (Array.isArray(newData.academics)) {
-    newData.academics = newData.academics.map((a: any) => ({
-      ...a,
-      startDate: a.startDate ? convertDateString(a.startDate) : a.startDate,
-      endDate: a.endDate ? convertDateString(a.endDate) : a.endDate,
-    }));
-  }
-  if (Array.isArray(newData.experiences)) {
-    newData.experiences = newData.experiences.map((e: any) => ({
-      ...e,
-      startDate: e.startDate ? convertDateString(e.startDate) : e.startDate,
-      endDate: e.endDate ? convertDateString(e.endDate) : e.endDate,
-    }));
-  }
-  if (Array.isArray(newData.skills)) {
-    newData.skills = newData.skills.map((s: any) => ({
-      ...s,
-      startDate: s.startDate ? convertDateString(s.startDate) : s.startDate,
-      endDate: s.endDate ? convertDateString(s.endDate) : s.endDate,
-    }));
-  }
+  // if (newData.dateOfBirth)
+  //   newData.dateOfBirth = convertDateString(newData.dateOfBirth);
+  // if (Array.isArray(newData.academics)) {
+  //   newData.academics = newData.academics.map((a: any) => ({
+  //     ...a,
+  //     startDate: a.startDate ? convertDateString(a.startDate) : a.startDate,
+  //     endDate: a.endDate ? convertDateString(a.endDate) : a.endDate,
+  //   }));
+  // }
+  // if (Array.isArray(newData.experiences)) {
+  //   newData.experiences = newData.experiences.map((e: any) => ({
+  //     ...e,
+  //     startDate: e.startDate ? convertDateString(e.startDate) : e.startDate,
+  //     endDate: e.endDate ? convertDateString(e.endDate) : e.endDate,
+  //   }));
+  // }
+  // if (Array.isArray(newData.skills)) {
+  //   newData.skills = newData.skills.map((s: any) => ({
+  //     ...s,
+  //     startDate: s.startDate ? convertDateString(s.startDate) : s.startDate,
+  //     endDate: s.endDate ? convertDateString(s.endDate) : s.endDate,
+  //   }));
+  // }
   return newData;
 }
 
@@ -650,6 +650,70 @@ const ApplicantFormPage = () => {
     // eslint-disable-next-line
   }, [jobId, jobStates?.applicantData]);
 
+  const handleAddAcademic = () => {
+    appendAcademic({
+      institutionId: undefined,
+      degreeId: undefined,
+      gpa: 0,
+      startDate: "",
+      endDate: "",
+      cityId: undefined,
+      countryId: undefined,
+    });
+    setTimeout(() => {
+      const newIndex = academicFields.length;
+      setValue(`academics.${newIndex}.institutionId`, undefined);
+      setValue(`academics.${newIndex}.degreeId`, undefined);
+      setValue(`academics.${newIndex}.gpa`, 0);
+      setValue(`academics.${newIndex}.startDate`, "");
+      setValue(`academics.${newIndex}.endDate`, "");
+      setValue(`academics.${newIndex}.cityId`, undefined);
+      setValue(`academics.${newIndex}.countryId`, undefined);
+    }, 0);
+  };
+
+  // Add for Professional (experiences)
+  const handleAddExperience = () => {
+    appendExperience({
+      companyName: "",
+      positionHeld: "",
+      startDate: "",
+      endDate: "",
+      cityId: undefined,
+      countryId: undefined,
+    });
+    setTimeout(() => {
+      const newIndex = experienceFields.length;
+      setValue(`experiences.${newIndex}.companyName`, "");
+      setValue(`experiences.${newIndex}.positionHeld`, "");
+      setValue(`experiences.${newIndex}.startDate`, "");
+      setValue(`experiences.${newIndex}.endDate`, "");
+      setValue(`experiences.${newIndex}.cityId`, undefined);
+      setValue(`experiences.${newIndex}.countryId`, undefined);
+    }, 0);
+  };
+
+  // Add for Skills
+  const handleAddSkill = () => {
+    appendSkill({
+      isReq: false,
+      skill: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      ratingScale: 0,
+    });
+    setTimeout(() => {
+      const newIndex = skillFields.length;
+      setValue(`skills.${newIndex}.isReq`, false);
+      setValue(`skills.${newIndex}.skill`, "");
+      setValue(`skills.${newIndex}.description`, "");
+      setValue(`skills.${newIndex}.startDate`, "");
+      setValue(`skills.${newIndex}.endDate`, "");
+      setValue(`skills.${newIndex}.ratingScale`, 0);
+    }, 0);
+  };
+
   if (submitSuccess && error === null) {
     return (
       <div
@@ -1102,17 +1166,7 @@ const ApplicantFormPage = () => {
                           </h2>
                           <button
                             type="button"
-                            onClick={() =>
-                              appendAcademic({
-                                institutionId: undefined,
-                                degreeId: undefined,
-                                gpa: 0,
-                                startDate: "",
-                                endDate: "",
-                                cityId: undefined,
-                                countryId: undefined,
-                              })
-                            }
+                            onClick={handleAddAcademic}
                             className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] rounded-full text-white px-3 p-1"
                           >
                             <CirclePlus className="inline-block w-3 h-3" /> Add
@@ -1379,16 +1433,7 @@ const ApplicantFormPage = () => {
                           </h2>
                           <button
                             type="button"
-                            onClick={() =>
-                              appendExperience({
-                                companyName: "",
-                                positionHeld: "",
-                                startDate: "",
-                                endDate: "",
-                                cityId: undefined,
-                                countryId: undefined,
-                              })
-                            }
+                            onClick={handleAddExperience}
                             className="text-xs bg-[#222222] text-white hover:bg-transparent hover:text-[#222222] border border-[#222222] px-3 p-1 rounded-full"
                           >
                             <CirclePlus className="inline-block w-3 h-3" /> Add
@@ -1592,7 +1637,7 @@ const ApplicantFormPage = () => {
                           </h2>
                           <button
                             type="button"
-                            onClick={appendNewSkill}
+                            onClick={handleAddSkill}
                             className="text-xs bg-[#222222] text-white text-center px-3 p-1 hover:bg-transparent hover:text-[#222222] border border-[#222222] rounded-full"
                           >
                             <CirclePlus className="inline-block w-3 h-3" /> Add
