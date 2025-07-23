@@ -93,32 +93,33 @@ const SelectOption: React.FC<SelectOptionProps> = ({
     });
   };
 
-  const selectedLabel =
-    options.find((opt) => opt.value === currentValue)?.label ||
-    `${placeholder}`;
+  const selectedLabel = options.find((opt) => opt.value === currentValue)
+    ?.label ? (
+    <span className="text-sm my-0 text-[#222222] line-clamp-1">
+      {options.find((opt) => opt.value === currentValue)?.label}
+    </span>
+  ) : (
+    <span className="text-sm my-0 text-gray-400 line-clamp-1">
+      {placeholder}
+    </span>
+  );
   return (
     <div className="min-h-[6.3vh]">
-      <div
-        data-title={placeholder}
-        ref={dropdownRef}
-        className="relative"
-      >
+      <div data-title={placeholder} ref={dropdownRef} className="relative">
         <div
           onClick={() => {
             if (!disable) setIsOpen(!isOpen);
           }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`form-input mt-[3px] flex items-center justify-between px-1 border-x-0 border-t-0 border-b-2 bg-transparent focus:ring-0 ${className} ${
+          className={`form-input mt-[3px] flex items-center justify-between px-1 border-x-0 border-t-0 border-b bg-transparent focus:ring-0 ${className} ${
             disable ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           }`}
           style={{
-            borderBottom: `2px solid ${isHovered ? primary_color : ""}`,
+            borderBottom: `1px solid ${isHovered ? primary_color : ""}`,
           }}
         >
-          <span className="text-sm my-0 text-[#222222] line-clamp-1">
-            {selectedLabel}
-          </span>
+          {selectedLabel}
           <div className="flex my-0 items-center">
             {currentValue && !disable && (
               <X
@@ -158,7 +159,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                   disable ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 style={{
-                  borderBottom: `2px solid ${
+                  borderBottom: `1px solid ${
                     isFocused ? primary_color : "#222222"
                   }`,
                   borderColor: isFocused ? primary_color : "#222222",

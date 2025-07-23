@@ -97,7 +97,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           onMouseLeave={() => setIsHovered(false)}
           tabIndex={0}
           style={{
-            borderBottom: `2px solid ${
+            borderBottom: `1px solid ${
               isFocused || isHovered ? primary_color : "#707070"
             }`,
             background: "transparent",

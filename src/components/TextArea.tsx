@@ -12,6 +12,7 @@ interface TextAreaProps {
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   className?: string;
   rows?: number;
+  disable?: boolean;
 }
 
 const TextArea: React.FC<TextAreaProps> = ({
@@ -23,6 +24,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   onChange,
   placeholder,
   className = "",
+  disable = false,
   rows = 1,
 }) => {
   const { companyConfig } = useCompanyConfig();
@@ -46,10 +48,12 @@ const TextArea: React.FC<TextAreaProps> = ({
           rows={rows}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 bg-transparent focus:ring-0 placeholder:text-[#222222] resize-none ${className}`}
           style={{
-            borderBottom: `2px solid ${isFocused ? primary_color : "#707070"}`,
+            borderBottom: `1px solid #222222`,
           }}
+          className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b focus:ring-0 placeholder:text-gray-400 ${
+            disable ? "text-[#6f6f6f]" : "text-[#222222]"
+          } ${className}`}
           placeholder={placeholder}
           {...textAreaProps}
         />

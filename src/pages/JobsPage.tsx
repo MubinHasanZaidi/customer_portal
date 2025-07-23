@@ -109,8 +109,8 @@ const JobsPage = () => {
     >
       <Header />
       <main className="flex-1">
-        <section className="pt-10">
-          <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 pb-5 sm:pb-10 space-y-6  md:space-y-14">
+        <section className="pt-4 sm:pt-10">
+          <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 space-y-6  md:space-y-4">
             <div className="flex flex-col-reverse gap-8 lg:flex-row justify-between">
               <div className="flex-1 space-y-6  md:space-y-14">
                 <div className="text-left w-fit">
@@ -149,7 +149,7 @@ const JobsPage = () => {
                 />
               </div>
             </div>
-            <div className="flex overflow-x-auto pb-4 hide-scrollbar">
+            <div className="flex overflow-x-auto pb-1 hide-scrollbar">
               <div className="flex flex-wrap gap-2">
                 <button
                   className={`px-4 py-2 text-xs rounded-3xl whitespace-nowrap ${
@@ -178,7 +178,7 @@ const JobsPage = () => {
                 ))}
               </div>
             </div>
-            <div className="border-b-[#707070] border-b"></div>
+            <div className="border-b-[#707070] border-b-2"></div>
           </div>
         </section>
 
@@ -217,7 +217,7 @@ const JobsPage = () => {
                 </p>
               </div>
             ) : (
-              <div className=" pb-6 sm:pb-12 lg:pb-28">
+              <div className="">
                 {jobs.map((job) => (
                   <JobCard
                     key={job.Id}
@@ -241,8 +241,8 @@ const JobsPage = () => {
           </div>
         </section>
 
-        {totalPages > 1 && (
-          <div className="flex justify-center mb-12 space-x-2">
+        {/* {totalPages > 1 && ( */}
+          <div className="flex justify-center py-6 sm:my-12 text-xs space-x-2">
             <button
               type="submit"
               onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
@@ -274,7 +274,7 @@ const JobsPage = () => {
               Next
             </button>
           </div>
-        )}
+        {/* )} */}
       </main>
       <Footer />
     </div>

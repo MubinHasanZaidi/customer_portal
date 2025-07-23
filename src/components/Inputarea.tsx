@@ -65,11 +65,11 @@ const InputArea: React.FC<InputAreaProps> = ({
             maxLength={max}
             disabled={disable}
             allowNegativeValue={false}
-            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
+            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-gray-400 ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
             style={{
-              borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+              borderBottom: `1px solid #222222`,
             }}
             onFocus={() => setIsFocused(true)}
             placeholder={placeholder}
@@ -83,9 +83,9 @@ const InputArea: React.FC<InputAreaProps> = ({
             type={type}
             disabled={disable}
             style={{
-              borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+              borderBottom: `1px solid #222222`,
             }}
-            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-[#222222] ${
+            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b focus:ring-0 placeholder:text-gray-400 ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
             maxLength={max}

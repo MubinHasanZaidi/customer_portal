@@ -6,6 +6,8 @@ import {
   ArrowRight,
   Calendar,
   ThumbsUp,
+  BriefcaseBusiness,
+  Handshake,
 } from "lucide-react";
 
 interface JobCardProps {
@@ -34,40 +36,45 @@ const JobCard: React.FC<JobCardProps> = ({
   applicant,
 }) => {
   return (
-    <div className="border-b-[#707070] border-b py-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
-        <div className="space-y-2 w-full">
+    <div className="border-b-[#707070] border-b pt-6 pb-2">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-48">
+        <div className="space-y-6 w-full">
           <div>
-            <h3 className="text-lg font-semibold text-[#222222]">{title}</h3>
+            <h3 className="text-xl font-semibold text-[#222222]">{title}</h3>
+            <p className="mt-1 text-sm font-normal text-[#222222] line-clamp-2">
+              {/* {description} */}
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book. It has
+              survived not only five centuries.
+            </p>
           </div>
-          <p className="mt-4 text-sm text-[#222222] line-clamp-2">
-            {description}
-          </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full font-bold">
             <div
               title="Location"
-              className="col-span-1 flex items-center text-sm text-[#222222]"
+              className="col-span-1 flex items-center text-xs text-[#222222]"
             >
               <MapPin className="w-4 h-4 mr-1" />
               {location}
             </div>
             <div
               title="Job type"
-              className="col-span-1 flex items-center text-sm text-[#222222]"
+              className="col-span-1 flex items-center text-xs text-[#222222]"
             >
-              <Briefcase className="w-4 h-4 mr-1" />
+                    <BriefcaseBusiness className="w-4 h-4 mr-1" />
               {type}
             </div>
             <div
               title="Experience"
-              className="col-span-1 flex items-center text-sm text-[#222222]"
+              className="col-span-1 flex items-center text-xs text-[#222222]"
             >
-              <Briefcase className="w-4 h-4 mr-1" />
+              <Handshake className="w-4 h-4 mr-1" />
               {workExpFrom} to {workExpTo} Year
             </div>
             <div
               title="Last date of application"
-              className="col-span-1 flex items-center text-sm text-[#222222]"
+              className="col-span-1 flex items-center text-xs text-[#222222]"
             >
               <Calendar className="w-4 h-4 mr-1" />
               {postedAt}

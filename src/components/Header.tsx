@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
 import { useState, useEffect, useRef } from "react";
-import { CircleUserRound } from "lucide-react";
+import { ChevronDown, CircleUserRound } from "lucide-react";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { getUploadUrl } from "../../lib/utils";
 
@@ -62,7 +62,7 @@ const Header = () => {
 
   return (
     <header className="bg-transparent">
-      <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 flex justify-between items-center">
+      <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 flex flex-row justify-between items-center">
         <div
           className="flex items-end lg:items-center cursor-pointer"
           onClick={() => {
@@ -73,7 +73,7 @@ const Header = () => {
           <img
             src={company?.Logo}
             alt={company?.name}
-            className="h-8 lg:h-14 mx-auto mb-4"
+            className="h-8 lg:h-12 m-auto"
           />
         </div>
         <div className="flex items-center space-x-4">
@@ -87,7 +87,7 @@ const Header = () => {
                   Welcome,{" "}
                   <span
                     style={{ color: primary_color }}
-                    className={`font-medium `}
+                    className={`font-bold `}
                   >
                     {userConfig?.firstName}
                   </span>
@@ -97,13 +97,19 @@ const Header = () => {
                   className="flex items-center focus:outline-none"
                 >
                   {userConfig?.profile_image ? (
-                    <img
-                      src={userConfig?.profile_image}
-                      alt="User"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
+                    <>
+                      <img
+                        src={userConfig?.profile_image}
+                        alt="User"
+                        className="w-10 h-10 rounded-full object-cover border border-black"
+                      />
+                      <ChevronDown className="w-3 h-3" />
+                    </>
                   ) : (
+                    <>
                     <CircleUserRound className="w-5 h-5 rounded-full object-cover stroke-[1.2]" />
+                    <ChevronDown className="w-3 h-3" />
+                    </>
                   )}
                 </button>
               </div>
@@ -148,7 +154,7 @@ const Header = () => {
               )}
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row items-start gap-1 sm:items-center space-x-2">
+            <div className="flex flex-row  gap-1 justify-center items-center space-x-2">
               <Link
                 to={"/auth"}
                 style={{ background: primary_color }}
@@ -157,7 +163,8 @@ const Header = () => {
                 Sign up
               </Link>
               <span className="text-xs text-[#222222]">
-                Already have an account?{"  "}
+                <span className="max-sm:hidden">Already have an account?</span>
+                {"  "}
                 <Link
                   to="/auth"
                   style={{ color: primary_color }}

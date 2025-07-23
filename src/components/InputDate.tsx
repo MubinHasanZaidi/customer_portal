@@ -74,9 +74,9 @@ const InputDate: React.FC<InputDateProps> = ({
       )}
       <div className="relative">
         <div
-          style={{
-            borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
-          }}
+          // style={{
+          //   borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+          // }}
         >
           <DatePicker
             id={id}
@@ -86,7 +86,7 @@ const InputDate: React.FC<InputDateProps> = ({
             dateFormat="dd-MMM-yyyy"
             disabled={disable}
             placeholderText={placeholder}
-            className={`form-input2 placeholder:text-sm px-1 w-full border-x-0 border-t-0  focus:border-y-0 bg-transparent  focus:ring-0 placeholder:text-[#222222] ${
+            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b border-b-[#707070] bg-transparent focus:border-b-1 focus:border-b-[#222222] focus:ring-0 placeholder:text-gray-400 ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
             onFocus={() => setIsFocused(true)}

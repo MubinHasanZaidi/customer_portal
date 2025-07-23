@@ -67,15 +67,15 @@ const ForgetPasswordPage = () => {
               <img
                 src={company?.Logo}
                 alt={company?.name}
-                className="h-16 mx-auto mb-4"
+                className="h-12 mx-auto mb-4"
               />
-              <h2 className="text-xl font-medium text-gray-900">
+              <h2 className="text-xl font-medium text-[#222222]">
                 Welcome to {company?.name}
               </h2>
-              <p className="text-sm text-gray-600">Careers Portal</p>
+              <p className="text-sm text-[#222222]">Careers Portal</p>
             </div>
 
-            <h3 className="text-lg text-[#222222] font-medium text-center mb-6">
+            <h3 className="text-md text-[#222222] font-medium text-center mb-6">
               Forgot Password
             </h3>
 
@@ -114,17 +114,17 @@ const ForgetPasswordPage = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-4 rounded-full font-medium hover:bg-black transition-colors"
+                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Sending..." : "Send Reset Instructions"}
+                  {isLoading ? "Sending..." : "Send reset instructions"}
                 </button>
 
                 <div className="text-center">
                   <Link
                     to="/auth"
                     style={{ color: primary_color }}
-                    className={`text-sm hover:underline`}
+                    className={`text-xs hover:underline`}
                   >
                     Back to Login
                   </Link>

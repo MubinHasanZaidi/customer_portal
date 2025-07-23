@@ -14,7 +14,17 @@ import Footer from "../components/Footer";
 import SelectOption from "../components/SelectOption";
 import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
-import { CirclePlus, CircleUserRound, MinusCircle } from "lucide-react";
+import {
+  ArrowRight,
+  CirclePlus,
+  CircleUserRound,
+  Delete,
+  DeleteIcon,
+  Drumstick,
+  MinusCircle,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
 import StarRating from "../components/StarRating";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import {
@@ -286,21 +296,17 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
 
       // Academic Information
       academics: academicRequired
-        ? z
-            .array(academicObj)
-            .min(1, "At least one academic record is required")
+        ? z.array(academicObj).min(1, "One record is required.")
         : z.array(academicObj).optional(),
 
       // Professional Experience
       experiences: experienceRequired
-        ? z
-            .array(experienceObj)
-            .min(1, "At least one experience record is required")
+        ? z.array(experienceObj).min(1, "One record is required.")
         : z.array(experienceObj).optional(),
 
       // Skills
       skills: skillsRequired
-        ? z.array(skillObj).min(1, "At least one skill record is required")
+        ? z.array(skillObj).min(1, "One record is required.")
         : z.array(skillObj).optional(),
 
       // Add notification boolean
@@ -723,16 +729,17 @@ const ApplicantFormPage = () => {
         <Header />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="mb-4 p-4  text-green-700 rounded-md">
+            <div className="mb-4 p-4  text-2xl sm:text-3xl font-bold  text-[#34B9A3] rounded-md">
               {localStorage.getItem("jobId") !== "none"
-                ? "Application submitted successfully! We will review your application and get back to you soon."
-                : "Profile updated successfully"}
+                ? "Your application has been submitted successfully! We will review and get back for the next step if you are shortlisted."
+                : "Profile updated successfully!"}
             </div>
             <Link
               to="/jobs"
-              className="mt-4 px-4 py-2 bg-transparent text-sm border-[#000000] border rounded-full text-[#00000]"
+              className="w-full bg-[#222222] hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] text-white py-2 px-4 rounded-full font-medium hover:bg-black transition-colors"
             >
-              Back to Jobs
+              Explore Jobs
+              <ArrowRight className="w-4 h-4 inline-block ml-1" />
             </Link>
           </div>
         </div>
@@ -740,7 +747,6 @@ const ApplicantFormPage = () => {
       </div>
     );
   }
-
 
   return (
     <>
@@ -760,13 +766,10 @@ const ApplicantFormPage = () => {
                 {/* Form */}
                 <div className="lg:col-span-3 order-2 lg:order-1">
                   <FormProvider {...methods}>
-                    <form
-                      onSubmit={handleSubmit(onSubmit)}
-                      className="space-y-8"
-                    >
+                    <form onSubmit={handleSubmit(onSubmit)}>
                       {/* Basic Information */}
                       <div className="py-4">
-                        <h2 className="text-xl font-medium text-[#222222] mb-2">
+                        <h2 className="mb-2 text-xl font-semibold text-[#222222]">
                           Basic Information
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -818,7 +821,7 @@ const ApplicantFormPage = () => {
 
                       {/* Personal Information */}
                       <div className="py-4">
-                        <h2 className="text-xl font-medium text-[#222222] mb-2">
+                        <h2 className="mb-2 text-xl font-semibold text-[#222222]">
                           Personal Information
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -942,7 +945,7 @@ const ApplicantFormPage = () => {
 
                       {/* Current Address and Contact Information */}
                       <div className="py-4">
-                        <h2 className="text-xl font-medium text-[#222222] mb-2">
+                        <h2 className="mb-2 text-xl font-semibold text-[#222222]">
                           Current Address and Contact Information
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -1025,7 +1028,7 @@ const ApplicantFormPage = () => {
                       </div>
                       {/* General Information */}
                       <div className="py-4">
-                        <h2 className="text-xl font-medium text-[#222222] mb-2">
+                        <h2 className="mb-2 text-xl font-semibold text-[#222222]">
                           General Information
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -1158,8 +1161,8 @@ const ApplicantFormPage = () => {
                       {/* Academic Information */}
                       <div className="py-4">
                         <div className="flex justify-between items-center mb-2">
-                          <h2 className="text-xl font-medium text-[#222222]">
-                            Academic
+                          <h2 className="mb-2 text-xl font-semibold text-[#222222]">
+                            Academic Detail
                             <span className="text-xs font-normal ml-2 text-red-600">
                               {errors.academics?.message || ""}
                             </span>
@@ -1178,30 +1181,28 @@ const ApplicantFormPage = () => {
                               <table className="w-full font-normal">
                                 <thead>
                                   <tr className="bg-white rounded-md text-[#222222]">
-                                    <th className="px-4 py-2 text-left text-sm font-normal">
-                                      Action
-                                    </th>
-                                    <th className="px-4 py-2 min-w-40 text-left text-sm font-normal">
+                                    <th className="px-2 py-2 min-w-40 text-left text-xs font-semibold">
                                       Institution
                                     </th>
-                                    <th className="px-4 py-2 min-w-36 text-left text-sm font-normal">
+                                    <th className="px-2 py-2 min-w-36 text-left text-xs font-semibold">
                                       Qualification
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm font-normal">
+                                    <th className="px-2 py-2 text-left text-xs font-semibold">
                                       CGPA
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm font-normal">
+                                    <th className="px-2 py-2 text-left text-xs font-semibold">
                                       Start Date
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm font-normal">
+                                    <th className="px-2 py-2 text-left text-xs font-semibold">
                                       End Date
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm min-w-28 font-normal">
+                                    <th className="px-2 py-2 text-left text-xs min-w-28 font-semibold">
                                       Country
                                     </th>
-                                    <th className="px-4 py-2 text-left min-w-28 text-sm font-normal">
+                                    <th className="px-2 py-2 text-left min-w-28 text-xs font-semibold">
                                       City
                                     </th>
+                                    <th className="px-2 py-2 min-w-12 text-left text-xs font-semibold"></th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -1212,17 +1213,6 @@ const ApplicantFormPage = () => {
                                         key={field.id}
                                         className="border-b text-[#222222] text-center"
                                       >
-                                        <td>
-                                          <button
-                                            type="button"
-                                            onClick={() =>
-                                              removeAcademic(index)
-                                            }
-                                            className="text-red-500 hover:text-red-600"
-                                          >
-                                            <MinusCircle className="w-4 h-4" />
-                                          </button>
-                                        </td>
                                         <td className="p-1">
                                           <div>
                                             <SelectOption
@@ -1412,6 +1402,17 @@ const ApplicantFormPage = () => {
                                             }}
                                           />
                                         </td>
+                                        <td>
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              removeAcademic(index)
+                                            }
+                                            className="text-red-500 hover:text-red-600"
+                                          >
+                                            <Trash2 className="w-4 h-4" />
+                                          </button>
+                                        </td>
                                       </tr>
                                     );
                                   })}
@@ -1425,8 +1426,8 @@ const ApplicantFormPage = () => {
                       {/* Experience Section */}
                       <div className="py-4">
                         <div className="flex justify-between items-center mb-2">
-                          <h2 className="text-xl font-medium text-[#222222]">
-                            Professional
+                          <h2 className="mb-2 text-xl font-semibold text-[#222222]">
+                            Professional Experience
                             <span className="text-xs font-normal ml-2 text-red-600">
                               {errors.experiences?.message || ""}
                             </span>
@@ -1444,27 +1445,25 @@ const ApplicantFormPage = () => {
                             <table className="w-full font-normal">
                               <thead>
                                 <tr className="bg-white rounded-md text-[#222222]">
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
-                                    Action
-                                  </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     Employer
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     Designation
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     Start Date
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     End Date
                                   </th>
-                                  <th className="px-4 py-2 text-left min-w-28 text-sm font-normal">
+                                  <th className="px-2 py-2 text-left min-w-28 text-xs font-semibold">
                                     Country
                                   </th>
-                                  <th className="px-4 py-2 text-left min-w-28 text-sm font-normal">
+                                  <th className="px-2 py-2 text-left min-w-28 text-xs font-semibold">
                                     City
                                   </th>
+                                  <th className="px-2 py-2 min-w-12 text-left text-xs font-semibold"></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -1473,15 +1472,6 @@ const ApplicantFormPage = () => {
                                     key={field.id}
                                     className="border-b text-[#222222] text-center"
                                   >
-                                    <td>
-                                      <button
-                                        type="button"
-                                        onClick={() => removeExperience(index)}
-                                        className="text-red-500 hover:text-red-600"
-                                      >
-                                        <MinusCircle className="w-4 h-4" />
-                                      </button>
-                                    </td>
                                     <td className="p-1">
                                       <InputArea
                                         id="companyName"
@@ -1618,6 +1608,15 @@ const ApplicantFormPage = () => {
                                         }}
                                       />
                                     </td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        onClick={() => removeExperience(index)}
+                                        className="text-red-500 hover:text-red-600"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1627,10 +1626,10 @@ const ApplicantFormPage = () => {
                       </div>
 
                       {/* Skills Section */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <h2 className="text-lg font-semibold">
-                            Skills
+                      <div className="py-4">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-xl font-semibold text-[#222222]">
+                            Skills & Certifications
                             <span className="text-xs font-normal ml-2 text-red-600">
                               {errors.skills?.message || ""}
                             </span>
@@ -1648,24 +1647,22 @@ const ApplicantFormPage = () => {
                             <table className="w-full">
                               <thead className="rounded-xl">
                                 <tr className="bg-white text-[#222222]">
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
-                                    Action
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
+                                    Name
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
-                                    Skill Name
-                                  </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     Details
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     Start Date
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     End Date
                                   </th>
-                                  <th className="px-4 py-2 text-left text-sm font-normal">
+                                  <th className="px-2 py-2 text-left text-xs font-semibold">
                                     Rating
                                   </th>
+                                  <th className="px-2 py-2 min-w-12 text-left text-xs font-semibold"></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -1674,25 +1671,11 @@ const ApplicantFormPage = () => {
                                     key={field.id}
                                     className="border-b text-[#222222] text-center"
                                   >
-                                    <td>
-                                      <button
-                                        type="button"
-                                        disabled={field?.isReq}
-                                        onClick={() => removeSkill(index)}
-                                        className={
-                                          field?.isReq
-                                            ? "text-red-200 hover:text-red-300 cursor-not-allowed"
-                                            : "text-red-500 hover:text-red-600 cursor-pointer"
-                                        }
-                                      >
-                                        <MinusCircle className="w-4 h-4" />
-                                      </button>
-                                    </td>
                                     <td className="p-1">
                                       <InputArea
                                         id="skill"
                                         disable={field?.isReq}
-                                        placeholder="Skill Name"
+                                        placeholder="Name"
                                         type="text"
                                         error={getFieldError(
                                           errors.skills,
@@ -1794,6 +1777,20 @@ const ApplicantFormPage = () => {
                                         )}
                                       />
                                     </td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        disabled={field?.isReq}
+                                        onClick={() => removeSkill(index)}
+                                        className={
+                                          field?.isReq
+                                            ? "text-red-200 hover:text-red-300 cursor-not-allowed"
+                                            : "text-red-500 hover:text-red-600 cursor-pointer"
+                                        }
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1806,7 +1803,7 @@ const ApplicantFormPage = () => {
 
                       {/* Submit Button */}
                       <div>
-                        <label className="flex items-center gap-2 mb-4">
+                        <label className="flex items-center gap-2 my-8">
                           <input
                             type="checkbox"
                             {...register("isNotifiedForJobPosting")}
@@ -1816,9 +1813,9 @@ const ApplicantFormPage = () => {
                             Receive new job posting notification
                           </span>
                         </label>
-                        <div className="flex flex-col md:flex-row justify-between md:items-center">
-                          <div className="py-6">
-                            <h2 className="text-xl font-medium text-[#222222] mb-4">
+                        <div className="flex flex-col gap-10 ">
+                          <div className="">
+                            <h2 className="mb-2 text-xl font-semibold text-[#222222]">
                               Upload Your Updated CV
                             </h2>
                             <input
@@ -1834,7 +1831,7 @@ const ApplicantFormPage = () => {
                             />
                             <label
                               htmlFor="cv-upload"
-                              className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-4 p-2 rounded-full cursor-pointer inline-flex items-center py-2 "
+                              className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-3 rounded-full cursor-pointer inline-flex items-center py-1 "
                             >
                               Choose File
                             </label>
@@ -1849,10 +1846,10 @@ const ApplicantFormPage = () => {
                           </div>
                           <button
                             type="submit"
-                            className="px-4 disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
+                            className="px-4 w-fit disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
                             disabled={isSubmitting}
                           >
-                            {isSubmitting ? "Submitting..." : "Submit"}
+                            {isSubmitting ? "Submitting..." : "Update Profile"}
                           </button>
                         </div>
                         {error && (
@@ -1868,10 +1865,10 @@ const ApplicantFormPage = () => {
                 {/* Progress Sidebar */}
                 <div className="justify-self-center order-1 lg:order-2 lg:justify-self-end lg:col-span-1">
                   <div className="sticky top-8 flex flex-row gap-2 lg:gap-4 lg:flex-col">
-                    <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 ">
-                      <p className="text-black text-sm text-center mb-4">
+                    <div className="bg-white rounded-xl w-fit  px-8 py-6 ">
+                      {/* <p className="text-black text-sm text-center mb-4">
                         Profile Picture
-                      </p>
+                      </p> */}
                       <div className="text-center">
                         <div className="w-20 h-20 sm:w-32 mx-auto sm:h-32 rounded-full mb-2 flex items-center justify-center overflow-hidden">
                           {photo ? (
@@ -1881,7 +1878,7 @@ const ApplicantFormPage = () => {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <CircleUserRound className="w-20 h-20 sm:w-32 sm:h-32 stroke-[1.4]" />
+                            <CircleUserRound className="w-20 h-20 sm:w-32 sm:h-32 stroke-[0.7]" />
                           )}
                         </div>
                         <input
@@ -1893,15 +1890,16 @@ const ApplicantFormPage = () => {
                         />
                         <label
                           htmlFor="photo-upload"
-                          className="text-xs bg-[#222222] text-white px-3 py-2 rounded-full cursor-pointer"
+                          className="text-xs bg-[#222222] text-white px-3 py-1 rounded-full cursor-pointer"
                         >
-                          {photo ? "Change Photo" : "Choose File"}
+                          {/* <PlusCircle className="inline-block  mr-1" /> */}
+                          {photo ? "Update Photo" : "Add Photo"}
                         </label>
                       </div>
                     </div>
-                    <div className="bg-white rounded-xl w-fit shadow-sm px-8 py-6 ">
-                      <p className="text-black text-sm text-center mb-4">
-                        Profile Status
+                    <div className="bg-white rounded-xl w-fit  px-8 py-6 ">
+                      <p className="text-black text-sm font-semibold text-center mb-4">
+                        Profile
                       </p>
                       <div className="flex flex-col items-center">
                         <div
@@ -1920,7 +1918,7 @@ const ApplicantFormPage = () => {
                           </span>
                         </div>
                         <p
-                          className={`text-xs text-white rounded-full px-3 py-2 ${
+                          className={`text-xs text-white rounded-full px-3 py-1 ${
                             completionPercentage <= 40
                               ? "bg-[#E23F35]"
                               : completionPercentage <= 60

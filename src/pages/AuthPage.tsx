@@ -7,7 +7,7 @@ import { z } from "zod";
 import { login, signup } from "../store/actions/authActions";
 import type { RootState, AppDispatch } from "../store";
 import loginIllustration from "../assets/login-illustration.png";
-import dy_logo from "../assets/dy_logo.png";
+import dy_logo_white from "../assets/dy_logo_white.svg";
 import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { resetError } from "../store/slices/authSlice";
@@ -91,46 +91,45 @@ const AuthPage = () => {
       ).unwrap();
       // navigate("/jobs");
       setIsLogin(true);
-      resetLogin()
+      resetLogin();
     } catch (err) {
       // Error is already handled in the action creator
     }
   };
   return (
     <div
-      className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
+      className="min-h-screen flex flex-col bg-white bg-cover bg-center bg-no-repeat lg:bg-none"
       style={{
-        // background: `${secondary_color} url(${loginIllustration}) no-repeat center center / cover`
-        background: `white url(${loginIllustration}) no-repeat center center / cover`
+        backgroundImage: `url(${loginIllustration})`,
       }}
     >
-      <div className="flex mt-[10%] max-lg:mt-0 max-lg:min-h-screen">
+      <div className="flex mt-[8%] max-lg:mt-0 max-lg:min-h-screen">
         {/* Left side - Empty space */}
         <div className="hidden lg:block lg:w-3/5"></div>
 
         {/* Right side - Auth forms */}
         <div className="w-full lg:w-2/5 flex flex-col items-center lg:justify-center pt-[20%] lg:pt-0 p-6 max-lg:bg-white max-lg:bg-opacity-95">
           <div className="w-full max-w-md">
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <img
                 src={company?.Logo}
                 alt={company?.name}
-                className="h-16 mx-auto mb-4"
+                className="h-12 mx-auto mb-4"
               />
-              <h2 className="text-xl font-medium text-gray-900">
+              <h2 className="text-xl font-medium text-[#222222]">
                 Welcome to {company?.name}
               </h2>
-              <p className="text-sm text-gray-600">Careers Portal</p>
+              <p className="text-sm font-semibold text-[#222222]">Careers Portal</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex justify-center mb-12">
+            <div className="flex gap-1 justify-center mb-6">
               <button
                 style={{
                   background: isLogin ? primary_color : secondary_color,
                   color: isLogin ? "#ffffff" : primary_color,
                 }}
-                className={`py-4 px-10 text-md rounded-full font-medium`}
+                className={`py-2 px-8 text-sm rounded-full font-medium`}
                 onClick={() => {
                   resetLogin();
                   setIsLogin(true);
@@ -140,7 +139,7 @@ const AuthPage = () => {
                 Sign in
               </button>
               <button
-                className={`py-4 px-10 text-md rounded-full font-medium`}
+                className={`py-2 px-8 text-sm rounded-full font-medium`}
                 style={{
                   background: isLogin ? secondary_color : primary_color,
                   color: isLogin ? primary_color : "#ffffff",
@@ -166,7 +165,7 @@ const AuthPage = () => {
             {isLogin ? (
               <form
                 onSubmit={handleLoginSubmit(onLoginSubmit)}
-                className="space-y-6"
+                className="space-y-4"
               >
                 <div className="space-y-4 mb-3">
                   <div>
@@ -191,7 +190,7 @@ const AuthPage = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-4 rounded-full font-medium hover:bg-black transition-colors"
+                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
                   disabled={isLoading}
                 >
                   {isLoading ? "Signing in..." : "Sign in"}
@@ -200,20 +199,17 @@ const AuthPage = () => {
                   <Link
                     style={{ color: primary_color }}
                     to="/forget-password"
-                    className={`text-sm hover:underline`}
+                    className={`text-xs hover:underline`}
                   >
                     Forgot Password
                   </Link>
-                </div>
-                <div>
-                  <img className="mx-auto h-14 mt-10" src={dy_logo} />
                 </div>
               </form>
             ) : (
               // Signup Form
               <form
                 onSubmit={handleSignupSubmit(onSignupSubmit)}
-                className="space-y-6"
+                className="space-y-4"
               >
                 <div className="space-y-4 mb-3">
                   <div>
@@ -255,7 +251,7 @@ const AuthPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-4 rounded-full font-medium hover:bg-black transition-colors"
+                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
                   disabled={isLoading}
                 >
                   {isLoading ? "Signing up..." : "Sign up"}
@@ -264,13 +260,19 @@ const AuthPage = () => {
                   <Link
                     style={{ color: primary_color }}
                     to="/forget-password"
-                    className={`text-sm hover:underline`}
+                    className={`text-xs hover:underline`}
                   >
                     Forgot Password?
                   </Link>
                 </div>
               </form>
             )}
+          </div>
+          <div>
+            <img
+              className="mx-auto h-12 mt-24 opacity-70"
+              src={dy_logo_white}
+            />
           </div>
         </div>
       </div>
