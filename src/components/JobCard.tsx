@@ -42,12 +42,12 @@ const JobCard: React.FC<JobCardProps> = ({
           <div>
             <h3 className="text-xl font-semibold text-[#222222]">{title}</h3>
             <p className="mt-1 text-sm font-normal text-[#222222] line-clamp-2">
-              {/* {description} */}
-              Lorem Ipsum is simply dummy text of the printing and typesetting
+              {description}
+              {/* Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
               ever since the 1500s, when an unknown printer took a galley of
               type and scrambled it to make a type specimen book. It has
-              survived not only five centuries.
+              survived not only five centuries. */}
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full font-bold">

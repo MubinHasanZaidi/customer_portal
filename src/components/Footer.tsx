@@ -29,7 +29,7 @@ const Footer = () => {
           <h5 className={`text-lg text-white hover:underline font-normal `}>
             <Link to={"/how-it-work"}>
               How it works?{" "}
-              <ArrowRight className="w-5 h-5 text-gray-400 inline-block -rotate-45 " />
+              <ArrowRight className="w-5 h-5 text-white inline-block -rotate-45 " />
             </Link>
           </h5>
           <ul style={{ fontWeight: 400 }} className="mt-4 space-y-2 text-gray-400">
@@ -75,7 +75,7 @@ const Footer = () => {
           <h5 className={`text-lg text-white hover:underline font-normal `}>
             <Link to={company?.web || ""} target={company?.web && "_blank"}>
               Contact us{" "}
-              <ArrowRight className="w-5 h-5  text-gray-400 inline-block -rotate-45 " />
+              <ArrowRight className="w-5 h-5  text-white inline-block -rotate-45 " />
             </Link>
           </h5>
           <div className="mt-2 space-y-3 text-gray-400">
