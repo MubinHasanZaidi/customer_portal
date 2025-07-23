@@ -117,9 +117,9 @@ const JobDetailPage = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                <div className=" mt-8">
                   <div>
-                    <div className="flex flex-col gap-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                       {/* Job Code: */}
                       {jobDetailConfig?.job_code && (
                         <div className="flex items-center">
