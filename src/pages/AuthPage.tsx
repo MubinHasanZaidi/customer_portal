@@ -119,7 +119,9 @@ const AuthPage = () => {
               <h2 className="text-xl font-medium text-[#222222]">
                 Welcome to {company?.name}
               </h2>
-              <p className="text-sm font-semibold text-[#222222]">Careers Portal</p>
+              <p className="text-sm font-semibold text-[#222222]">
+                Careers Portal
+              </p>
             </div>
 
             {/* Tabs */}
@@ -203,6 +205,15 @@ const AuthPage = () => {
                   >
                     Forgot Password
                   </Link>
+                  <div className="text-center">
+                    <Link
+                      style={{ color: primary_color }}
+                      to="/jobs"
+                      className={`text-xs hover:underline`}
+                    >
+                      View All Jobs
+                    </Link>
+                  </div>
                 </div>
               </form>
             ) : (
@@ -264,6 +275,15 @@ const AuthPage = () => {
                   >
                     Forgot Password?
                   </Link>
+                  <div className="text-center">
+                    <Link
+                      style={{ color: primary_color }}
+                      to="/jobs"
+                      className={`text-xs hover:underline`}
+                    >
+                      View All Jobs
+                    </Link>
+                  </div>
                 </div>
               </form>
             )}
