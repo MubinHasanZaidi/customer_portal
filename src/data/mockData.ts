@@ -1,84 +1,23 @@
-import type { Job } from "../store/slices/jobsSlice"
+import Red from "../assets/loginImage/Red.png";
+import Green from "../assets/loginImage/Green.png";
+import Blue from "../assets/loginImage/Blue.png";
+import DeepSea from "../assets/loginImage/DeepSea.png";
+import Yellow from "../assets/loginImage/Yellow.png";
+import Pink from "../assets/loginImage/Pink.png";
+import Orange from "../assets/loginImage/Orange.png";
+import Black from "../assets/loginImage/Black.png";
+import Indigo from "../assets/loginImage/Indigo.png";
+import Default from "../assets/loginImage/Default.png";
 
-export const mockJobs: Job[] = [
-  {
-    id: "1",
-    title: "Accountant",
-    company: "Dynasoft Cloud",
-    location: "Karachi, PK",
-    type: "Full Time",
-    applyBy: "15 June 2025",
-    description: "We are looking for an Accountant to join our team in Karachi.",
-    department: "Finance",
-    jobType: "Permanent",
-    level: "Mid-level",
-    experience: "2-4 years",
-    salary: "PKR 50,000 to 80,000",
-    positions: 1,
-    postedAt: "2 days ago"
-  },
-  {
-    id: "2",
-    title: "Technical Manager",
-    company: "Dynasoft Cloud",
-    location: "Dubai, UAE",
-    type: "Full Time",
-    applyBy: "15 June 2025",
-    description: "We are looking for Technical Manager to join our team at Dubai office.",
-    department: "Technology",
-    jobType: "Permanent",
-    level: "Senior",
-    experience: "5-8 years",
-    salary: "AED 8,000 to 12,000",
-    positions: 1,
-    postedAt: "2 days ago"
-  },
-  {
-    id: "3",
-    title: "Functional Consultant",
-    company: "Dynasoft Cloud",
-    location: "Lahore, PK",
-    type: "Part Time",
-    applyBy: "15 June 2025",
-    description: "We are in urgent need of NetSuite Functional Consultant to join our Lahore office.",
-    department: "Consulting",
-    jobType: "Contract",
-    level: "Mid-level",
-    experience: "3-5 years",
-    salary: "PKR 60,000 to 90,000",
-    positions: 2,
-    postedAt: "1 week ago"
-  },
-  {
-    id: "4",
-    title: "Software Engineer (MERN Stack)",
-    company: "Dynasoft Cloud",
-    location: "Remote",
-    type: "Full Time",
-    applyBy: "15 June 2025",
-    description: "We are looking for an experienced MERN Stack developer to join us remotely.",
-    department: "Development",
-    jobType: "Permanent",
-    level: "Mid-level",
-    experience: "2-5 years",
-    salary: "PKR 80,000 to 150,000",
-    positions: 3,
-    postedAt: "2 days ago"
-  },
-  {
-    id: "5",
-    title: "Admin Officer",
-    company: "Dynasoft Cloud",
-    location: "Lahore",
-    type: "Full Time",
-    applyBy: "15 June 2025",
-    description: "Join our Lahore office as an Admin officer.",
-    department: "Administration",
-    jobType: "Permanent",
-    level: "Entry-level",
-    experience: "1-3 years",
-    salary: "PKR 40,000 to 60,000",
-    positions: 1,
-    postedAt: "2 days ago"
-  },
-]
+export const themeImages: any = {
+  Red,
+  Green,
+  Blue,
+  DeepSea,
+  Yellow,
+  Pink,
+  Orange,
+  Black,
+  Indigo,
+  Default,
+};

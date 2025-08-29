@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { login, signup } from "../store/actions/authActions";
 import type { RootState, AppDispatch } from "../store";
-import loginIllustration from "../assets/login-illustration.png";
 import dy_logo_white from "../assets/dy_logo_white.svg";
 import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { resetError } from "../store/slices/authSlice";
+import { themeImages } from "../data/mockData";
 
 // Login schema
 const loginSchema = z.object({
@@ -39,7 +39,8 @@ type SignupFormData = z.infer<typeof signupSchema>;
 const AuthPage = () => {
   const { companyConfig } = useCompanyConfig();
   const { company, themeConfig } = companyConfig;
-  const { primary_color, secondary_color } = themeConfig;
+  const { primary_color, secondary_color, color_name } = themeConfig;
+  console.log("color_namecolor_name" , color_name);
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -100,7 +101,7 @@ const AuthPage = () => {
     <div
       className="min-h-screen flex flex-col bg-white bg-cover bg-center bg-no-repeat lg:bg-none"
       style={{
-        backgroundImage: `url(${loginIllustration})`,
+        backgroundImage: `url(${themeImages[color_name || "Default"]})`,
       }}
     >
       <div className="flex mt-[8%] max-lg:mt-0 max-lg:min-h-screen">
