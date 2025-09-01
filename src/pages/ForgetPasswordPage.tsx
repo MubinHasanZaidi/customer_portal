@@ -10,9 +10,9 @@ import {
   resetPasswordFailure,
 } from "../store/slices/authSlice";
 import type { RootState } from "../store";
-import loginIllustration from "../assets/login-illustration.png";
 import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
+import { themeImages } from "../data/mockData";
 
 const resetPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -23,7 +23,7 @@ type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 const ForgetPasswordPage = () => {
   const { companyConfig } = useCompanyConfig();
   const { company, themeConfig } = companyConfig;
-  const { primary_color, secondary_color } = themeConfig;
+  const { primary_color, color_name } = themeConfig;
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const [resetSuccess, setResetSuccess] = useState(false);
@@ -54,7 +54,9 @@ const ForgetPasswordPage = () => {
   return (
     <div
       className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${loginIllustration})` }}
+      style={{
+        backgroundImage: `url(${themeImages[color_name || "Default"]})`,
+      }}
     >
       <div className="flex flex-1">
         {/* Left side - Empty space */}

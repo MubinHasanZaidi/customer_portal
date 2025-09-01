@@ -40,7 +40,6 @@ const AuthPage = () => {
   const { companyConfig } = useCompanyConfig();
   const { company, themeConfig } = companyConfig;
   const { primary_color, secondary_color, color_name } = themeConfig;
-  console.log("color_namecolor_name" , color_name);
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
