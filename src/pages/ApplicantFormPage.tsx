@@ -14,6 +14,7 @@ import Footer from "../components/Footer";
 import SelectOption from "../components/SelectOption";
 import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
+import {formatDates} from "../utils/common";
 import {
   ArrowRight,
   CirclePlus,
@@ -579,6 +580,10 @@ const ApplicantFormPage = () => {
     const payload = {
       ...data,
       jobId: jobId !== "none" ? jobId : null,
+       dateOfBirth: data.dateOfBirth
+    ? formatDates(data.dateOfBirth, "dd-MMM-yyyy")
+    : null,
+
     };
     dispatch(
       applicatFormSubmit({
