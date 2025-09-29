@@ -1,32 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  resetPasswordSuccess,
-  resetPasswordFailure,
-} from "../store/slices/authSlice";
 import type { AppDispatch, RootState } from "../store";
 import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { themeImages } from "../data/mockData";
-import { forgotPasswordWithEmail } from "../store/actions/authActions";
+import { updatePassword } from "../store/actions/authActions";
 
-const resetPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
-});
+//  Schema for password + confirmPassword
+const resetPasswordSchema = z
+  .object({
+    password: z.string().min(6, "Minimum 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
-const ForgetPasswordPage = () => {
+const ResetPasswordLinkPage = () => {
+  console.log("Paggegeee run")
   const { companyConfig } = useCompanyConfig();
   const { company, themeConfig } = companyConfig;
   const { primary_color, color_name } = themeConfig;
+
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const [resetSuccess, setResetSuccess] = useState(false);
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { Id } = useParams<{ Id?: string }>();
+  const forgetLink = Id ?? "";
+
+  //  Redirect if no forgetLink in URL
+  useEffect(() => {
+    if (!forgetLink) {
+      navigate("/auth");
+    } else {
+      // Validate link on mount (without password)
+      dispatch(updatePassword({ forgetLink }))
+        .unwrap()
+        .catch(() => {
+          navigate("/auth");
+        });
+    }
+  }, [forgetLink, dispatch, history]);
+
   const {
     register,
     handleSubmit,
@@ -36,14 +59,17 @@ const ForgetPasswordPage = () => {
   });
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    console.log("dataaa", data);
-    await dispatch(
-      forgotPasswordWithEmail({
-        email: data.email,
-      })
-    ).unwrap();
-    // Mock successful password reset
-    setResetSuccess(true);
+    try {
+      await dispatch(
+        updatePassword({
+          forgetLink,
+          password: data.password,
+        })
+      ).unwrap();
+      setResetSuccess(true);
+    } catch (err) {
+      console.error("Reset password failed", err);
+    }
   };
 
   return (
@@ -73,7 +99,7 @@ const ForgetPasswordPage = () => {
             </div>
 
             <h3 className="text-md text-[#222222] font-medium text-center mb-6">
-              Forgot Password
+              Reset Password
             </h3>
 
             {/* Error message */}
@@ -87,8 +113,7 @@ const ForgetPasswordPage = () => {
             {resetSuccess ? (
               <div className="text-center">
                 <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-md">
-                  Password reset instructions have been sent to your email.
-                  Please check your inbox.
+                  Your password has been reset successfully.
                 </div>
                 <Link
                   to="/auth"
@@ -101,20 +126,29 @@ const ForgetPasswordPage = () => {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
                   <InputArea
-                    id="email"
-                    type="email"
-                    placeholder="Email"
-                    error={errors.email?.message}
-                    registration={register("email")}
+                    id="password"
+                    type="password"
+                    placeholder="New Password"
+                    error={errors.password?.message}
+                    registration={register("password")}
+                  />
+                </div>
+                <div>
+                  <InputArea
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm Password"
+                    error={errors.confirmPassword?.message}
+                    registration={register("confirmPassword")}
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
+                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium transition-colors"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Sending..." : "Send reset instructions"}
+                  {isLoading ? "Updating..." : "Update Password"}
                 </button>
 
                 <div className="text-center">
@@ -135,4 +169,4 @@ const ForgetPasswordPage = () => {
   );
 };
 
-export default ForgetPasswordPage;
+export default ResetPasswordLinkPage;

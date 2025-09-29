@@ -14,6 +14,7 @@ import DisclaimerPage from "./pages/DisclaimerPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ResetPasswordLinkPage from "./pages/ResetPasswordLink";
 
 function App() {
   return (
@@ -28,6 +29,14 @@ function App() {
                 <Route path="/" element={<Navigate to="/jobs" replace />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route
+                  path="/forget-password"
+                  element={<ForgetPasswordPage />}
+                />
+                <Route
+                  path="/reset-link-password/:Id"
+                  element={<ResetPasswordLinkPage />}
+                />
+                <Route
                   path="/reset-password"
                   element={
                     <ProtectedRoute>
@@ -39,7 +48,6 @@ function App() {
                 <Route path="/how-it-work" element={<HowItWorkPage />} />
                 <Route path="/disclaimer" element={<DisclaimerPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                <Route path="/forget-password" element={<ForgetPasswordPage />} />
                 <Route path="/job-detail/:id" element={<JobDetailPage />} />
                 <Route
                   path="/applicant-form"
@@ -49,7 +57,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="*" element={<NotFoundPage />} />
+                {/* <Route path="*" element={<NotFoundPage />} /> */}
               </Routes>
             </CompanyConfigProvider>
           }

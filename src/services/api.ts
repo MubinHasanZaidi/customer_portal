@@ -49,6 +49,22 @@ export const authAPI = {
     return response.data;
   },
 
+  forgotPassword: async (email: string) => {
+    const response = await api.post(
+      "/career/forget-password",
+      { email },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
+  },
+
+  updatePassowrd: async (body: any) => {
+    const response = await api.post("/career/update-forget-password", body, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  },
+
   resetPassword: async ({
     previousPassword,
     newPassword,

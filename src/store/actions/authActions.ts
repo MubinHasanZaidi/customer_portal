@@ -81,6 +81,25 @@ export const signup = createAsyncThunk(
   }
 );
 
+export const forgotPasswordWithEmail = createAsyncThunk(
+  "auth/forgotPassword",
+  async ({ email }: { email: string }, { dispatch }) => {
+    try {
+      dispatch(resetPasswordStart());
+      const userData = await authAPI.forgotPassword(email);
+      dispatch(resetPasswordSuccess());
+      toast.success(userData.data?.message);
+      return userData;
+    } catch (error) {
+      const errorMessage =
+        (error as any)?.response?.data?.message ||
+        (error instanceof Error ? error.message : "Failed to forgot password");
+      dispatch(signupFailure(errorMessage));
+      throw error;
+    }
+  }
+);
+
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async (
@@ -103,6 +122,30 @@ export const resetPassword = createAsyncThunk(
     }
   }
 );
+
+export const updatePassword = createAsyncThunk(
+  "auth/updatePassword",
+  async (
+    {
+      forgetLink,
+      password,
+    }: { forgetLink: string; password?: string },
+    { dispatch }
+  ) => {
+    try {
+      dispatch(resetPasswordStart());
+      await authAPI.updatePassowrd({ forgetLink, password });
+      dispatch(resetPasswordSuccess());
+    } catch (error) {
+      const errorMessage =
+        (error as any)?.response?.data?.message ||
+        (error instanceof Error ? error.message : "Failed to reset password");
+      dispatch(resetPasswordFailure(errorMessage));
+      throw error;
+    }
+  }
+);
+
 
 export const companyConfigFetch = createAsyncThunk(
   "auth/companyConfig",
