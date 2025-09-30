@@ -106,15 +106,15 @@ const AuthPage = () => {
       <div
         className={
           isLogin
-            ? "flex mt-[8%] max-lg:mt-0 max-lg:min-h-screen"
-            : "flex mt-[6%] max-lg:mt-0 max-lg:min-h-screen"
+            ? "flex mt-4 md:mt-[8%] max-lg:mt-0 max-lg:min-h-screen"
+            : "flex mt-4 md:mt-[6%] max-lg:mt-0 max-lg:min-h-screen"
         }
       >
         {/* Left side - Empty space */}
         <div className="hidden lg:block lg:w-3/5"></div>
 
         {/* Right side - Auth forms */}
-        <div className="w-full lg:w-2/5 flex flex-col items-center lg:justify-center pt-[20%] lg:pt-0 p-6 max-lg:bg-white max-lg:bg-opacity-95">
+        <div className="w-full lg:w-2/5 flex flex-col items-center lg:justify-center pt-10 md:pt-[20%] lg:pt-0 p-6 max-lg:bg-white max-lg:bg-opacity-95">
           <div className="w-full max-w-md">
             <div className="text-center mb-6">
               <img
@@ -298,8 +298,8 @@ const AuthPage = () => {
             <img
               className={
                 isLogin
-                  ? "mx-auto h-12 bottom-1 right-[13%] absolute opacity-70"
-                  : "mx-auto h-12 bottom-1 right-[13%] absolute opacity-70"
+                  ? "mx-auto h-12 mt-2 md:mt-24 opacity-70"
+                  : "mx-auto h-12 mt-2 md:mt-5 opacity-70"
               }
               src={dy_logo_white}
             />
