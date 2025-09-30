@@ -298,8 +298,8 @@ const AuthPage = () => {
             <img
               className={
                 isLogin
-                  ? "mx-auto h-12 mt-24 opacity-70"
-                  : "mx-auto h-12 mt-5 opacity-70"
+                  ? "mx-auto h-12 bottom-1 right-[13%] absolute opacity-70"
+                  : "mx-auto h-12 bottom-1 right-[13%] absolute opacity-70"
               }
               src={dy_logo_white}
             />
