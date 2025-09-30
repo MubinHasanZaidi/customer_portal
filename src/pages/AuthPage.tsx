@@ -103,7 +103,13 @@ const AuthPage = () => {
         backgroundImage: `url(${themeImages[color_name || "Default"]})`,
       }}
     >
-      <div className="flex mt-[8%] max-lg:mt-0 max-lg:min-h-screen">
+      <div
+        className={
+          isLogin
+            ? "flex mt-[8%] max-lg:mt-0 max-lg:min-h-screen"
+            : "flex mt-[6%] max-lg:mt-0 max-lg:min-h-screen"
+        }
+      >
         {/* Left side - Empty space */}
         <div className="hidden lg:block lg:w-3/5"></div>
 
@@ -220,9 +226,9 @@ const AuthPage = () => {
               // Signup Form
               <form
                 onSubmit={handleSignupSubmit(onSignupSubmit)}
-                className="space-y-4"
+                className="space-y-3"
               >
-                <div className="space-y-4 mb-3">
+                <div className="space-y-3 mb-3">
                   <div>
                     <InputArea
                       id="name"
@@ -290,7 +296,11 @@ const AuthPage = () => {
           </div>
           <div>
             <img
-              className="mx-auto h-12 mt-24 opacity-70"
+              className={
+                isLogin
+                  ? "mx-auto h-12 mt-24 opacity-70"
+                  : "mx-auto h-12 mt-5 opacity-70"
+              }
               src={dy_logo_white}
             />
           </div>
