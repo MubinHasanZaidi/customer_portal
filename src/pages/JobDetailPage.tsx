@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { format } from "date-fns";
+import he from "he";
 
 const JobDetailPage = () => {
   const { companyConfig } = useCompanyConfig();
@@ -71,7 +72,7 @@ const JobDetailPage = () => {
       <main className="flex-1 py-10">
         <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-5">
-            <div className="lg:col-span-4 order-2 lg:order-1" >
+            <div className="lg:col-span-4 order-2 lg:order-1">
               <div className="my-2 md:my-4">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start">
                   <div>
@@ -496,7 +497,12 @@ const JobDetailPage = () => {
                         <h5 className="text-xl text-[#222222]">
                           Role and Responsibilities
                         </h5>
-                        <p>{selectedJob?.jobSummary || ""}</p>
+                        {/* <p>{selectedJob?.jobSummary || ""}</p> */}
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: he.decode(selectedJob?.jobSummary || ""),
+                          }}
+                        />
                       </div>
                     )}
                     {jobDetailConfig?.work_experience_detail && (
@@ -504,15 +510,27 @@ const JobDetailPage = () => {
                         <h5 className="text-xl text-[#222222]">
                           Experiences, Skills and Qualification
                         </h5>
-                        <p className="">{selectedJob?.workExpDetail || ""}</p>
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: he.decode(selectedJob?.workExpDetail || ""),
+                          }}
+                        />
+                        {/* <p className="">{selectedJob?.workExpDetail || ""}</p> */}
                       </div>
                     )}
                     {jobDetailConfig?.incentive_package && (
                       <div>
                         <h5 className="text-xl text-[#222222]">Incentive</h5>
-                        <p className="">
+                        {/* <p className="">
                           {selectedJob?.incentivePackages || ""}
-                        </p>
+                        </p> */}
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: he.decode(
+                              selectedJob?.incentivePackages || ""
+                            ),
+                          }}
+                        />
                       </div>
                     )}
                     {jobDetailConfig?.other_benefits && (
@@ -520,13 +538,24 @@ const JobDetailPage = () => {
                         <h5 className="text-xl text-[#222222]">
                           Perks and Benefits
                         </h5>
-                        <p className="">{selectedJob?.otherBenefits || ""}</p>
+                        {/* <p className="">{selectedJob?.otherBenefits || ""}</p>
+                         */}
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: he.decode(selectedJob?.otherBenefits || ""),
+                          }}
+                        />
                       </div>
                     )}
                     {jobDetailConfig?.comments && (
                       <div>
                         <h5 className="text-xl text-[#222222]">Remarks</h5>
-                        <p className="">{selectedJob?.comment || ""}</p>
+                        {/* <p className="">{selectedJob?.comment || ""}</p> */}
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: he.decode(selectedJob?.comment || ""),
+                          }}
+                        />
                       </div>
                     )}
                   </div>
@@ -534,22 +563,28 @@ const JobDetailPage = () => {
               </div>
             </div>
             <div className="justify-self-start order-1 lg:order-2 lg:justify-self-end lg:col-span-1">
-            <div className="mt-4 w-[100%] sm:items-center md:sticky md:top-24 md:mt-0 sticky top-8 flex gap-2 lg:gap-4 flex-col">
-              <Link
-                onClick={(e) => localStorage.setItem("jobId", selectedJob?.Id)}
-                to="/applicant-form"
-                className={`py-2 w-fit px-4 text-sm hover:bg-transparent hover:text-[#222222] hover:border hover:border-[#222222] rounded-full font-medium bg-[#222222] text-white`}
-              >
-                Apply Now
-                <ArrowRight className="w-6 h-6 -rotate-45 ml-2 inline-block" />
-              </Link>
-              <Link
-                to="/jobs"
-                className="inline-flex text-sm hover:underline items-center justify-start md:justify-end border border-transparent font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
-              >
-                View all jobs
-              </Link>
-            </div>
+              <div className="mt-4 w-[100%] sm:items-center md:sticky md:top-24 md:mt-0 sticky top-8 flex gap-2 lg:gap-4 flex-col">
+                <Link
+                  onClick={(e) => {
+                    localStorage.setItem(
+                      "localizationId",
+                      selectedJob?.localizationId
+                    );
+                    localStorage.setItem("jobId", selectedJob?.Id);
+                  }}
+                  to="/applicant-form"
+                  className={`py-2 w-fit px-4 text-sm hover:bg-transparent hover:text-[#222222] hover:border hover:border-[#222222] rounded-full font-medium bg-[#222222] text-white`}
+                >
+                  Apply Now
+                  <ArrowRight className="w-6 h-6 -rotate-45 ml-2 inline-block" />
+                </Link>
+                <Link
+                  to="/jobs"
+                  className="inline-flex text-sm hover:underline items-center justify-start md:justify-end border border-transparent font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
+                >
+                  View all jobs
+                </Link>
+              </div>
             </div>
           </div>
         </div>

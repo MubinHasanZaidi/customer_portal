@@ -36,7 +36,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div data-title={placeholder} className="relative">
+    <div data-title={placeholder} className="relative overflow-hidden">
       {label && (
         <label htmlFor={id} className="form-label">
           {label}

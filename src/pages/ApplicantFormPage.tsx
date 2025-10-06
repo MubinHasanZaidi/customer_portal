@@ -14,7 +14,7 @@ import Footer from "../components/Footer";
 import SelectOption from "../components/SelectOption";
 import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
-import {formatDates} from "../utils/common";
+import { formatDates } from "../utils/common";
 import {
   ArrowRight,
   CirclePlus,
@@ -42,30 +42,7 @@ import { AppDispatch, RootState } from "../store";
 import { getUploadUrl } from "../../lib/utils";
 import useHandleNavigation from "../hooks/useHandleNavigation";
 import InputDate from "../components/InputDate";
-
-// Utility to convert '26-Feb-1999' to '1999-02-26'
-function convertDateString(dateStr: string): string {
-  if (!dateStr || typeof dateStr !== "string") return dateStr;
-  const match = dateStr.match(/^\d{1,2}-[A-Za-z]{3}-\d{4}$/);
-  if (!match) return dateStr;
-  const [_, day, mon, year] =
-    dateStr.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/) || [];
-  const months: Record<string, string> = {
-    Jan: "01",
-    Feb: "02",
-    Mar: "03",
-    Apr: "04",
-    May: "05",
-    Jun: "06",
-    Jul: "07",
-    Aug: "08",
-    Sep: "09",
-    Oct: "10",
-    Nov: "11",
-    Dec: "12",
-  };
-  return `${year}-${months[mon] || "01"}-${day.padStart(2, "0")}`;
-}
+import MaskedInputField from "../components/MaskedInput";
 
 function convertApplicantDates(
   data: any,
@@ -107,7 +84,10 @@ function convertApplicantDates(
 }
 
 // Utility to build Zod schema dynamically from applicantFormConfig
-function buildApplicantFormSchema(applicantFormConfig: any) {
+function buildApplicantFormSchema(
+  applicantFormConfig: any,
+  localizationId: any
+) {
   // Helper to decide required/optional string
   const str = (key: string) =>
     applicantFormConfig?.[key]
@@ -148,7 +128,7 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
       institutionId: num("academic_info"),
       degreeId: num("academic_info"),
       gpa: academicRequired
-        ? z.coerce.number().min(1, "b/w 1 and 4").max(4, "b/w 1 and 4")
+        ? z.coerce.number().min(1, "b/w 1 and 9").max(9, "b/w 1 and 9")
         : z.coerce.number().optional(),
       startDate: str("academic_info"),
       endDate: str("academic_info"),
@@ -161,7 +141,7 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
         return new Date(data.endDate) >= new Date(data.startDate);
       },
       {
-        message: "Invalid: End Date < Start Date.",
+        message: "Invalid Date Range.",
         path: ["endDate"],
       }
     );
@@ -182,7 +162,7 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
         return new Date(data.endDate) >= new Date(data.startDate);
       },
       {
-        message: "Invalid: End Date < Start Date.",
+        message: "Invalid Date Range.",
         path: ["endDate"],
       }
     );
@@ -206,7 +186,7 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
         return new Date(data.endDate) >= new Date(data.startDate);
       },
       {
-        message: "Invalid: End Date < Start Date.",
+        message: "Invalid Date Range.",
         path: ["endDate"],
       }
     );
@@ -234,14 +214,23 @@ function buildApplicantFormSchema(applicantFormConfig: any) {
             }, "Date of birth cannot be in the future")
         : z.string().optional(),
       nic_no: applicantFormConfig?.["nic_no"]
-        ? z
-            .string()
-            .regex(/^\d{5}-\d{7}-\d{1}$/, "Format: 12345-1234567-1")
-            .nullable()
-            .refine((val) => val !== null && val.trim() !== "", {
-              message: "Required",
-            })
+        ? localizationId == 1
+          ? z
+              .string()
+              .regex(/^\d{5}-\d{7}-\d{1}$/, "Format: 12345-1234567-1")
+              .nullable()
+              .refine((val) => val !== null && val.trim() !== "", {
+                message: "Required",
+              })
+          : z
+              .string()
+              .max(22, "Maximum 22 characters allowed")
+              .nullable()
+              .refine((val) => val !== null && val.trim() !== "", {
+                message: "Required",
+              })
         : z.string().optional(),
+
       passportNo: str("passportNo"),
       relation_name: str("relation_name"),
       nationality: num("nationality"),
@@ -386,6 +375,7 @@ const ApplicantFormPage = () => {
     themeConfig,
     applicantFormConfig,
     applicant_form_percent_config,
+    subsidiary,
   } = companyConfig;
   const { primary_color, secondary_color } = themeConfig;
 
@@ -399,9 +389,16 @@ const ApplicantFormPage = () => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [cvFileName, setCvFileName] = useState<string>("");
   const jobId = localStorage.getItem("jobId");
+  const localizationId =
+    localStorage.getItem("localizationId") ||
+    subsidiary[0]?.localizationId ||
+    null;
 
   // Build schema dynamically
-  const applicantFormSchema = buildApplicantFormSchema(applicantFormConfig);
+  const applicantFormSchema = buildApplicantFormSchema(
+    applicantFormConfig,
+    localizationId
+  );
 
   type ApplicantFormData = z.infer<typeof applicantFormSchema>;
 
@@ -416,6 +413,7 @@ const ApplicantFormPage = () => {
     handleSubmit,
     control,
     setValue,
+    getValues,
     watch,
     formState: { errors, dirtyFields },
   } = methods;
@@ -580,10 +578,9 @@ const ApplicantFormPage = () => {
     const payload = {
       ...data,
       jobId: jobId !== "none" ? jobId : null,
-       dateOfBirth: data.dateOfBirth
-    ? formatDates(data.dateOfBirth, "dd-MMM-yyyy")
-    : null,
-
+      dateOfBirth: data.dateOfBirth
+        ? formatDates(data.dateOfBirth, "dd-MMM-yyyy")
+        : null,
     };
     dispatch(
       applicatFormSubmit({
@@ -850,15 +847,39 @@ const ApplicantFormPage = () => {
                               />
                             )}
                           />
-
-                          <InputArea
-                            id="nic_no"
-                            placeholder="Id Card No"
-                            type="text"
-                            error={errors.nic_no?.message}
-                            registration={{
-                              ...register("nic_no"),
-                            }}
+                          <Controller
+                            name="nic_no"
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <MaskedInputField
+                                id="nic_no"
+                                placeholder="ID Card No"
+                                mask={
+                                  localizationId == 1
+                                    ? [
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        "-",
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        /\d/,
+                                        "-",
+                                        /\d/,
+                                      ]
+                                    : false // 👈 disables masking, allows free typing
+                                }
+                                value={field.value || ""}
+                                onChange={field.onChange}
+                                error={fieldState.error?.message}
+                              />
+                            )}
                           />
                           <InputArea
                             id="passportNo"
@@ -1303,22 +1324,33 @@ const ApplicantFormPage = () => {
                                           <Controller
                                             control={control}
                                             name={`academics.${index}.startDate`}
-                                            render={({ field }) => (
-                                              <InputDate
-                                                id="startDate"
-                                                placeholder="Start Date"
-                                                max={new Date().toDateString()}
-                                                value={field.value || undefined}
-                                                onChange={field.onChange}
-                                                error={getFieldError(
-                                                  errors.academics,
-                                                  index,
-                                                  "startDate"
-                                                )}
-                                                popperClassName="z-[9999]"
-                                                portalId="root-portal"
-                                              />
-                                            )}
+                                            render={({ field }) => {
+                                              const endDateValue = watch(
+                                                `academics.${index}.endDate`
+                                              );
+                                              return (
+                                                <InputDate
+                                                  id="startDate"
+                                                  placeholder="Start Date"
+                                                  max={
+                                                    endDateValue
+                                                      ? endDateValue
+                                                      : new Date()
+                                                  }
+                                                  value={
+                                                    field.value || undefined
+                                                  }
+                                                  onChange={field.onChange}
+                                                  error={getFieldError(
+                                                    errors.academics,
+                                                    index,
+                                                    "startDate"
+                                                  )}
+                                                  popperClassName="z-[9999]"
+                                                  portalId="root-portal"
+                                                />
+                                              );
+                                            }}
                                           />
                                         </td>
                                         <td className="p-1">
@@ -1333,6 +1365,7 @@ const ApplicantFormPage = () => {
                                                 <InputDate
                                                   id="endDate"
                                                   placeholder="End Date"
+                                                  disable={!startDateValue}
                                                   value={
                                                     field.value || undefined
                                                   }
@@ -1548,6 +1581,7 @@ const ApplicantFormPage = () => {
                                               id="endDate"
                                               placeholder="End Date"
                                               value={field.value || undefined}
+                                              disable={!startDateValue}
                                               min={startDateValue || undefined}
                                               onChange={field.onChange}
                                               error={getFieldError(
@@ -1743,6 +1777,7 @@ const ApplicantFormPage = () => {
                                             <InputDate
                                               id="endDate"
                                               placeholder="End Date"
+                                              disable={!startDateValue}
                                               min={startDateValue || undefined}
                                               value={field.value || undefined}
                                               onChange={field.onChange}

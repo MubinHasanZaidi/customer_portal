@@ -9,7 +9,7 @@ import {
   BriefcaseBusiness,
   Handshake,
 } from "lucide-react";
-
+import he from "he";
 interface JobCardProps {
   id: string;
   title: string;
@@ -41,14 +41,10 @@ const JobCard: React.FC<JobCardProps> = ({
         <div className="space-y-6 w-full">
           <div>
             <h3 className="text-xl font-semibold text-[#222222]">{title}</h3>
-            <p className="mt-1 text-sm font-normal text-[#222222] line-clamp-2">
-              {description}
-              {/* Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries. */}
-            </p>
+            <p
+              dangerouslySetInnerHTML={{ __html: he.decode(description || "") }}
+              className="mt-1 text-sm font-normal text-[#222222] line-clamp-2"
+            />
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full font-bold">
             <div
@@ -62,7 +58,7 @@ const JobCard: React.FC<JobCardProps> = ({
               title="Job type"
               className="col-span-1 flex items-center text-xs text-[#222222]"
             >
-                    <BriefcaseBusiness className="w-4 h-4 mr-1" />
+              <BriefcaseBusiness className="w-4 h-4 mr-1" />
               {type}
             </div>
             <div

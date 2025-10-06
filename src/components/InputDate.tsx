@@ -15,7 +15,7 @@ interface InputDateProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   disable?: boolean;
-  max?: string;
+  max?: any;
   min?: string;
   rightIcon?: React.ReactNode;
   popperClassName?: string;
@@ -55,6 +55,10 @@ const InputDate: React.FC<InputDateProps> = ({
   };
   const selectedDate = parseDate(value ?? "");
 
+  // Parse max and min dates
+  const maxDate = max ? parseDate(max) || new Date(max) : undefined;
+  const minDate = min ? parseDate(min) || new Date(min) : undefined;
+
   // Always output 'yyyy-MM-dd' to the form
   const handleChange = (date: Date | null) => {
     const formatted = date ? format(new Date(date), "yyyy-MM-dd") : "";
@@ -74,15 +78,14 @@ const InputDate: React.FC<InputDateProps> = ({
       )}
       <div className="relative">
         <div
-          // style={{
-          //   borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
-          // }}
+        // style={{
+        //   borderBottom: `2px solid ${isFocused ? primary_color : ""}`,
+        // }}
         >
           <DatePicker
             id={id}
             selected={selectedDate}
             onChange={handleChange}
-            
             dateFormat="dd-MMM-yyyy"
             disabled={disable}
             placeholderText={placeholder}
@@ -94,14 +97,19 @@ const InputDate: React.FC<InputDateProps> = ({
               setIsFocused(false);
               setTouched(true);
             }}
-            maxDate={max ? new Date(max) : undefined}
-            minDate={min ? new Date(min) : undefined}
+            maxDate={maxDate}
+            minDate={minDate}
             {...(registration ? { name: registration.name } : {})}
             {...(popperClassName ? { popperClassName } : {})}
             {...(portalId ? { portalId } : {})}
             showMonthDropdown
             showYearDropdown
             dropdownMode="select"
+            filterDate={(date) => {
+              if (maxDate && date > maxDate) return false;
+              if (minDate && date < minDate) return false;
+              return true;
+            }}
           />
         </div>
         {rightIcon && (
