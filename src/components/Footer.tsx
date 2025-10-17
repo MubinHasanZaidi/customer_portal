@@ -45,7 +45,7 @@ const Footer = () => {
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
               <span className="text-sm ">
                 Once registered <span style={{ fontWeight: 600 }}>Login</span>{" "}
-                with user id
+                with user ID
               </span>
             </li>
             <li className="flex items-center gap-3">
