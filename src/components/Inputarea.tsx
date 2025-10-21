@@ -10,7 +10,7 @@ interface InputAreaProps {
   error?: string;
   placeholder?: string;
   registration?: UseFormRegisterReturn;
-  value?: string | number;
+  value?: any;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   rightIcon?: React.ReactNode;
@@ -25,7 +25,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   type = "text",
   error,
   registration,
-  max = '',
+  max = "",
   value,
   onChange,
   placeholder,
@@ -64,6 +64,11 @@ const InputArea: React.FC<InputAreaProps> = ({
             onValueChange={handleCurrencyChange}
             maxLength={max}
             disabled={disable}
+            onWheel={(e) => {
+              if (type === "number") {
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
             allowNegativeValue={false}
             className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b-2 border-b-[#707070] focus:border-y-0 bg-transparent focus:border-b-2 focus:ring-0 placeholder:text-gray-400 ${
               disable ? "text-[#6f6f6f]" : "text-[#222222]"

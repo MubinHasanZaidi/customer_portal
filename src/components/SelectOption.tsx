@@ -93,16 +93,16 @@ const SelectOption: React.FC<SelectOptionProps> = ({
     });
   };
 
-  const selectedLabel = options.find((opt) => opt.value === currentValue)
-    ?.label ? (
-    <span className="text-sm my-0 text-[#222222] line-clamp-1">
-      {options.find((opt) => opt.value === currentValue)?.label}
-    </span>
-  ) : (
-    <span className="text-sm my-0 text-gray-400 line-clamp-1">
-      {placeholder}
-    </span>
-  );
+  const selectedLabel =
+    options.find((opt) => opt.value === currentValue)?.label !== undefined ? (
+      <span className="text-sm my-0 text-[#222222] line-clamp-1">
+        {options.find((opt) => opt.value === currentValue)?.label}
+      </span>
+    ) : (
+      <span className="text-sm my-0 text-gray-400 line-clamp-1">
+        {placeholder}
+      </span>
+    );
   return (
     <div className="min-h-[6.3vh]">
       <div data-title={placeholder} ref={dropdownRef} className="relative">

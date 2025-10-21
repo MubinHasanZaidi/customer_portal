@@ -15,17 +15,7 @@ import SelectOption from "../components/SelectOption";
 import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
 import { formatDates } from "../utils/common";
-import {
-  ArrowRight,
-  CirclePlus,
-  CircleUserRound,
-  Delete,
-  DeleteIcon,
-  Drumstick,
-  MinusCircle,
-  PlusCircle,
-  Trash2,
-} from "lucide-react";
+import { ArrowRight, CirclePlus, CircleUserRound, Trash2 } from "lucide-react";
 import StarRating from "../components/StarRating";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import {
@@ -57,29 +47,6 @@ function convertApplicantDates(
   if (newData?.file) {
     setCvFileName(newData?.file);
   }
-  // if (newData.dateOfBirth)
-  //   newData.dateOfBirth = convertDateString(newData.dateOfBirth);
-  // if (Array.isArray(newData.academics)) {
-  //   newData.academics = newData.academics.map((a: any) => ({
-  //     ...a,
-  //     startDate: a.startDate ? convertDateString(a.startDate) : a.startDate,
-  //     endDate: a.endDate ? convertDateString(a.endDate) : a.endDate,
-  //   }));
-  // }
-  // if (Array.isArray(newData.experiences)) {
-  //   newData.experiences = newData.experiences.map((e: any) => ({
-  //     ...e,
-  //     startDate: e.startDate ? convertDateString(e.startDate) : e.startDate,
-  //     endDate: e.endDate ? convertDateString(e.endDate) : e.endDate,
-  //   }));
-  // }
-  // if (Array.isArray(newData.skills)) {
-  //   newData.skills = newData.skills.map((s: any) => ({
-  //     ...s,
-  //     startDate: s.startDate ? convertDateString(s.startDate) : s.startDate,
-  //     endDate: s.endDate ? convertDateString(s.endDate) : s.endDate,
-  //   }));
-  // }
   return newData;
 }
 
@@ -97,7 +64,7 @@ function buildApplicantFormSchema(
           .refine((val) => val !== null && val.trim() !== "", {
             message: "Required",
           })
-      : z.string().optional();
+      : z.string().nullable().optional();
   // Helper to decide required/optional number
   const num = (key: string) =>
     applicantFormConfig?.[key]
@@ -107,19 +74,24 @@ function buildApplicantFormSchema(
             invalid_type_error: "Required",
           })
           .min(1, "Required")
-      : z.coerce.number().optional();
+      : z.coerce.number().nullable().optional().default(null);
   // Helper for email
   const email = (key: string) =>
     applicantFormConfig?.[key]
       ? z
-          .string()
-          .refine((val) => val !== null && val.trim() !== "", {
-            message: "Required",
-          })
-          .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
-            message: "Invalid",
-          })
-      : z.string().optional();
+          .union([z.string(), z.null()]) // allow string or null
+          .transform((val) => (val === "" ? null : val))
+          .refine(
+            (val) => {
+              if (val === null) return false; // treat null as missing → trigger Required
+              return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+            },
+            {
+              message: "Invalid",
+            }
+          )
+          .refine((val) => val !== null, { message: "Required" })
+      : z.string().nullable().optional();
 
   // Academic Table
   const academicRequired = !!applicantFormConfig?.academic_info;
@@ -212,7 +184,7 @@ function buildApplicantFormSchema(
               const birthDate = new Date(date);
               return birthDate <= today;
             }, "Date of birth cannot be in the future")
-        : z.string().optional(),
+        : z.string().nullable().optional(),
       nic_no: applicantFormConfig?.["nic_no"]
         ? localizationId == 1
           ? z
@@ -246,22 +218,36 @@ function buildApplicantFormSchema(
       additional_summary: str("address"),
       phone_cell: applicantFormConfig?.["phone_cell"]
         ? z
-            .string()
-            .regex(
-              /^0[0-9]{9,14}$/,
-              "Must start with 0 and contain only digits (10-15 digits)"
+            .union([z.string(), z.null()]) // allow string or null
+            .transform((val) => (val === "" ? null : val))
+            .refine(
+              (val) => {
+                if (val === null) return false; // treat null as missing → trigger Required
+                return /^0[0-9]{9,14}$/.test(val);
+              },
+              {
+                message:
+                  "Must start with 0 and contain only digits (10–15 digits)",
+              }
             )
-            .refine((val) => val.trim() !== "", { message: "Required" })
-        : z.string().optional(),
+            .refine((val) => val !== null, { message: "Required" })
+        : z.string().nullable().optional(),
       phone_official: applicantFormConfig?.["phone_official"]
         ? z
-            .string()
-            .regex(
-              /^0[0-9]{9,14}$/,
-              "Must start with 0 and contain only digits (10-15 digits)"
+            .union([z.string(), z.null()]) // allow string or null
+            .transform((val) => (val === "" ? null : val))
+            .refine(
+              (val) => {
+                if (val === null) return false; // treat null as missing → trigger Required
+                return /^0[0-9]{9,14}$/.test(val);
+              },
+              {
+                message:
+                  "Must start with 0 and contain only digits (10–15 digits)",
+              }
             )
-            .refine((val) => val.trim() !== "", { message: "Required" })
-        : z.string().optional(),
+            .refine((val) => val !== null, { message: "Required" })
+        : z.string().nullable().optional(),
       email_personal: email("email_personal"),
 
       // General Information
@@ -346,6 +332,191 @@ function buildApplicantFormSchema(
           path: ["maritalStatus"],
           code: z.ZodIssueCode.custom,
           message: `Mr. cannot be Widow.`,
+        });
+      }
+
+      // Academic validation - ONLY for optional case when user added rows
+      if (data.academics && data.academics.length > 0 && !academicRequired) {
+        data.academics.forEach((academic, index) => {
+          // Check if this academic record has any data
+          // Validate required fields
+          if (!academic.institutionId) {
+            ctx.addIssue({
+              path: [`academics.${index}.institutionId`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!academic.degreeId) {
+            ctx.addIssue({
+              path: [`academics.${index}.degreeId`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!academic.gpa) {
+            ctx.addIssue({
+              path: [`academics.${index}.gpa`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!academic.startDate) {
+            ctx.addIssue({
+              path: [`academics.${index}.startDate`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!academic.endDate) {
+            ctx.addIssue({
+              path: [`academics.${index}.endDate`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!academic.cityId) {
+            ctx.addIssue({
+              path: [`academics.${index}.cityId`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!academic.countryId) {
+            ctx.addIssue({
+              path: [`academics.${index}.countryId`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+
+          // Date range validation
+          if (academic.startDate && academic.endDate) {
+            if (new Date(academic.endDate) < new Date(academic.startDate)) {
+              ctx.addIssue({
+                path: [`academics.${index}.endDate`],
+                code: z.ZodIssueCode.custom,
+                message: "Invalid Date Range.",
+              });
+            }
+          }
+        });
+      }
+
+      // Same for experiences
+      if (
+        data.experiences &&
+        data.experiences.length > 0 &&
+        !experienceRequired
+      ) {
+        data.experiences.forEach((experience, index) => {
+          // Validate required fields
+          if (!experience.companyName) {
+            ctx.addIssue({
+              path: [`experiences.${index}.companyName`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!experience.positionHeld) {
+            ctx.addIssue({
+              path: [`experiences.${index}.positionHeld`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!experience.startDate) {
+            ctx.addIssue({
+              path: [`experiences.${index}.startDate`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!experience.endDate) {
+            ctx.addIssue({
+              path: [`experiences.${index}.endDate`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!experience.cityId) {
+            ctx.addIssue({
+              path: [`experiences.${index}.cityId`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!experience.countryId) {
+            ctx.addIssue({
+              path: [`experiences.${index}.countryId`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+
+          // Date range validation
+          if (experience.startDate && experience.endDate) {
+            if (new Date(experience.endDate) < new Date(experience.startDate)) {
+              ctx.addIssue({
+                path: [`experiences.${index}.endDate`],
+                code: z.ZodIssueCode.custom,
+                message: "Invalid Date Range.",
+              });
+            }
+          }
+        });
+      }
+
+      // Same for skills
+      if (data.skills && data.skills.length > 0 && !skillsRequired) {
+        data.skills.forEach((skill, index) => {
+          // Validate required fields
+          if (!skill.skill) {
+            ctx.addIssue({
+              path: [`skills.${index}.skill`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!skill.description) {
+            ctx.addIssue({
+              path: [`skills.${index}.description`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!skill.startDate) {
+            ctx.addIssue({
+              path: [`skills.${index}.startDate`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (!skill.endDate) {
+            ctx.addIssue({
+              path: [`skills.${index}.endDate`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+          if (skill.ratingScale === undefined || skill.ratingScale === null) {
+            ctx.addIssue({
+              path: [`skills.${index}.ratingScale`],
+              code: z.ZodIssueCode.custom,
+              message: "Required",
+            });
+          }
+
+          // Date range validation
+          if (skill.startDate && skill.endDate) {
+            if (new Date(skill.endDate) < new Date(skill.startDate)) {
+              ctx.addIssue({
+                path: [`skills.${index}.endDate`],
+                code: z.ZodIssueCode.custom,
+                message: "Invalid Date Range.",
+              });
+            }
+          }
         });
       }
     });
@@ -626,7 +797,7 @@ const ApplicantFormPage = () => {
   let countryId = watch("countryId");
   useEffect(() => {
     if (countryId) {
-      setValue("cityId", undefined);
+      setValue("cityId", null);
       dispatch(fetchCityOptionAction({ key: "cityList", countryId }));
     }
   }, [countryId]);
@@ -660,23 +831,23 @@ const ApplicantFormPage = () => {
 
   const handleAddAcademic = () => {
     appendAcademic({
-      institutionId: undefined,
-      degreeId: undefined,
+      institutionId: null,
+      degreeId: null,
       gpa: 0,
       startDate: "",
       endDate: "",
-      cityId: undefined,
-      countryId: undefined,
+      cityId: null,
+      countryId: null,
     });
     setTimeout(() => {
       const newIndex = academicFields.length;
-      setValue(`academics.${newIndex}.institutionId`, undefined);
-      setValue(`academics.${newIndex}.degreeId`, undefined);
+      setValue(`academics.${newIndex}.institutionId`, null);
+      setValue(`academics.${newIndex}.degreeId`, null);
       setValue(`academics.${newIndex}.gpa`, 0);
       setValue(`academics.${newIndex}.startDate`, "");
       setValue(`academics.${newIndex}.endDate`, "");
-      setValue(`academics.${newIndex}.cityId`, undefined);
-      setValue(`academics.${newIndex}.countryId`, undefined);
+      setValue(`academics.${newIndex}.cityId`, null);
+      setValue(`academics.${newIndex}.countryId`, null);
     }, 0);
   };
 
@@ -687,8 +858,8 @@ const ApplicantFormPage = () => {
       positionHeld: "",
       startDate: "",
       endDate: "",
-      cityId: undefined,
-      countryId: undefined,
+      cityId: null,
+      countryId: null,
     });
     setTimeout(() => {
       const newIndex = experienceFields.length;
@@ -696,8 +867,8 @@ const ApplicantFormPage = () => {
       setValue(`experiences.${newIndex}.positionHeld`, "");
       setValue(`experiences.${newIndex}.startDate`, "");
       setValue(`experiences.${newIndex}.endDate`, "");
-      setValue(`experiences.${newIndex}.cityId`, undefined);
-      setValue(`experiences.${newIndex}.countryId`, undefined);
+      setValue(`experiences.${newIndex}.cityId`, null);
+      setValue(`experiences.${newIndex}.countryId`, null);
     }, 0);
   };
 
@@ -839,7 +1010,7 @@ const ApplicantFormPage = () => {
                                   )
                                 ).toDateString()}
                                 placeholder="Date of Birth"
-                                value={field.value || undefined}
+                                value={field.value || null}
                                 onChange={field.onChange}
                                 error={errors?.dateOfBirth?.message}
                                 popperClassName="z-[9999]"
@@ -1069,7 +1240,7 @@ const ApplicantFormPage = () => {
                                   max={3}
                                   value={field.value}
                                   onChange={field.onChange}
-                                  placeholder="Tenative Days of Joining"
+                                  placeholder="Tentative  Days of Joining"
                                   type="number"
                                   error={errors.applicantCanJoin?.message}
                                 />
