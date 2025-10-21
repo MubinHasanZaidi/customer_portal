@@ -86,7 +86,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   const handleClear = (e: React.MouseEvent) => {
     if (disable) return;
     e.stopPropagation();
-    setValue(registration.name, "", {
+    setValue(registration.name, null, {
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true,
