@@ -1188,25 +1188,25 @@ const ApplicantFormPage = () => {
                           </div>
                           <div>
                             <InputArea
-                              id="phone_cell"
-                              placeholder="Phone (Offical)"
-                              type="tel"
-                              max={15}
-                              error={errors.phone_cell?.message}
-                              registration={{
-                                ...register("phone_cell"),
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <InputArea
                               id="phone_official"
-                              placeholder="Cell No"
+                              placeholder="Phone (Offical)"
                               type="tel"
                               max={15}
                               error={errors.phone_official?.message}
                               registration={{
                                 ...register("phone_official"),
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <InputArea
+                              id="phone_cell"
+                              placeholder="Cell No"
+                              type="tel"
+                              max={15}
+                              error={errors.phone_cell?.message}
+                              registration={{
+                                ...register("phone_cell"),
                               }}
                             />
                           </div>
