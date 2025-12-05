@@ -14,7 +14,7 @@ import Footer from "../components/Footer";
 import SelectOption from "../components/SelectOption";
 import InputArea from "../components/Inputarea";
 import TextArea from "../components/TextArea";
-import { formatDates } from "../utils/common";
+import { formatDates, generateImageUrl } from "../utils/common";
 import { ArrowRight, CirclePlus, CircleUserRound, Trash2 } from "lucide-react";
 import StarRating from "../components/StarRating";
 import useCompanyConfig from "../hooks/useCompanyConfig";
@@ -42,7 +42,7 @@ function convertApplicantDates(
   if (!data) return data;
   const newData = { ...data };
   if (newData?.profile_image) {
-    setPhoto(newData?.profile_image);
+    setPhoto(generateImageUrl(newData?.profile_image));
   }
   if (newData?.file) {
     setCvFileName(newData?.file);

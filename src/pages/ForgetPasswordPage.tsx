@@ -13,6 +13,7 @@ import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { themeImages } from "../data/mockData";
 import { forgotPasswordWithEmail } from "../store/actions/authActions";
+import { generateImageUrl } from "../utils/common";
 
 const resetPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -62,7 +63,7 @@ const ForgetPasswordPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <img
-                src={company?.Logo}
+                src={generateImageUrl(company?.Logo)}
                 alt={company?.name}
                 className="h-12 mx-auto mb-4"
               />

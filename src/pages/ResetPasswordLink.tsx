@@ -9,6 +9,7 @@ import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { themeImages } from "../data/mockData";
 import { updatePassword } from "../store/actions/authActions";
+import { generateImageUrl } from "../utils/common";
 
 //  Schema for password + confirmPassword
 const resetPasswordSchema = z
@@ -88,7 +89,7 @@ const ResetPasswordLinkPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <img
-                src={company?.Logo}
+                src={generateImageUrl(company?.Logo)}
                 alt={company?.name}
                 className="h-12 mx-auto mb-4"
               />

@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { getUploadUrl } from "../../lib/utils";
+import { generateImageUrl } from "../utils/common";
 
 const Header = () => {
   const { companyConfig, userConfig, setUserConfig } = useCompanyConfig();
@@ -71,7 +72,7 @@ const Header = () => {
           }}
         >
           <img
-            src={company?.Logo}
+            src={generateImageUrl(company?.Logo)}
             alt={company?.name}
             className="h-8 lg:h-12 m-auto"
           />
@@ -99,7 +100,7 @@ const Header = () => {
                   {userConfig?.profile_image ? (
                     <>
                       <img
-                        src={userConfig?.profile_image}
+                        src={generateImageUrl(userConfig?.profile_image)}
                         alt="User"
                         className="w-10 h-10 rounded-full object-cover border border-black"
                       />

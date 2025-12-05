@@ -11,6 +11,7 @@ import InputArea from "../components/Inputarea";
 import useCompanyConfig from "../hooks/useCompanyConfig";
 import { resetError } from "../store/slices/authSlice";
 import { themeImages } from "../data/mockData";
+import { generateImageUrl } from "../utils/common";
 
 // Login schema
 const loginSchema = z.object({
@@ -118,7 +119,7 @@ const AuthPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-6">
               <img
-                src={company?.Logo}
+                src={generateImageUrl(company?.Logo)}
                 alt={company?.name}
                 className="h-12 mx-auto mb-4"
               />
