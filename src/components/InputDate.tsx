@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parse, isValid } from "date-fns";
 import { UseFormRegisterReturn } from "react-hook-form";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 
 interface InputDateProps {
   id: string;
@@ -38,8 +38,8 @@ const InputDate: React.FC<InputDateProps> = ({
   popperClassName,
   portalId,
 }) => {
-  const { companyConfig } = useCompanyConfig();
-  const { primary_color } = companyConfig.themeConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { primary_color } = customerConfig.themeConfig;
   const [isFocused, setIsFocused] = useState(false);
   const [touched, setTouched] = useState(false);
   // Convert string value (like "2025-07-02" or "02-Jul-2025") to Date object

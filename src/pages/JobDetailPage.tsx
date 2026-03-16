@@ -12,13 +12,13 @@ import {
   Handshake,
   MapPin,
 } from "lucide-react";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import { format } from "date-fns";
 import he from "he";
 
 const JobDetailPage = () => {
-  const { companyConfig } = useCompanyConfig();
-  const { company, themeConfig, jobDetailConfig } = companyConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { company, themeConfig, jobDetailConfig } = customerConfig;
   const { primary_color, secondary_color } = themeConfig;
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
@@ -51,7 +51,7 @@ const JobDetailPage = () => {
         <div className="flex-1 flex flex-col items-center justify-center p-4">
           <p className="text-red-500 mb-4">{error || "Job not found"}</p>
           <Link
-            to="/jobs"
+            to="/tickets"
             className="mt-4 px-4 py-2 bg-transparent text-sm border-[#000000] border rounded-full text-[#00000]"
           >
             Back to Jobs
@@ -579,7 +579,7 @@ const JobDetailPage = () => {
                   <ArrowRight className="w-6 h-6 -rotate-45 ml-2 inline-block" />
                 </Link>
                 <Link
-                  to="/jobs"
+                  to="/tickets"
                   className="inline-flex text-sm hover:underline items-center justify-start md:justify-end border border-transparent font-medium rounded-md text-[#222222] focus:ring-2 focus:ring-offset-2"
                 >
                   View all jobs

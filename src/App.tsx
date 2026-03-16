@@ -4,29 +4,27 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import JobsPage from "./pages/JobsPage";
 import JobDetailPage from "./pages/JobDetailPage";
 import ApplicantFormPage from "./pages/ApplicantFormPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage";
-import CareerPage from "./pages/CareerPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import CompanyConfigProvider from "./contexts/CompanyConfigContext";
+import CustomerConfigProvider from "./contexts/CustomerConfigContext";
 import HowItWorkPage from "./pages/HowItWorkPage";
 import DisclaimerPage from "./pages/DisclaimerPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ResetPasswordLinkPage from "./pages/ResetPasswordLink";
+import MainPage from "./pages/MainPage";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/career/:companyId" element={<CareerPage />} />
+        <Route path="/customer/:customerId" element={<MainPage />} />
         <Route
           path="/*"
           element={
-            <CompanyConfigProvider>
+            <CustomerConfigProvider>
               <Routes>
-                <Route path="/" element={<Navigate to="/jobs" replace />} />
+                <Route path="/" element={<Navigate to="/tickets" replace />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route
                   path="/forget-password"
@@ -36,30 +34,13 @@ function App() {
                   path="/reset-link-password/:Id"
                   element={<ResetPasswordLinkPage />}
                 />
-                <Route
-                  path="/reset-password"
-                  element={
-                    <ProtectedRoute>
-                      <ResetPasswordPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/jobs" element={<JobsPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/tickets" element={<JobsPage />} />
                 <Route path="/how-it-work" element={<HowItWorkPage />} />
                 <Route path="/disclaimer" element={<DisclaimerPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                <Route path="/job-detail/:id" element={<JobDetailPage />} />
-                <Route
-                  path="/applicant-form"
-                  element={
-                    <ProtectedRoute>
-                      <ApplicantFormPage />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* <Route path="*" element={<NotFoundPage />} /> */}
               </Routes>
-            </CompanyConfigProvider>
+            </CustomerConfigProvider>
           }
         />
       </Routes>

@@ -21,47 +21,55 @@ apiAuth.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
+);
+const handleUnauthorized = () => {
+  localStorage.removeItem("access");
+  localStorage.removeItem("refresh");
+  localStorage.removeItem("user");
+  window.location.href = "/auth"; // Redirect to auth page
+};
+
+apiAuth.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      handleUnauthorized();
+    }
+    return Promise.reject(error);
+  },
 );
 
 // Auth APIs
 export const authAPI = {
-  login: async (email: string, password: string, companyId: string) => {
+  login: async (email: string, password: string, customerId: string) => {
     const response = await api.post(
-      "/career/login",
-      { email, password, companyId },
-      { headers: { "Content-Type": "application/json" } }
+      "/customer_portal/login",
+      { email, password, customerId },
+      { headers: { "Content-Type": "application/json" } },
     );
     return response.data;
   },
 
-  signup: async (
-    name: string,
-    email: string,
-    password: string,
-    companyId: string
-  ) => {
+  forgotPassword: async (email: string, customerId: string) => {
     const response = await api.post(
-      "/career/register",
-      { name, email, password, companyId },
-      { headers: { "Content-Type": "application/json" } }
-    );
-    return response.data;
-  },
-
-  forgotPassword: async (email: string) => {
-    const response = await api.post(
-      "/career/forget-password",
-      { email },
-      { headers: { "Content-Type": "application/json" } }
+      "/customer_portal/forget-password",
+      { email, customerId },
+      { headers: { "Content-Type": "application/json" } },
     );
     return response.data;
   },
 
   updatePassowrd: async (body: any) => {
-    const response = await api.post("/career/update-forget-password", body, {
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await api.post(
+      "/customer_portal/update-forget-password",
+      body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
     return response.data;
   },
 
@@ -73,23 +81,23 @@ export const authAPI = {
     newPassword: string;
   }) => {
     const response = await apiAuth.post(
-      "/career/reset_password",
+      "/customer_portal/reset_password",
       { previousPassword, newPassword },
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
     return response.data;
   },
 
-  companyConfig: async (companyId: string) => {
-    const response = await api.get(`/career/${companyId}`);
+  customerConfig: async (customerId: string) => {
+    const response = await api.get(`/customer_portal/${customerId}`);
     return response.data;
   },
 
   refreshToken: async (refresh: string) => {
     const response = await apiAuth.post(
-      "/career/refresh_token",
+      "/customer_portal/refresh_token",
       { refresh },
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
     return response.data;
   },
@@ -98,46 +106,50 @@ export const authAPI = {
 // Jobs APIs
 export const jobsAPI = {
   getJobs: async (body: any) => {
-    const response = await api.post("/career/jobs", body, {
+    const response = await api.post("/customer_portal/tickets", body, {
       headers: { "Content-Type": "application/json" },
     });
     return response.data;
   },
 
   getJobById: async (id: string) => {
-    const response = await api.get(`/career/jobs/${id}`);
+    const response = await api.get(`/customer_portal/tickets/${id}`);
     return response.data;
   },
-  getLocationByCompanyId: async (companyId: string) => {
-    const response = await api.get(`/career/locations/${companyId}`);
+  getLocationByCompanyId: async (customerId: string) => {
+    const response = await api.get(`/customer_portal/locations/${customerId}`);
     return response.data;
   },
-  getDepartmentByCompanyId: async (companyId: string) => {
-    const response = await api.get(`/career/departments/${companyId}`);
+  getDepartmentByCompanyId: async (customerId: string) => {
+    const response = await api.get(
+      `/customer_portal/departments/${customerId}`,
+    );
     return response.data;
   },
   getFormOption: async (parentId: string) => {
     const response = await apiAuth.post(
-      "/career/form_option",
+      "/customer_portal/form_option",
       { parentId },
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
     return response.data;
   },
   getCountryOption: async () => {
-    const response = await apiAuth.get("/career/country_option");
+    const response = await apiAuth.get("/customer_portal/country_option");
     return response.data;
   },
   getCityOption: async (countryId?: number) => {
-    const response = await apiAuth.get(`/career/city_option/${countryId}`);
+    const response = await apiAuth.get(
+      `/customer_portal/city_option/${countryId}`,
+    );
     return response.data;
   },
   applicantFormSubmit: async (body?: any) => {
-    const response = await apiAuth.post(`/career/applicant`, body);
+    const response = await apiAuth.post(`/customer_portal/applicant`, body);
     return response.data;
   },
   getApplicantForm: async () => {
-    const response = await apiAuth.get(`/career/applicant`);
+    const response = await apiAuth.get(`/customer_portal/applicant`);
     return response.data;
   },
   uploadFile: async (body: any) => {
@@ -145,21 +157,26 @@ export const jobsAPI = {
     return api.post(`/file-upload`, body);
   },
   getJobMandaotrySkills: async (jboId: string) => {
-    const response = await apiAuth.get(`/career/mandatory_skills/${jboId}`);
+    const response = await apiAuth.get(
+      `/customer_portal/mandatory_skills/${jboId}`,
+    );
     return response.data;
   },
   getActiveVacancy: async () => {
-    const response = await apiAuth.get("/career/active-vacancy");
+    const response = await apiAuth.get("/customer_portal/active-vacancy");
     return response.data;
   },
   downloadOfferLetter: async () => {
-    const response = await apiAuth.get("/career/download-offer-letter", {
-      responseType: "blob",
-    });
+    const response = await apiAuth.get(
+      "/customer_portal/download-offer-letter",
+      {
+        responseType: "blob",
+      },
+    );
     return response.data;
   },
   handleOfferLetter: async (body: any) => {
-    const response = await apiAuth.post("/career/handle-offer", body);
+    const response = await apiAuth.post("/customer_portal/handle-offer", body);
     return response.data;
   },
 };

@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 
 // Add this type above your thunk
 interface FetchJobsParams {
-  companyId: string;
+  customerId: string;
   currentPage: number;
   jobsPerPage: number;
   searchTerm?: string;
@@ -67,9 +67,9 @@ export const fetchJobDetail = createAsyncThunk(
 
 export const fetchJobLocations = createAsyncThunk(
   "job/fetchLocationList",
-  async (companyId: string, { dispatch }) => {
+  async (customerId: string, { dispatch }) => {
     try {
-      const locations = await jobsAPI.getLocationByCompanyId(companyId);
+      const locations = await jobsAPI.getLocationByCompanyId(customerId);
       dispatch(
         fetchLocationList(locations?.data.length > 0 ? locations?.data : [])
       );
@@ -84,9 +84,9 @@ export const fetchJobLocations = createAsyncThunk(
 
 export const fetchJobDepartments = createAsyncThunk(
   "job/fetchDepartmentList",
-  async (companyId: string, { dispatch }) => {
+  async (customerId: string, { dispatch }) => {
     try {
-      const department = await jobsAPI.getDepartmentByCompanyId(companyId);
+      const department = await jobsAPI.getDepartmentByCompanyId(customerId);
       dispatch(
         fetchDepartmentList(department?.data.length > 0 ? department?.data : [])
       );

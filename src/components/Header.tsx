@@ -5,14 +5,13 @@ import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, CircleUserRound } from "lucide-react";
-import useCompanyConfig from "../hooks/useCompanyConfig";
-import { getUploadUrl } from "../../lib/utils";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import { generateImageUrl } from "../utils/common";
+import { themeImages } from "../data/mockData";
 
 const Header = () => {
-  const { companyConfig, userConfig, setUserConfig } = useCompanyConfig();
-  const { company, themeConfig } = companyConfig;
-  const { primary_color, secondary_color } = themeConfig;
+  const { customerConfig, userConfig, setUserConfig } = useCustomerConfig();
+  const { customer } = customerConfig;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,7 +57,7 @@ const Header = () => {
     localStorage.removeItem("refresh");
     setUserConfig(null);
     setIsDropdownOpen(false);
-    navigate("/jobs");
+    navigate("/tickets");
   };
 
   return (
@@ -67,13 +66,13 @@ const Header = () => {
         <div
           className="flex items-end lg:items-center cursor-pointer"
           onClick={() => {
-            // window.location.href = "/jobs";
-            navigate("/jobs");
+            // window.location.href = "/tickets";
+            navigate("/tickets");
           }}
         >
           <img
-            src={generateImageUrl(company?.Logo)}
-            alt={company?.name}
+            src={themeImages["logo"]}
+            alt={""}
             className="h-8 lg:h-12 m-auto"
           />
         </div>
@@ -87,7 +86,7 @@ const Header = () => {
                 >
                   Welcome,{" "}
                   <span
-                    style={{ color: primary_color }}
+                    style={{ color: customer?.primary_color }}
                     className={`font-bold `}
                   >
                     {userConfig?.firstName}
@@ -108,8 +107,8 @@ const Header = () => {
                     </>
                   ) : (
                     <>
-                    <CircleUserRound className="w-5 h-5 rounded-full object-cover stroke-[1.2]" />
-                    <ChevronDown className="w-3 h-3" />
+                      <CircleUserRound className="w-5 h-5 rounded-full object-cover stroke-[1.2]" />
+                      <ChevronDown className="w-3 h-3" />
                     </>
                   )}
                 </button>
@@ -119,18 +118,8 @@ const Header = () => {
                 <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-xl py-0 z-20 border border-gray-100">
                   {/* Actions */}
                   <div className="py-2">
-                    <Link
-                      to="/applicant-form"
-                      className="block px-4 py-1 text-xs text-[#222222] transition-colors"
-                      onClick={() => {
-                        localStorage.setItem("jobId", "none");
-                        setIsDropdownOpen(false);
-                      }}
-                    >
-                      Edit Profile
-                    </Link>
                     <div
-                      style={{ borderColor: secondary_color }}
+                      style={{ borderColor: customer?.secondary_color }}
                       className={`border-t text-center my-1`}
                     />
                     <Link
@@ -141,7 +130,7 @@ const Header = () => {
                       Reset Password
                     </Link>
                     <div
-                      style={{ borderColor: secondary_color }}
+                      style={{ borderColor: customer?.secondary_color }}
                       className={`border-t  text-center my-1`}
                     />
                     <button
@@ -158,7 +147,7 @@ const Header = () => {
             <div className="flex flex-row  gap-1 justify-center items-center space-x-2">
               <Link
                 to={"/auth"}
-                style={{ background: primary_color }}
+                style={{ background: customer?.primary_color }}
                 className={`py-2 px-4 text-xs rounded-full text-white`}
               >
                 Sign up
@@ -168,7 +157,7 @@ const Header = () => {
                 {"  "}
                 <Link
                   to="/auth"
-                  style={{ color: primary_color }}
+                  style={{ color: customer?.primary_color }}
                   className={`text-xs hover:underline`}
                 >
                   Sign in

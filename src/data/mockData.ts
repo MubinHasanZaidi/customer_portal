@@ -8,6 +8,7 @@ import Orange from "../assets/loginImage/Orange.png";
 import Black from "../assets/loginImage/Black.png";
 import Indigo from "../assets/loginImage/Indigo.png";
 import Default from "../assets/loginImage/Default.png";
+import logo from "../assets/logo.png";
 
 export const themeImages: any = {
   Red,
@@ -20,4 +21,5 @@ export const themeImages: any = {
   Black,
   Indigo,
   Default,
+  logo,
 };

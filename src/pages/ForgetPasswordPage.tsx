@@ -4,13 +4,9 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  resetPasswordSuccess,
-  resetPasswordFailure,
-} from "../store/slices/authSlice";
 import type { AppDispatch, RootState } from "../store";
 import InputArea from "../components/Inputarea";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import { themeImages } from "../data/mockData";
 import { forgotPasswordWithEmail } from "../store/actions/authActions";
 import { generateImageUrl } from "../utils/common";
@@ -22,9 +18,8 @@ const resetPasswordSchema = z.object({
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const ForgetPasswordPage = () => {
-  const { companyConfig } = useCompanyConfig();
-  const { company, themeConfig } = companyConfig;
-  const { primary_color, color_name } = themeConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { customer } = customerConfig;
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const [resetSuccess, setResetSuccess] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -41,7 +36,8 @@ const ForgetPasswordPage = () => {
     await dispatch(
       forgotPasswordWithEmail({
         email: data.email,
-      })
+        customerId: customer?.customerId,
+      }),
     ).unwrap();
     // Mock successful password reset
     setResetSuccess(true);
@@ -51,7 +47,7 @@ const ForgetPasswordPage = () => {
     <div
       className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url(${themeImages[color_name || "Default"]})`,
+        backgroundImage: `url(${themeImages[customer.color_name || "Default"]})`,
       }}
     >
       <div className="flex flex-1">
@@ -63,14 +59,14 @@ const ForgetPasswordPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <img
-                src={generateImageUrl(company?.Logo)}
-                alt={company?.name}
+                src={themeImages["logo"]}
+                alt={""}
                 className="h-12 mx-auto mb-4"
               />
               <h2 className="text-xl font-medium text-[#222222]">
-                Welcome to {company?.name}
+                Welcome to {customer?.Customer?.customerName}
               </h2>
-              <p className="text-sm text-[#222222]">Careers Portal</p>
+              <p className="text-sm text-[#222222]">Customer Portal</p>
             </div>
 
             <h3 className="text-md text-[#222222] font-medium text-center mb-6">
@@ -121,7 +117,7 @@ const ForgetPasswordPage = () => {
                 <div className="text-center">
                   <Link
                     to="/auth"
-                    style={{ color: primary_color }}
+                    style={{ color: customer.primary_color }}
                     className={`text-xs hover:underline`}
                   >
                     Back to Login

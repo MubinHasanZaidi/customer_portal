@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 
 const DisclaimerPage = () => {
-  const { companyConfig } = useCompanyConfig();
-  const { themeConfig } = companyConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { themeConfig } = customerConfig;
   const { secondary_color } = themeConfig;
 
   useEffect(() => {

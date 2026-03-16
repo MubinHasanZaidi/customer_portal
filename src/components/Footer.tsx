@@ -1,26 +1,12 @@
 import { Link } from "react-router-dom";
 import dy_logo from "../assets/dy_logo.svg";
 import np_logo from "../assets/NP.svg";
-import useCompanyConfig from "../hooks/useCompanyConfig";
-import logos from "../assets/Logos.svg";
-import {
-  EditIcon,
-  UserPlus,
-  LogIn,
-  Briefcase,
-  Upload,
-  CheckCircle,
-  ArrowUpRightFromSquare,
-  ArrowRight,
-  Phone,
-  MailCheck,
-  Mail,
-} from "lucide-react";
+import useCustomerConfig from "../hooks/useCustomerConfig";
+import { ArrowRight, Mail, Phone } from "lucide-react";
 
 const Footer = () => {
-  const { companyConfig } = useCompanyConfig();
-  const { themeConfig, subsidiary, company } = companyConfig;
-  const { primary_color, secondary_color } = themeConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { customer, subsidiary, company } = customerConfig;
 
   return (
     <footer className="bg-[#111111]">
@@ -32,7 +18,10 @@ const Footer = () => {
               <ArrowRight className="w-5 h-5 text-white inline-block -rotate-45 " />
             </Link>
           </h5>
-          <ul style={{ fontWeight: 400 }} className="mt-4 space-y-2 text-gray-400">
+          <ul
+            style={{ fontWeight: 400 }}
+            className="mt-4 space-y-2 text-gray-400"
+          >
             <li className="flex items-center gap-3">
               {/* <UserPlus className="w-4 h-4 text-blue-600 flex-shrink-0" /> */}
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
@@ -123,7 +112,7 @@ const Footer = () => {
         </div>
       </div>
       <div
-        style={{ fontWeight: 400, color: secondary_color }}
+        style={{ fontWeight: 400, color: customer?.secondary_color }}
         className="bg-[#000000] mt-auto border-t-[0.2px] border-gray-400"
       >
         <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4">

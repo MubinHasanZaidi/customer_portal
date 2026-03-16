@@ -1,43 +1,43 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { companyConfigFetch } from "../store/actions/authActions";
+import {  customerConfigFetch } from "../store/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { decrypt, encrypt } from "../utils/crypto";
 
-const CareerPage = () => {
+const MainPage = () => {
   const navigate = useNavigate();
-  const { companyId } = useParams();
+  const { customerId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const { error_company, companyConfig } = useSelector(
+  const { error_customer, customerConfig } = useSelector(
     (state: RootState) => state.auth
   );
 
   useEffect(() => {
-    if (companyConfig) {
-      let encrpytValue = encrypt(JSON.stringify(companyConfig));
+    if (customerConfig) {
+      let encrpytValue = encrypt(JSON.stringify(customerConfig));
       localStorage.clear();
-      localStorage.setItem("companyConfig", encrpytValue);
-      navigate("/jobs");
+      localStorage.setItem("customerConfig", encrpytValue);
+      navigate("/auth");
     }
-  }, [companyConfig, navigate]);
+  }, [customerConfig, navigate]);
 
   useEffect(() => {
-    if (error_company) {
+    if (error_customer) {
       navigate("/not-found");
     }
-  }, [error_company, navigate]);
+  }, [error_customer, navigate]);
 
   useEffect(() => {
-    if (companyId) {
-      handleCompanyConfig(companyId);
+    if (customerId) {
+      handleCustomerConfig(customerId);
     } else {
       navigate("/not-found");
     }
-  }, [companyId, navigate]);
+  }, [customerId, navigate]);
 
-  const handleCompanyConfig = async (companyId: string) => {
-    await dispatch(companyConfigFetch(companyId)).unwrap();
+  const handleCustomerConfig = async (customerId: string) => {
+    await dispatch(customerConfigFetch(customerId)).unwrap();
   };
 
   return (
@@ -47,4 +47,4 @@ const CareerPage = () => {
   );
 };
 
-export default CareerPage;
+export default MainPage;

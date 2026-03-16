@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
-import useCompanyConfig from "../hooks/useCompanyConfig";
 import CurrencyInput from "react-currency-input-field";
 
 interface InputAreaProps {
@@ -34,9 +33,6 @@ const InputArea: React.FC<InputAreaProps> = ({
   amountFormat = false,
   rightIcon,
 }) => {
-  const { companyConfig } = useCompanyConfig();
-  const { themeConfig } = companyConfig;
-  const { primary_color } = themeConfig;
   const [isFocused, setIsFocused] = useState(false);
 
   // Handler for CurrencyInput to work with react-hook-form registration

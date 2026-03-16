@@ -4,16 +4,12 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  resetPasswordStart,
-  resetPasswordSuccess,
-  resetPasswordFailure,
-} from "../store/slices/authSlice";
+import { resetPasswordFailure } from "../store/slices/authSlice";
 import type { RootState } from "../store";
 import InputArea from "../components/Inputarea";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import { resetPassword } from "../store/actions/authActions";
 import type { AppDispatch } from "../store";
 
@@ -22,7 +18,9 @@ const resetPasswordSchema = z
     previousPassword: z
       .string()
       .min(6, "Password must contain at least 6 characters"),
-    newPassword: z.string().min(6, "Password must contain at least 6 characters"),
+    newPassword: z
+      .string()
+      .min(6, "Password must contain at least 6 characters"),
     confirmPassword: z
       .string()
       .min(6, "Password must contain at least 6 characters"),
@@ -39,9 +37,8 @@ const resetPasswordSchema = z
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const ResetPasswordPage = () => {
-  const { companyConfig } = useCompanyConfig();
-  const { company, themeConfig } = companyConfig;
-  const { primary_color, secondary_color } = themeConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { customer } = customerConfig;
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
   const [resetSuccess, setResetSuccess] = useState(false);
@@ -63,7 +60,7 @@ const ResetPasswordPage = () => {
         resetPassword({
           previousPassword: data.previousPassword,
           newPassword: data.newPassword,
-        })
+        }),
       );
       setResetSuccess(true);
       reset();
@@ -73,7 +70,10 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div style={{ background: secondary_color }} className={`flex flex-col`}>
+    <div
+      style={{ background: customer.secondary_color }}
+      className={`flex flex-col`}
+    >
       <Header />
       <div className="flex flex-col min-h-screen">
         <div className="flex flex-1">
@@ -99,7 +99,7 @@ const ResetPasswordPage = () => {
                     Password has been reset successfully.
                   </div>
                   <Link
-                    to="/jobs"
+                    to="/tickets"
                     className="w-full bg-[#222222] text-white py-2 px-6 text-sm mt-4 rounded-full font-medium hover:bg-black transition-colors"
                   >
                     Go to Jobs

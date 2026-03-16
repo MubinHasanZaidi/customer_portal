@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { ChevronDown, X } from "lucide-react";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 
 interface MultiSelectProps {
   error?: string;
@@ -22,8 +22,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   onChange,
   className = "",
 }) => {
-  const { companyConfig } = useCompanyConfig();
-  const { themeConfig } = companyConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { themeConfig } = customerConfig;
   const { primary_color, secondary_color } = themeConfig;
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);

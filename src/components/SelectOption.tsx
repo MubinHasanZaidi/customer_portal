@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UseFormRegisterReturn, useFormContext } from "react-hook-form";
 import { ChevronDown, X } from "lucide-react";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import { createPortal } from "react-dom";
 
 interface SelectOptionProps {
@@ -21,8 +21,8 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   className = "",
   disable = false,
 }) => {
-  const { companyConfig } = useCompanyConfig();
-  const { themeConfig } = companyConfig;
+  const { customerConfig } = useCustomerConfig();
+  const { themeConfig } = customerConfig;
   const { primary_color, secondary_color } = themeConfig;
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

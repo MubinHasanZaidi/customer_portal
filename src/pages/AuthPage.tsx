@@ -4,14 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { login, signup } from "../store/actions/authActions";
+import { login } from "../store/actions/authActions";
 import type { RootState, AppDispatch } from "../store";
 import dy_logo_white from "../assets/dy_logo_white.svg";
 import InputArea from "../components/Inputarea";
-import useCompanyConfig from "../hooks/useCompanyConfig";
-import { resetError } from "../store/slices/authSlice";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import { themeImages } from "../data/mockData";
-import { generateImageUrl } from "../utils/common";
 
 // Login schema
 const loginSchema = z.object({
@@ -38,10 +36,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const AuthPage = () => {
-  const { companyConfig } = useCompanyConfig();
-  const { company, themeConfig } = companyConfig;
-  const { primary_color, secondary_color, color_name } = themeConfig;
-  const [isLogin, setIsLogin] = useState(true);
+  const { customerConfig } = useCustomerConfig();
+  const { customer } = customerConfig;
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state: RootState) => state.auth);
@@ -71,46 +67,23 @@ const AuthPage = () => {
         login({
           email: data.email,
           password: data.password,
-          companyId: company?.Id,
+          customerId: customer?.customerId,
           navigate,
-        })
+        }),
       ).unwrap();
     } catch (err) {
       // Error is already handled in the action creator
     }
   };
 
-  const onSignupSubmit = async (data: SignupFormData) => {
-    try {
-      await dispatch(
-        signup({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          companyId: company?.Id,
-        })
-      ).unwrap();
-      // navigate("/jobs");
-      setIsLogin(true);
-      resetLogin();
-    } catch (err) {
-      // Error is already handled in the action creator
-    }
-  };
   return (
     <div
       className="min-h-screen flex flex-col bg-white bg-cover bg-center bg-no-repeat lg:bg-none"
       style={{
-        backgroundImage: `url(${themeImages[color_name || "Default"]})`,
+        backgroundImage: `url(${themeImages[customer?.color_name || "Default"]})`,
       }}
     >
-      <div
-        className={
-          isLogin
-            ? "flex mt-4 md:mt-[8%] max-lg:mt-0 max-lg:min-h-screen"
-            : "flex mt-4 md:mt-[6%] max-lg:mt-0 max-lg:min-h-screen"
-        }
-      >
+      <div className={"flex mt-4 md:mt-[8%] max-lg:mt-0 max-lg:min-h-screen"}>
         {/* Left side - Empty space */}
         <div className="hidden lg:block lg:w-3/5"></div>
 
@@ -119,48 +92,16 @@ const AuthPage = () => {
           <div className="w-full max-w-md">
             <div className="text-center mb-6">
               <img
-                src={generateImageUrl(company?.Logo)}
-                alt={company?.name}
+                src={themeImages["logo"]}
+                alt={""}
                 className="h-12 mx-auto mb-4"
               />
               <h2 className="text-xl font-medium text-[#222222]">
-                Welcome to {company?.name}
+                Welcome to {customer?.Customer?.customerName}
               </h2>
               <p className="text-sm font-semibold text-[#222222]">
-                Careers Portal
+                Customer Portal
               </p>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex gap-1 justify-center mb-6">
-              <button
-                style={{
-                  background: isLogin ? primary_color : secondary_color,
-                  color: isLogin ? "#ffffff" : primary_color,
-                }}
-                className={`py-2 px-8 text-sm rounded-full font-medium`}
-                onClick={() => {
-                  resetLogin();
-                  setIsLogin(true);
-                  dispatch(resetError());
-                }}
-              >
-                Sign in
-              </button>
-              <button
-                className={`py-2 px-8 text-sm rounded-full font-medium`}
-                style={{
-                  background: isLogin ? secondary_color : primary_color,
-                  color: isLogin ? primary_color : "#ffffff",
-                }}
-                onClick={() => {
-                  resetSignup();
-                  setIsLogin(false);
-                  dispatch(resetError());
-                }}
-              >
-                Sign up
-              </button>
             </div>
 
             {/* Error message */}
@@ -170,138 +111,61 @@ const AuthPage = () => {
               </div>
             )}
 
-            {/* Login Form */}
-            {isLogin ? (
-              <form
-                onSubmit={handleLoginSubmit(onLoginSubmit)}
-                className="space-y-4"
-              >
-                <div className="space-y-4 mb-3">
-                  <div>
-                    <InputArea
-                      id="email"
-                      type="email"
-                      placeholder="Email"
-                      error={loginErrors.email?.message}
-                      registration={loginRegister("email")}
-                    />
-                  </div>
-                  <div>
-                    <InputArea
-                      id="password"
-                      type="password"
-                      placeholder="Password"
-                      error={loginErrors.password?.message}
-                      registration={loginRegister("password")}
-                    />
-                  </div>
+            <form
+              onSubmit={handleLoginSubmit(onLoginSubmit)}
+              className="space-y-4"
+            >
+              <div className="space-y-4 mb-3">
+                <div>
+                  <InputArea
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    error={loginErrors.email?.message}
+                    registration={loginRegister("email")}
+                  />
                 </div>
+                <div>
+                  <InputArea
+                    id="password"
+                    type="password"
+                    placeholder="Password"
+                    error={loginErrors.password?.message}
+                    registration={loginRegister("password")}
+                  />
+                </div>
+              </div>
 
-                <button
-                  type="submit"
-                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing in..." : "Sign in"}
-                </button>
-                <div className="text-center">
-                  <Link
-                    style={{ color: primary_color }}
-                    to="/forget-password"
-                    className={`text-xs hover:underline`}
-                  >
-                    Forgot Password
-                  </Link>
-                  <div className="text-center">
-                    <Link
-                      style={{ color: primary_color }}
-                      to="/jobs"
-                      className={`text-xs hover:underline`}
-                    >
-                      View All Jobs
-                    </Link>
-                  </div>
-                </div>
-              </form>
-            ) : (
-              // Signup Form
-              <form
-                onSubmit={handleSignupSubmit(onSignupSubmit)}
-                className="space-y-3"
+              <button
+                type="submit"
+                className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
+                disabled={isLoading}
               >
-                <div className="space-y-3 mb-3">
-                  <div>
-                    <InputArea
-                      id="name"
-                      type="text"
-                      placeholder="Name"
-                      error={signupErrors.name?.message}
-                      registration={signupRegister("name")}
-                    />
-                  </div>
-                  <div>
-                    <InputArea
-                      id="email"
-                      type="email"
-                      placeholder="Email"
-                      error={signupErrors.email?.message}
-                      registration={signupRegister("email")}
-                    />
-                  </div>
-                  <div>
-                    <InputArea
-                      id="password"
-                      type="password"
-                      placeholder="Password"
-                      error={signupErrors.password?.message}
-                      registration={signupRegister("password")}
-                    />
-                  </div>
-                  <div>
-                    <InputArea
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="Confirm Password"
-                      error={signupErrors.confirmPassword?.message}
-                      registration={signupRegister("confirmPassword")}
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
-                  disabled={isLoading}
+                {isLoading ? "Signing in..." : "Sign in"}
+              </button>
+              <div className="text-center">
+                <Link
+                  style={{ color: customer?.primary_color }}
+                  to="/forget-password"
+                  className={`text-xs hover:underline`}
                 >
-                  {isLoading ? "Signing up..." : "Sign up"}
-                </button>
-                <div className="text-center">
+                  Forgot Password
+                </Link>
+                {/* <div className="text-center">
                   <Link
-                    style={{ color: primary_color }}
-                    to="/forget-password"
+                    style={{ color: customer?.primary_color }}
+                    to="/tickets"
                     className={`text-xs hover:underline`}
                   >
-                    Forgot Password?
+                    View All Jobs
                   </Link>
-                  <div className="text-center">
-                    <Link
-                      style={{ color: primary_color }}
-                      to="/jobs"
-                      className={`text-xs hover:underline`}
-                    >
-                      View All Jobs
-                    </Link>
-                  </div>
-                </div>
-              </form>
-            )}
+                </div> */}
+              </div>
+            </form>
           </div>
           <div>
             <img
-              className={
-                isLogin
-                  ? "mx-auto h-12 mt-2 md:mt-24 opacity-70"
-                  : "mx-auto h-12 mt-2 md:mt-5 opacity-70"
-              }
+              className={"mx-auto h-12 mt-2 md:mt-24 opacity-70"}
               src={dy_logo_white}
             />
           </div>

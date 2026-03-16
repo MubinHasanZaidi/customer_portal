@@ -17,7 +17,7 @@ import TextArea from "../components/TextArea";
 import { formatDates } from "../utils/common";
 import { ArrowRight, CirclePlus, CircleUserRound, Trash2 } from "lucide-react";
 import StarRating from "../components/StarRating";
-import useCompanyConfig from "../hooks/useCompanyConfig";
+import useCustomerConfig from "../hooks/useCustomerConfig";
 import {
   applicatFormSubmit,
   fetchApplicant,
@@ -540,14 +540,14 @@ function getFieldError<T = any>(
 }
 
 const ApplicantFormPage = () => {
-  const { companyConfig } = useCompanyConfig();
+  const { customerConfig } = useCustomerConfig();
   const {
     company,
     themeConfig,
     applicantFormConfig,
     applicant_form_percent_config,
     subsidiary,
-  } = companyConfig;
+  } = customerConfig;
   const { primary_color, secondary_color } = themeConfig;
 
   const dispatch = useDispatch<AppDispatch>();
@@ -908,7 +908,7 @@ const ApplicantFormPage = () => {
                 : "Profile updated successfully!"}
             </div>
             <Link
-              to="/jobs"
+              to="/tickets"
               className="w-full bg-[#222222] hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] text-white py-2 px-4 rounded-full font-medium hover:bg-black transition-colors"
             >
               Explore Jobs

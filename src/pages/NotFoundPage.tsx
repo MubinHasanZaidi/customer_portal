@@ -11,7 +11,7 @@ const NotFoundPage = () => {
         <p className="text-[#00000] mt-2 text-center max-w-md">
           Oops! The page you're looking for doesn't exist or has been moved.
         </p>
-        <Link to={"/career/1"} className="bg-blue-500 rounded-full mt-2 text-sm text-white p-2 ">Go To Dynasoft career page</Link>
+        <Link to={"/customer_portal/1"} className="bg-blue-500 rounded-full mt-2 text-sm text-white p-2 ">Go To Dynasoft career page</Link>
       </div>
     </div>
   );

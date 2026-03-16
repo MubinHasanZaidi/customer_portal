@@ -8,8 +8,8 @@ import {
   signupSuccess,
   signupFailure,
   resetPasswordStart,
-  companyConfigSuccess,
-  companyConfigFailure,
+  customerConfigFailure,
+  customerConfigSuccess,
   resetPasswordSuccess,
   resetPasswordFailure,
 } from "../slices/authSlice";
@@ -22,14 +22,14 @@ export const login = createAsyncThunk(
     {
       email,
       password,
-      companyId,
+      customerId,
       navigate,
-    }: { email: string; password: string; companyId: string; navigate: any },
-    { dispatch }
+    }: { email: string; password: string; navigate: any; customerId: string },
+    { dispatch },
   ) => {
     try {
       dispatch(loginStart());
-      const userData = await authAPI.login(email, password, companyId);
+      const userData = await authAPI.login(email, password, customerId);
       let jobId = localStorage.getItem("jobId");
       const { user, access, refresh } = userData?.data;
       const encryptedUser = encrypt(JSON.stringify(user));
@@ -37,7 +37,7 @@ export const login = createAsyncThunk(
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("user", encryptedUser);
-      navigate(jobId && jobId !== "none" ? `/job-detail/${jobId}` : "/jobs");
+      navigate(jobId && jobId !== "none" ? `/job-detail/${jobId}` : "/tickets");
       return userData;
     } catch (error) {
       const errorMessage =
@@ -46,47 +46,18 @@ export const login = createAsyncThunk(
       dispatch(loginFailure(errorMessage));
       throw error;
     }
-  }
-);
-
-export const signup = createAsyncThunk(
-  "auth/signup",
-  async (
-    {
-      name,
-      email,
-      password,
-      companyId,
-    }: { name: string; email: string; password: string; companyId: string },
-    { dispatch }
-  ) => {
-    try {
-      dispatch(signupStart());
-      const userData = await authAPI.signup(name, email, password, companyId);
-      // const { user, access, refresh } = userData?.data;
-      // const encryptedUser = encrypt(JSON.stringify(user));
-      dispatch(signupSuccess(userData.data?.message));
-      toast.success(userData.data?.message);
-      // localStorage.setItem("access", access);
-      // localStorage.setItem("refresh", refresh);
-      // localStorage.setItem("user", encryptedUser);
-      return userData;
-    } catch (error) {
-      const errorMessage =
-        (error as any)?.response?.data?.message ||
-        (error instanceof Error ? error.message : "Failed to signup");
-      dispatch(signupFailure(errorMessage));
-      throw error;
-    }
-  }
+  },
 );
 
 export const forgotPasswordWithEmail = createAsyncThunk(
   "auth/forgotPassword",
-  async ({ email }: { email: string }, { dispatch }) => {
+  async (
+    { email, customerId }: { email: string; customerId: string },
+    { dispatch },
+  ) => {
     try {
       dispatch(resetPasswordStart());
-      const userData = await authAPI.forgotPassword(email);
+      const userData = await authAPI.forgotPassword(email , customerId);
       dispatch(resetPasswordSuccess());
       toast.success(userData.data?.message);
       return userData;
@@ -97,7 +68,7 @@ export const forgotPasswordWithEmail = createAsyncThunk(
       dispatch(signupFailure(errorMessage));
       throw error;
     }
-  }
+  },
 );
 
 export const resetPassword = createAsyncThunk(
@@ -107,7 +78,7 @@ export const resetPassword = createAsyncThunk(
       previousPassword,
       newPassword,
     }: { previousPassword: string; newPassword: string },
-    { dispatch }
+    { dispatch },
   ) => {
     try {
       dispatch(resetPasswordStart());
@@ -120,17 +91,14 @@ export const resetPassword = createAsyncThunk(
       dispatch(resetPasswordFailure(errorMessage));
       throw error;
     }
-  }
+  },
 );
 
 export const updatePassword = createAsyncThunk(
   "auth/updatePassword",
   async (
-    {
-      forgetLink,
-      password,
-    }: { forgetLink: string; password?: string },
-    { dispatch }
+    { forgetLink, password }: { forgetLink: string; password?: string },
+    { dispatch },
   ) => {
     try {
       dispatch(resetPasswordStart());
@@ -143,21 +111,20 @@ export const updatePassword = createAsyncThunk(
       dispatch(resetPasswordFailure(errorMessage));
       throw error;
     }
-  }
+  },
 );
 
-
-export const companyConfigFetch = createAsyncThunk(
-  "auth/companyConfig",
-  async (companyId: string, { dispatch }) => {
+export const customerConfigFetch = createAsyncThunk(
+  "auth/customerConfig",
+  async (customerId: string, { dispatch }) => {
     try {
-      let res = await authAPI.companyConfig(companyId);
-      dispatch(companyConfigSuccess(res?.data));
+      let res = await authAPI.customerConfig(customerId);
+      dispatch(customerConfigSuccess(res?.data));
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to reset password";
-      dispatch(companyConfigFailure(errorMessage));
+        error instanceof Error ? error.message : "Failed to fetch";
+      dispatch(customerConfigFailure(errorMessage));
       throw error;
     }
-  }
+  },
 );

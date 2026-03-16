@@ -13,8 +13,8 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   success?: string | null;
-  companyConfig: any;
-  error_company: string | null;
+  customerConfig: any;
+  error_customer: string | null;
 }
 
 const initialState: AuthState = {
@@ -23,8 +23,8 @@ const initialState: AuthState = {
   isLoading: false,
   error: null,
   success: null,
-  companyConfig: null,
-  error_company: null,
+  customerConfig: null,
+  error_customer: null,
 };
 
 const authSlice = createSlice({
@@ -82,13 +82,13 @@ const authSlice = createSlice({
     rehydrate: (state, action: PayloadAction<AuthState>) => {
       return { ...state, ...action.payload };
     },
-    companyConfigSuccess: (state, action: PayloadAction<any>) => {
-      state.companyConfig = action.payload;
-      state.error_company = null;
+    customerConfigSuccess: (state, action: PayloadAction<any>) => {
+      state.customerConfig = action.payload;
+      state.error_customer = null;
     },
-    companyConfigFailure: (state, action: PayloadAction<any>) => {
-      state.companyConfig = null;
-      state.error_company = action.payload;
+    customerConfigFailure: (state, action: PayloadAction<any>) => {
+      state.customerConfig = null;
+      state.error_customer = action.payload;
     },
   },
 });
@@ -104,8 +104,8 @@ export const {
   resetPasswordStart,
   resetPasswordSuccess,
   resetPasswordFailure,
-  companyConfigFailure,
-  companyConfigSuccess,
+  customerConfigFailure,
+  customerConfigSuccess,
   rehydrate,
   resetError,
 } = authSlice.actions;

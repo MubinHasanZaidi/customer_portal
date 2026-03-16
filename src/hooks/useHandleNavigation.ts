@@ -5,7 +5,7 @@ const useHandleNavigation = (url?: string): void => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const targetUrl = url || "/jobs";
+  const targetUrl = url || "/tickets";
 
   const handleBackAction = (): void => {
     if (window.confirm("Are you sure you want to leave this page?")) {
