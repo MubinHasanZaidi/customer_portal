@@ -57,7 +57,7 @@ const Header = () => {
     localStorage.removeItem("refresh");
     setUserConfig(null);
     setIsDropdownOpen(false);
-    navigate("/tickets");
+    navigate("/auth");
   };
 
   return (
@@ -89,7 +89,8 @@ const Header = () => {
                     style={{ color: customer?.primary_color }}
                     className={`font-bold `}
                   >
-                    {userConfig?.firstName}
+                    {userConfig?.firstName} {userConfig?.middleName}{" "}
+                    {userConfig?.lastName}
                   </span>
                 </span>
                 <button

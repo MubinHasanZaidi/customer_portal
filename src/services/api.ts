@@ -101,6 +101,10 @@ export const authAPI = {
     );
     return response.data;
   },
+  uploadFile: async (body: any) => {
+    // Do not set Content-Type; let Axios handle FormData
+    return api.post(`/file-upload`, body);
+  },
 };
 
 // Jobs APIs
@@ -152,10 +156,7 @@ export const jobsAPI = {
     const response = await apiAuth.get(`/customer_portal/applicant`);
     return response.data;
   },
-  uploadFile: async (body: any) => {
-    // Do not set Content-Type; let Axios handle FormData
-    return api.post(`/file-upload`, body);
-  },
+
   getJobMandaotrySkills: async (jboId: string) => {
     const response = await apiAuth.get(
       `/customer_portal/mandatory_skills/${jboId}`,
@@ -177,6 +178,51 @@ export const jobsAPI = {
   },
   handleOfferLetter: async (body: any) => {
     const response = await apiAuth.post("/customer_portal/handle-offer", body);
+    return response.data;
+  },
+};
+
+export const ticketAPI = {
+  getProjectDetail: async () => {
+    const response = await apiAuth.get("/customer_portal/project-detail", {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  },
+  createOrUpdateTicket: async (body: any) => {
+    const response = await apiAuth.post("/customer_portal/ticket-form", body, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  },
+  getTickets: async (body: any) => {
+    const response = await apiAuth.post(
+      "/customer_portal/read-all-tickets",
+      body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    return response.data;
+  },
+  getTicketById: async (body: any) => {
+    const response = await apiAuth.post(
+      "/customer_portal/read-ticket-by-Id",
+      body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    return response.data;
+  },
+    deleteTicketById: async (body: any) => {
+    const response = await apiAuth.post(
+      "/customer_portal/delete-ticket-by-Id",
+      body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
     return response.data;
   },
 };

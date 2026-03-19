@@ -3,7 +3,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parse, isValid } from "date-fns";
 import { UseFormRegisterReturn } from "react-hook-form";
-import useCustomerConfig from "../hooks/useCustomerConfig";
 
 interface InputDateProps {
   id: string;
@@ -38,21 +37,9 @@ const InputDate: React.FC<InputDateProps> = ({
   popperClassName,
   portalId,
 }) => {
-  const { customerConfig } = useCustomerConfig();
-  const { primary_color } = customerConfig.themeConfig;
   const [isFocused, setIsFocused] = useState(false);
   const [touched, setTouched] = useState(false);
-  // Convert string value (like "2025-07-02" or "02-Jul-2025") to Date object
-  // const parseDate = (val: string | null): Date | null => {
-  //   if (!val) return null;
-  //   // Try parsing as 'dd-MMM-yyyy'
-  //   let parsed = parse(val, "dd-MMM-yyyy", new Date());
-  //   if (isValid(parsed)) return parsed;
-  //   // Try parsing as 'yyyy-MM-dd'
-  //   parsed = parse(val, "yyyy-MM-dd", new Date());
-  //   if (isValid(parsed)) return parsed;
-  //   return null;
-  // };
+  
   const parseDate = (val: string | Date | null): Date | null => {
     if (!val) return null;
 

@@ -1,9 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import JobsPage from "./pages/JobsPage";
-import JobDetailPage from "./pages/JobDetailPage";
-import ApplicantFormPage from "./pages/ApplicantFormPage";
+import TicketsPage from "./pages/TicketsPage/TicketsPage";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import CustomerConfigProvider from "./contexts/CustomerConfigContext";
 import HowItWorkPage from "./pages/HowItWorkPage";
@@ -35,7 +33,7 @@ function App() {
                   element={<ResetPasswordLinkPage />}
                 />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
-                <Route path="/tickets" element={<JobsPage />} />
+                <Route path="/tickets" element={<TicketsPage />} />
                 <Route path="/how-it-work" element={<HowItWorkPage />} />
                 <Route path="/disclaimer" element={<DisclaimerPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
