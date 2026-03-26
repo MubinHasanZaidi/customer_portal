@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ResetPasswordLinkPage from "./pages/ResetPasswordLink";
 import MainPage from "./pages/MainPage";
+import TicketActivityPage from "./pages/TicketActivity/TicketActivityPage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
                 />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/tickets" element={<TicketsPage />} />
+                <Route path="/ticket/activity/:Id" element={<TicketActivityPage />} />
                 <Route path="/how-it-work" element={<HowItWorkPage />} />
                 <Route path="/disclaimer" element={<DisclaimerPage />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

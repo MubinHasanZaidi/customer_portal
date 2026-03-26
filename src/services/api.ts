@@ -107,80 +107,6 @@ export const authAPI = {
   },
 };
 
-// Jobs APIs
-export const jobsAPI = {
-  getJobs: async (body: any) => {
-    const response = await api.post("/customer_portal/tickets", body, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return response.data;
-  },
-
-  getJobById: async (id: string) => {
-    const response = await api.get(`/customer_portal/tickets/${id}`);
-    return response.data;
-  },
-  getLocationByCompanyId: async (customerId: string) => {
-    const response = await api.get(`/customer_portal/locations/${customerId}`);
-    return response.data;
-  },
-  getDepartmentByCompanyId: async (customerId: string) => {
-    const response = await api.get(
-      `/customer_portal/departments/${customerId}`,
-    );
-    return response.data;
-  },
-  getFormOption: async (parentId: string) => {
-    const response = await apiAuth.post(
-      "/customer_portal/form_option",
-      { parentId },
-      { headers: { "Content-Type": "application/json" } },
-    );
-    return response.data;
-  },
-  getCountryOption: async () => {
-    const response = await apiAuth.get("/customer_portal/country_option");
-    return response.data;
-  },
-  getCityOption: async (countryId?: number) => {
-    const response = await apiAuth.get(
-      `/customer_portal/city_option/${countryId}`,
-    );
-    return response.data;
-  },
-  applicantFormSubmit: async (body?: any) => {
-    const response = await apiAuth.post(`/customer_portal/applicant`, body);
-    return response.data;
-  },
-  getApplicantForm: async () => {
-    const response = await apiAuth.get(`/customer_portal/applicant`);
-    return response.data;
-  },
-
-  getJobMandaotrySkills: async (jboId: string) => {
-    const response = await apiAuth.get(
-      `/customer_portal/mandatory_skills/${jboId}`,
-    );
-    return response.data;
-  },
-  getActiveVacancy: async () => {
-    const response = await apiAuth.get("/customer_portal/active-vacancy");
-    return response.data;
-  },
-  downloadOfferLetter: async () => {
-    const response = await apiAuth.get(
-      "/customer_portal/download-offer-letter",
-      {
-        responseType: "blob",
-      },
-    );
-    return response.data;
-  },
-  handleOfferLetter: async (body: any) => {
-    const response = await apiAuth.post("/customer_portal/handle-offer", body);
-    return response.data;
-  },
-};
 
 export const ticketAPI = {
   getProjectDetail: async () => {
@@ -215,9 +141,42 @@ export const ticketAPI = {
     );
     return response.data;
   },
-    deleteTicketById: async (body: any) => {
+  deleteTicketById: async (body: any) => {
     const response = await apiAuth.post(
       "/customer_portal/delete-ticket-by-Id",
+      body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    return response.data;
+  },
+};
+
+export const ticketActivityAPI = {
+  getAllTicketComments: async (payload: any) => {
+    const response = await apiAuth.post(
+      "/customer_portal/read-all-ticket-comments",
+      payload,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    return response.data;
+  },
+  createOrUpdateComment: async (body: any) => {
+    const response = await apiAuth.post(
+      "/customer_portal/update-ticket-comment",
+      body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    return response.data;
+  },
+  deleteComment: async (body: any) => {
+    const response = await apiAuth.post(
+      "/customer_portal/delete-ticket-comment",
       body,
       {
         headers: { "Content-Type": "application/json" },

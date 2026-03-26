@@ -11,8 +11,16 @@ import {
   ticketFormSubmit,
 } from "../../store/actions/ticketActions";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "@/src/store";
-import { Bug, CircleHelp, PencilIcon, Ticket, Trash2 } from "lucide-react";
+import {
+  Bug,
+  CircleHelp,
+  MessageSquareText,
+  PencilIcon,
+  Ticket,
+  Trash2,
+} from "lucide-react";
 import TicketCreateDialog, { TicketCreatePayload } from "./TicketFormDialog";
 import TicketDeleteDialog from "./TicketDeleteDialog";
 import { PriorityType, TicketType } from "../../utils/common";
@@ -24,6 +32,7 @@ const TicketsPage = () => {
   const { customerConfig } = useCustomerConfig();
   const { customer } = customerConfig;
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { projectDetail, count, entities, editRecord } = useSelector(
     (state: RootState) => state.ticket,
   );
@@ -106,6 +115,10 @@ const TicketsPage = () => {
     closeDeleteModal();
   };
 
+  const handleTicketActivityClick = (e: any) => {
+    navigate(`/ticket/activity/${e?.Id}`);
+  };
+
   const handleSaveTicket = (payload: TicketCreatePayload) => {
     const requestBody = {
       ...payload,
@@ -173,6 +186,9 @@ const TicketsPage = () => {
             <button onClick={() => handleEditClick(cell || row)}>
               <PencilIcon className="w-3 h-3 text-black" />
             </button>
+            <button onClick={() => handleTicketActivityClick(cell || row)}>
+              <MessageSquareText className="w-3 h-3 text-black" />
+            </button>
             {!isAbove24Hours((cell || row)?.createdAt) && (
               <button onClick={() => handleDeleteClick(cell || row)}>
                 <Trash2 className="w-3 h-3 text-black" />
@@ -225,8 +241,6 @@ const TicketsPage = () => {
             column={column}
             data={entities || []}
             count={count}
-            // data={[]}
-            // count={0}
             heading={"Tickets"}
             filter={filter}
             setFilter={setFilter}

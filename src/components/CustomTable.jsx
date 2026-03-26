@@ -176,7 +176,7 @@ export function CustomTable({
 
                     return (
                       <td
-                        title={value}
+                        data-title={displayValue}
                         key={col.key || col.name}
                         className={classes}
                       >

@@ -12,6 +12,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import authReducer from "./slices/authSlice";
 import ticketReducer from "./slices/ticketSlice";
+import ticketActivityReducer from "./slices/ticketActivitySlice";
 
 const persistConfig = {
   key: "root",
@@ -25,6 +26,7 @@ export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
     ticket: ticketReducer,
+    ticket_activity: ticketActivityReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
