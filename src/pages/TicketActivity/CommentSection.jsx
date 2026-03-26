@@ -75,11 +75,11 @@ export function CommentSection({ Id, primaryColor, customerUserId }) {
     <>
       {commentsFilter?.ticketId ? (
         <div className="w-full overflow-x-auto h-auto min-h-32 px-3 py-2 rounded-lg bg-white mt-2">
-          {/* <CommentForm
+          <CommentForm
             onSave={handleSubmit}
             commentForm={commentForm}
             setCommentForm={setCommentForm}
-          /> */}
+          />
           <hr />
           <div className="flex justify-between items-center">
             <h6
@@ -98,13 +98,13 @@ export function CommentSection({ Id, primaryColor, customerUserId }) {
               <RefreshCcw className="w-4 h-4" />
             </button>
           </div>
-          {/* <CommentsList
+          <CommentsList
             commentsFilter={commentsFilter}
             setCommentsFilter={setCommentsFilter}
             setCommentForm={setCommentForm}
             customerUserId={customerUserId}
             primaryColor={primaryColor}
-          /> */}
+          />
         </div>
       ) : null}
     </>
