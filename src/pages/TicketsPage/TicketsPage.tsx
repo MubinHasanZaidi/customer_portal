@@ -2,10 +2,11 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import useCustomerConfig from "../../hooks/useCustomerConfig";
 import { CustomTable } from "../../components/CustomTable";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   deleteTicketById,
   fetchCustomerProjectDetail,
+  fetchTicketStatus,
   getTicketById,
   getTickets,
   ticketFormSubmit,
@@ -25,6 +26,7 @@ import TicketCreateDialog, { TicketCreatePayload } from "./TicketFormDialog";
 import TicketDeleteDialog from "./TicketDeleteDialog";
 import { PriorityType, TicketType } from "../../utils/common";
 import { clearEditRecord } from "../../store/slices/ticketSlice";
+import TicketsFilter from "./TicketsFilter";
 
 type TicketActionType = "Ask A Question" | "Report A Bug" | "Task";
 
@@ -33,7 +35,7 @@ const TicketsPage = () => {
   const { customer } = customerConfig;
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { projectDetail, count, entities, editRecord } = useSelector(
+  const { projectDetail, count, entities, editRecord , ticketStatus } = useSelector(
     (state: RootState) => state.ticket,
   );
   const [selectedTicketType, setSelectedTicketType] =
@@ -43,6 +45,9 @@ const TicketsPage = () => {
   const [filter, setFilter] = useState({
     filter: {
       searchQuery: "",
+      ticketTypeId: "",
+      priority: "",
+      ticketStatusId: "",
     },
     sortOrder: "asc",
     pageSize: 5,
@@ -57,6 +62,7 @@ const TicketsPage = () => {
 
   useEffect(() => {
     dispatch(fetchCustomerProjectDetail());
+    dispatch(fetchTicketStatus());
   }, [dispatch]);
 
   useEffect(() => {
@@ -67,7 +73,11 @@ const TicketsPage = () => {
     filter.pageSize,
     filter.sortOrder,
     filter.filter.searchQuery,
+    filter.filter.priority,
+    filter.filter.ticketTypeId,
+    filter.filter.ticketStatusId,
   ]);
+
 
   const openCreateTicketModal = (type: TicketActionType) => {
     dispatch(clearEditRecord());
@@ -138,20 +148,33 @@ const TicketsPage = () => {
       key: "ticketCode",
       name: "Ticket Number",
       type: "string",
+      formatter: (e: any, row: any) => {
+        const color = PriorityType.find(
+          (el) => el?.value == row?.priority,
+        )?.color;
+        return (
+          <div className="flex gap-2">
+            <span className="flex items-center gap-1">
+              <span
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "50%",
+                  backgroundColor: color,
+                  display: "inline-block",
+                }}
+              ></span>
+            </span>
+            <span>{e}</span>
+          </div>
+        );
+      },
     },
     {
       key: "ticketDescription",
       name: "Ticket Description",
       type: "string",
       formatter: (e: any) => (e?.length > 50 ? `${e?.slice(0, 50)}...` : e),
-    },
-    {
-      key: "priority",
-      name: "Priority",
-      type: "string",
-      formatter: (e: any) => {
-        return PriorityType?.find((el) => el.value == e)?.label;
-      },
     },
     {
       key: "ticketTypeId",
@@ -176,6 +199,12 @@ const TicketsPage = () => {
       key: "CustomerUser.name",
       name: "Report To",
       type: "string",
+    },
+    {
+      key: "createdAt",
+      name: "Date",
+      type: "string",
+      formatter: (cell: any) => new Date(cell).toDateString(),
     },
     {
       name: "Action",
@@ -242,6 +271,13 @@ const TicketsPage = () => {
             data={entities || []}
             count={count}
             heading={"Tickets"}
+            filterComponent={
+              <TicketsFilter
+                filter={filter}
+                setFilter={setFilter}
+                ticketStatusOptions={ticketStatus}
+              />
+            }
             filter={filter}
             setFilter={setFilter}
           />

@@ -18,23 +18,23 @@ const PrivacyPolicyPage = () => {
           Privacy Policy & Disclaimer
         </h1>
         <p className="text-xs text-center mb-2">
-          Effective Date: 07th July, 2025
+          Effective Date: 1st April, 2026
         </p>
         <p className="text-xs text-center mb-6">
-          Last Updated: 07th July, 2025
+          Last Updated: 1st April, 2026
         </p>
         <section className="mb-6">
           <p className="text-sm">
-            At the HRMS Career portal, your privacy is important to us. We are
-            committed to handling your data responsibly by Pakistan’s data
-            protection laws, including the SECP's guidelines for digital
-            platforms.
+            At the Project Management Customer portal, your privacy is important
+            to us. We are committed to handling your data responsibly by
+            Pakistan’s data protection laws, including the SECP's guidelines for
+            digital platforms.
           </p>
           <p className="text-sm mt-2">
-            This Privacy Policy and Disclaimer document outlines how {""} ("we,"
+            This Privacy Policy and Disclaimer document outlines how ("we,"
             "us," or "our") collects, uses, discloses, and protects personal
-            data submitted through our HRMS (Human Resource Management System)
-            Recruitment Portal ("Portal").
+            data submitted through our Project Management System Customer
+            Portal ("Portal").
           </p>
           <p className="text-sm mt-2">
             By accessing or using this Portal, you consent to the practices
@@ -50,8 +50,12 @@ const PrivacyPolicyPage = () => {
               Identity Information: Full name, CNIC, contact number, photograph.
             </li>
             <li>
-              Professional Details: Resume/CV, academic qualifications, work
-              experience.
+              Customer Identity Information: Customer name, Email Address,
+              Contact Detail, Address.
+            </li>
+            <li>
+              Customer Concern Person Details: Name, Email Address, Designation,
+              Contact Detail.
             </li>
             <li>
               Technical Data: IP address, browser type, location, device
@@ -69,9 +73,10 @@ const PrivacyPolicyPage = () => {
           </h2>
           <ul className="list-disc pl-5 text-sm mb-2">
             <li>
-              To process job applications and evaluate candidate profiles.
+              To process Customer Tickets against the queries or complaint
+              raised and resolved them accordingly.
             </li>
-            <li>To verify candidate eligibility and background checks.</li>
+            <li>To verify customer complaints and background checks.</li>
             <li>Internal analytics and improve portal functionality.</li>
             <li>Regulatory reporting as required under SECP.</li>
             <li>
@@ -108,6 +113,10 @@ const PrivacyPolicyPage = () => {
             purposes or as required under:
           </p>
           <ul className="list-disc pl-5 text-sm mb-2">
+            <li>
+              We retain personal data only as long as necessary for Customer
+              Support purposes or as required under:
+            </li>
             <li>Section 14 of SECP’s Electronic Media Guidelines</li>
           </ul>
           <p className="text-sm mb-2">

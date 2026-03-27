@@ -97,7 +97,7 @@ const AuthPage = () => {
                 className="h-12 mx-auto mb-4"
               />
               <h2 className="text-xl font-medium text-[#222222]">
-                Welcome to {customer?.Customer?.customerName}
+                Welcome to Dynasoft Cloud
               </h2>
               <p className="text-sm font-semibold text-[#222222]">
                 Customer Portal

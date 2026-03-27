@@ -107,7 +107,6 @@ export const authAPI = {
   },
 };
 
-
 export const ticketAPI = {
   getProjectDetail: async () => {
     const response = await apiAuth.get("/customer_portal/project-detail", {
@@ -145,6 +144,16 @@ export const ticketAPI = {
     const response = await apiAuth.post(
       "/customer_portal/delete-ticket-by-Id",
       body,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+    return response.data;
+  },
+  getAllTicketStatus: async () => {
+    const response = await apiAuth.post(
+      "/customer_portal/read-all-ticket-status",
+      {},
       {
         headers: { "Content-Type": "application/json" },
       },

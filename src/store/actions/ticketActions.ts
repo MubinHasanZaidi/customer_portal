@@ -9,6 +9,7 @@ import {
   createTicket,
   updateTicket,
   deleteTicket,
+  ticketStatusFetched,
 } from "../slices/ticketSlice";
 import { toast } from "react-toastify";
 
@@ -140,6 +141,25 @@ export const deleteTicketById = createAsyncThunk(
         (error instanceof Error ? error.message : "Failed to delete ticket");
       toast.error(errorMessage);
       dispatch(catchError(errorMessage));
+      throw error;
+    }
+  },
+);
+
+export const fetchTicketStatus = createAsyncThunk(
+  "ticket/deleteTicketById",
+  async (_, { dispatch }) => {
+    try {
+      const response = await ticketAPI.getAllTicketStatus();
+      dispatch(ticketStatusFetched(response?.data));
+      return response?.data;
+    } catch (error) {
+      const errorMessage =
+        (typeof error === "object" &&
+          error !== null &&
+          "response" in error &&
+          (error as any).response?.data?.message) ||
+        (error instanceof Error ? error.message : "Failed to delete ticket");
       throw error;
     }
   },

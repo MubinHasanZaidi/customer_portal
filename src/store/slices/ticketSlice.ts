@@ -8,6 +8,7 @@ interface JobsState {
   count: number;
   entities: any[];
   editRecord: any;
+  ticketStatus: any[];
 }
 
 interface FetchTicketsPayload {
@@ -22,6 +23,7 @@ const initialState: JobsState = {
   count: 0,
   entities: [],
   editRecord: {},
+  ticketStatus: [],
 };
 
 const ticketSlice = createSlice({
@@ -78,6 +80,11 @@ const ticketSlice = createSlice({
       // Don't increment count for updates
       state.count = state.count;
     },
+    ticketStatusFetched: (state, action: any) => {
+      state.isLoading = false;
+      state.error = null;
+      state.ticketStatus = action.payload;
+    },
     deleteTicket: (state, action: any) => {
       state.isLoading = false;
       state.error = null;
@@ -98,6 +105,7 @@ export const {
   createTicket,
   updateTicket,
   deleteTicket,
+  ticketStatusFetched,
 } = ticketSlice.actions;
 
 export default ticketSlice.reducer;

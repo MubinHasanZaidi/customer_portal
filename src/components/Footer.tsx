@@ -26,36 +26,29 @@ const Footer = () => {
               {/* <UserPlus className="w-4 h-4 text-blue-600 flex-shrink-0" /> */}
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
               <span className="text-sm ">
-                <span style={{ fontWeight: 600 }}>Register </span> yourself by
-                clicking on Login button
+                Log in with your provided credentials.
               </span>
             </li>
             <li className="flex items-center gap-3">
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
               <span className="text-sm ">
-                Once registered <span style={{ fontWeight: 600 }}>Login</span>{" "}
-                with user ID
+                Submit a ticket based on your need.{" "}
+                <span style={{ fontWeight: 600 }}>
+                  (Question, Bug, or Task)
+                </span>{" "}
               </span>
             </li>
             <li className="flex items-center gap-3">
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
               <span className="text-sm ">
-                Select the <span style={{ fontWeight: 600 }}>Job </span> in
-                which you are interested
+                Track the ticket status in the dashboard.
               </span>
             </li>
             <li className="flex items-center gap-3">
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
               <span className="text-sm ">
-                Enter your <span style={{ fontWeight: 600 }}> profile</span> and{" "}
-                <span style={{ fontWeight: 600 }}>upload</span> the CV
-              </span>
-            </li>
-            <li className="flex items-center gap-3">
-              <ArrowRight className="w-4 h-4 flex-shrink-0" />
-              <span className="text-sm ">
-                Once <span style={{ fontWeight: 600 }}>submitted</span>, Job
-                request is <span style={{ fontWeight: 600 }}>applied</span>.
+                Communicate with the relevant person directly through the
+                ticket.
               </span>
             </li>
           </ul>

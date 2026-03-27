@@ -1,83 +1,34 @@
-import { PencilIcon } from "@heroicons/react/24/solid";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Card,
   CardHeader,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Avatar,
   IconButton,
-  Tooltip,
 } from "@material-tailwind/react";
-import InputArea from "./Inputarea";
 import { getNestedValue } from "../utils/common";
 
 export function CustomTable({
   column,
   data,
   heading,
+  filterComponent,
   filter,
   setFilter,
   count,
 }) {
   const pageSize = filter?.pageSize || 5;
   const pageNumber = filter?.pageNumber || 1;
-  const searchQuery = filter?.filter?.searchQuery || "";
   const totalPages = Math.max(1, Math.ceil((count || 0) / pageSize));
-  const [searchValue, setSearchValue] = useState(searchQuery);
-
-  const isSameFilter = useCallback(
-    (prev, next) =>
-      prev?.pageNumber === next?.pageNumber &&
-      prev?.pageSize === next?.pageSize &&
-      prev?.sortOrder === next?.sortOrder &&
-      (prev?.filter?.searchQuery || "") === (next?.filter?.searchQuery || ""),
-    [],
-  );
-
-  const updateFilter = useCallback(
-    (updater) => {
-      setFilter((prev) => {
-        const next = updater(prev);
-        return isSameFilter(prev, next) ? prev : next;
-      });
-    },
-    [isSameFilter, setFilter],
-  );
-
-  useEffect(() => {
-    setSearchValue(searchQuery);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const currentQuery = filter?.filter?.searchQuery || "";
-      if (searchValue === currentQuery) {
-        return;
-      }
-
-      updateFilter((prev) => ({
-        ...prev,
-        pageNumber: 1,
-        filter: {
-          ...(prev?.filter || {}),
-          searchQuery: searchValue,
-        },
-      }));
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [searchValue, filter?.filter?.searchQuery, updateFilter]);
 
   const goToPage = (nextPage) => {
     if (nextPage < 1 || nextPage > totalPages || nextPage === pageNumber) {
       return;
     }
 
-    updateFilter((prev) => ({
+    setFilter((prev) => ({
       ...prev,
       pageNumber: nextPage,
     }));
@@ -111,22 +62,13 @@ export function CustomTable({
   return (
     <Card className="h-full w-full shadow-none mt-3">
       <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+        <div className="mb-4">
           <div>
             <Typography variant="h5" color="blue-gray">
               {heading}
             </Typography>
           </div>
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <InputArea
-                id="table-search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                placeholder="Search"
-              />
-            </div>
-          </div>
+          {filterComponent ? <div className="mt-3">{filterComponent}</div> : null}
         </div>
       </CardHeader>
       <CardBody className="py-2  overflow-scroll px-0">
