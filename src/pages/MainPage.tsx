@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {  customerConfigFetch } from "../store/actions/authActions";
+import { customerConfigFetch } from "../store/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { decrypt, encrypt } from "../utils/crypto";
@@ -10,15 +10,19 @@ const MainPage = () => {
   const { customerId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const { error_customer, customerConfig } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
 
   useEffect(() => {
+    let userConfig = localStorage.getItem("user");
     if (customerConfig) {
       let encrpytValue = encrypt(JSON.stringify(customerConfig));
-      localStorage.clear();
       localStorage.setItem("customerConfig", encrpytValue);
-      navigate("/auth");
+      if (userConfig) {
+        navigate("/tickets");
+      } else {
+        navigate("/auth");
+      }
     }
   }, [customerConfig, navigate]);
 

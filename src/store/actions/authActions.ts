@@ -120,6 +120,7 @@ export const customerConfigFetch = createAsyncThunk(
     try {
       let res = await authAPI.customerConfig(customerId);
       dispatch(customerConfigSuccess(res?.data));
+      return res?.data
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch";

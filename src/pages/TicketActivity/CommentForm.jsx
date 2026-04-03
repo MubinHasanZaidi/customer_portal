@@ -79,7 +79,7 @@ function CommentForm({ onSave, commentForm, setCommentForm }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form form-label-right">
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         <div className="col-span-3">
           <MentionInputField
             label={

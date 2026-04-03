@@ -74,7 +74,7 @@ const ResetPasswordPage = () => {
       style={{ background: customer.secondary_color }}
       className={`flex flex-col`}
     >
-      <Header />
+      <Header isBack={true} />
       <div className="flex flex-col min-h-screen">
         <div className="flex flex-1">
           <div className="w-full flex flex-col items-center justify-center p-6">
@@ -137,7 +137,7 @@ const ResetPasswordPage = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-4 rounded-full font-medium hover:bg-black transition-colors"
+                    className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
                     disabled={isLoading}
                   >
                     {isLoading ? "Resetting..." : "Reset Password"}

@@ -19,7 +19,9 @@ const TicketActivityPage = () => {
   }, [Id]);
   return (
     <div className={`min-h-screen flex flex-col `}>
-      <Header isBack={true} />
+      <div style={{ background: customer?.secondary_color }}>
+        <Header isBack={true} />
+      </div>
       <main className="flex-1 bg-white">
         <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 min-h-[90dvh]">
           <TicketDetail ticketId={Id} />
