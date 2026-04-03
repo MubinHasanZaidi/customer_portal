@@ -13,6 +13,7 @@ interface TicketDeleteDialogProps {
   onDelete: () => void;
   isLoading?: boolean;
   ticketCode?: string;
+  secondaryColor?: any;
 }
 
 const TicketDeleteDialog: React.FC<TicketDeleteDialogProps> = ({
@@ -21,6 +22,7 @@ const TicketDeleteDialog: React.FC<TicketDeleteDialogProps> = ({
   onDelete,
   isLoading = false,
   ticketCode,
+  secondaryColor,
 }) => {
   return (
     <Dialog
@@ -29,7 +31,10 @@ const TicketDeleteDialog: React.FC<TicketDeleteDialogProps> = ({
         if (!isOpen) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent
+        style={{ backgroundColor: secondaryColor }}
+        className="sm:max-w-[480px]"
+      >
         <DialogHeader>
           <DialogTitle>Delete Ticket</DialogTitle>
         </DialogHeader>
@@ -38,7 +43,7 @@ const TicketDeleteDialog: React.FC<TicketDeleteDialogProps> = ({
           Are you sure you want to delete
           {ticketCode ? ` ticket ${ticketCode}` : " this ticket"}?
         </p>
-        <DialogFooter>
+        <DialogFooter className="flex flex-row gap-1 py-2 justify-end">
           <button
             type="button"
             className="px-4 w-fit disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-white text-[#222222] py-2 rounded-full font-medium hover:bg-black transition-colors"

@@ -41,7 +41,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
   const filteredOptions =
     options.length > 0
       ? options.filter((option) =>
-          option.label.toLowerCase().includes(searchTerm.toLowerCase())
+          option.label.toLowerCase().includes(searchTerm.toLowerCase()),
         )
       : [];
 
@@ -95,16 +95,16 @@ const SelectOption: React.FC<SelectOptionProps> = ({
 
   const selectedLabel =
     options.find((opt) => opt.value === currentValue)?.label !== undefined ? (
-      <span className="text-sm my-0 text-[#222222] line-clamp-1">
+      <span className="text-xs my-0 text-[#222222] line-clamp-1">
         {options.find((opt) => opt.value === currentValue)?.label}
       </span>
     ) : (
-      <span className="text-sm my-0 text-gray-400 line-clamp-1">
+      <span className="text-xs my-0 text-gray-400 line-clamp-1">
         {placeholder}
       </span>
     );
   return (
-    <div className="min-h-[6.3vh]">
+    <>
       <div data-title={placeholder} ref={dropdownRef} className="relative">
         <div
           onClick={() => {
@@ -112,11 +112,12 @@ const SelectOption: React.FC<SelectOptionProps> = ({
           }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`form-input mt-[3px] flex items-center justify-between px-1 border-x-0 border-t-0 border-b bg-transparent focus:ring-0 ${className} ${
+          className={`form-input flex items-center justify-between px-1 border-x-0 border-t-0 border-b bg-white  focus:ring-0 ${className} ${
             disable ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           }`}
           style={{
-            borderBottom: `1px solid ${isHovered ? primary_color : ""}`,
+            border: `1px solid ${isHovered ? primary_color : ""}`,
+            borderRadius: "5px",
           }}
         >
           {selectedLabel}
@@ -155,7 +156,7 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                 placeholder="Search..."
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                className={`w-full px-2 py-1 text-sm border border-x-0 border-t-0 border-b rounded-lg focus:outline-none ${
+                className={`form-input h-9 px-2 flex items-center justify-between ${
                   disable ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 style={{
@@ -180,22 +181,22 @@ const SelectOption: React.FC<SelectOptionProps> = ({
                     pointerEvents: disable || option.disable ? "none" : "auto",
                     opacity: disable || option.disable ? 0.5 : 1,
                   }}
-                  className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-50 `}
+                  className={`px-4 py-2 text-xs cursor-pointer hover:bg-gray-50 `}
                 >
                   {option.label}
                 </div>
               ))}
               {filteredOptions.length === 0 && (
-                <div className="px-4 py-2 text-sm text-gray-500">
+                <div className="px-4 py-2 text-xs text-gray-500">
                   No options found
                 </div>
               )}
             </div>
           </div>,
-          document.body
+          document.body,
         )}
       {error && <p className="form-error">{error}</p>}
-    </div>
+    </>
   );
 };
 

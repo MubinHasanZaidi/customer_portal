@@ -77,98 +77,101 @@ const AuthPage = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col bg-white bg-cover bg-center bg-no-repeat lg:bg-none"
-      style={{
-        backgroundImage: `url(${themeImages[customer?.color_name || "Default"]})`,
-      }}
-    >
-      <div className={"flex mt-4 md:mt-[8%] max-lg:mt-0 max-lg:min-h-screen"}>
-        {/* Left side - Empty space */}
-        <div className="hidden lg:block lg:w-3/5"></div>
+    <div className={"grid grid-cols-1 md:grid-cols-2 min-h-screen"}>
+      {/* Left side - Empty space */}
+      <div className="bg-white flex items-center justify-center hidden md:block py-5">
+        <div className="text-center space-y-2 lg:space-y-5">
+          <img src={themeImages["logo"]} alt={""} className="h-12 mx-auto" />
+          <h2 className="text-xl font-medium text-[#222222]">
+            Customer Portal
+          </h2>
+          <img
+            src={`${themeImages[customer?.color_name || "Default"]}`}
+            alt={""}
+            className="mx-0 md:mx-2 mb-0 md:mb-2 hidden md:block "
+          />
+          <p className="hidden md:block text-sm font-semibold text-[#222222]">
+            Powered by Dynasoft Cloud
+          </p>
+        </div>
+      </div>
 
-        {/* Right side - Auth forms */}
-        <div className="w-full lg:w-2/5 flex flex-col items-center lg:justify-center pt-10 md:pt-[20%] lg:pt-0 p-6 max-lg:bg-white max-lg:bg-opacity-95">
-          <div className="w-full max-w-md">
-            <div className="text-center mb-6">
-              <img
-                src={themeImages["logo"]}
-                alt={""}
-                className="h-12 mx-auto mb-4"
-              />
-              <h2 className="text-xl font-medium text-[#222222]">
-                Welcome to Dynasoft Cloud
-              </h2>
-              <p className="text-sm font-semibold text-[#222222]">
-                Customer Portal
-              </p>
+      {/* Right side - Auth forms */}
+      <div
+        style={{
+          background: customer?.secondary_color,
+        }}
+        className="w-full flex items-center justify-center"
+      >
+        <div className="min-w-96 mx-auto">
+          <div className="text-center mb-8 md:hidden block">
+            <img
+              src={themeImages["logo"]}
+              alt={""}
+              className="h-12 mx-auto mb-4"
+            />
+            <h2 className="text-xl font-medium text-[#222222]">
+              Customer Portal
+            </h2>
+          </div>
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-medium text-[#222222]">
+              Login to your account
+            </h2>
+          </div>
+
+          {/* Error message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded-md">
+              {error}
+            </div>
+          )}
+
+          <form
+            onSubmit={handleLoginSubmit(onLoginSubmit)}
+            className="space-y-4"
+          >
+            <div className="space-y-4 mb-3">
+              <div>
+                <InputArea
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  error={loginErrors.email?.message}
+                  registration={loginRegister("email")}
+                />
+              </div>
+              <div>
+                <InputArea
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  error={loginErrors.password?.message}
+                  registration={loginRegister("password")}
+                />
+              </div>
             </div>
 
-            {/* Error message */}
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded-md">
-                {error}
-              </div>
-            )}
-
-            <form
-              onSubmit={handleLoginSubmit(onLoginSubmit)}
-              className="space-y-4"
+            <button
+              type="submit"
+              className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
+              disabled={isLoading}
             >
-              <div className="space-y-4 mb-3">
-                <div>
-                  <InputArea
-                    id="email"
-                    type="email"
-                    placeholder="Email"
-                    error={loginErrors.email?.message}
-                    registration={loginRegister("email")}
-                  />
-                </div>
-                <div>
-                  <InputArea
-                    id="password"
-                    type="password"
-                    placeholder="Password"
-                    error={loginErrors.password?.message}
-                    registration={loginRegister("password")}
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-[#222222] hover:bg-transparent hover:text-[#222222] border-2 border-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
-                disabled={isLoading}
+              {isLoading ? "Signing in..." : "Sign in"}
+            </button>
+            <div className="text-center">
+              <Link
+                style={{ color: customer?.primary_color }}
+                to="/forget-password"
+                className={`text-xs hover:underline`}
               >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </button>
-              <div className="text-center">
-                <Link
-                  style={{ color: customer?.primary_color }}
-                  to="/forget-password"
-                  className={`text-xs hover:underline`}
-                >
-                  Forgot Password
-                </Link>
-                {/* <div className="text-center">
-                  <Link
-                    style={{ color: customer?.primary_color }}
-                    to="/tickets"
-                    className={`text-xs hover:underline`}
-                  >
-                    View All Jobs
-                  </Link>
-                </div> */}
-              </div>
-            </form>
-          </div>
-          <div>
-            <img
-              className={"mx-auto h-12 mt-2 md:mt-24 opacity-70"}
-              src={dy_logo_white}
-            />
-          </div>
+                Forgot Password
+              </Link>
+            </div>
+            <p className="block text-center md:hidden text-sm font-semibold text-[#222222]">
+              Powered by Dynasoft Cloud
+            </p>
+          </form>
         </div>
       </div>
     </div>

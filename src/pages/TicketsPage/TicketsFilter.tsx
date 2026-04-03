@@ -20,6 +20,9 @@ interface TicketsFilterProps {
   filter: TicketFilterState;
   setFilter: React.Dispatch<React.SetStateAction<TicketFilterState>>;
   ticketStatusOptions: { value: string; label: string }[];
+  customer: any | null;
+  projectDetail: any | null;
+  primary_color: string;
 }
 
 type FilterFormValues = {
@@ -33,6 +36,9 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
   filter,
   setFilter,
   ticketStatusOptions,
+  customer,
+  projectDetail,
+  primary_color,
 }) => {
   const methods = useForm<FilterFormValues>({
     defaultValues: {
@@ -128,8 +134,110 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
 
   return (
     <FormProvider {...methods}>
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:w-3/5">
+      <div className="grid grid-cols-3 gap-4 my-1 lg:my-3">
+        <div
+          style={{ backgroundColor: primary_color, borderRadius: "9px" }}
+          className="p-2 md:p-4 space-y-1 md:space-y-3"
+        >
+          <h3 className="text-white text-sm md:text-md">
+            Tickets Generated{" "}
+            {projectDetail?.tickets?.filter(
+              (e: any) => e.ticketTypeId == 3 && !e?.isQuestion,
+            )?.length || 0}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 text-xs md:text-sm text-white font-light">
+            <p>
+              Completed{" "}
+              {projectDetail?.tickets?.filter(
+                (e: any) =>
+                  e.ticketTypeId == 3 &&
+                  !e?.isQuestion &&
+                  e?.TicketStatus?.statusTypeId == 616,
+              )?.length || 0}
+            </p>
+            <p>
+              In Progress{" "}
+              {projectDetail?.tickets?.filter(
+                (e: any) =>
+                  e.ticketTypeId == 3 &&
+                  !e?.isQuestion &&
+                  e?.TicketStatus?.statusTypeId != 616,
+              )?.length || 0}
+            </p>
+          </div>
+        </div>
+        <div
+          style={{ backgroundColor: primary_color, borderRadius: "9px" }}
+          className="p-2 md:p-4 space-y-1 md:space-y-3"
+        >
+          <h3 className="text-white text-sm md:text-md">
+            Bugs Reported{" "}
+            {projectDetail?.tickets?.filter(
+              (e: any) => e.ticketTypeId == 4 && !e?.isQuestion,
+            )?.length || 0}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 text-xs md:text-sm text-white font-light">
+            <p>
+              Completed{" "}
+              {projectDetail?.tickets?.filter(
+                (e: any) =>
+                  e.ticketTypeId == 4 &&
+                  !e?.isQuestion &&
+                  e?.TicketStatus?.statusTypeId == 616,
+              )?.length || 0}
+            </p>
+            <p>
+              In Progress{" "}
+              {projectDetail?.tickets?.filter(
+                (e: any) =>
+                  e.ticketTypeId == 4 &&
+                  !e?.isQuestion &&
+                  e?.TicketStatus?.statusTypeId != 616,
+              )?.length || 0}
+            </p>
+          </div>
+        </div>
+        <div
+          style={{ backgroundColor: primary_color, borderRadius: "9px" }}
+          className="p-2 md:p-4 space-y-1 md:space-y-3"
+        >
+          {" "}
+          <h3 className="text-white text-sm md:text-md">
+            Question Raised{" "}
+            {projectDetail?.tickets?.filter(
+              (e: any) => e.ticketTypeId == 3 && e?.isQuestion,
+            )?.length || 0}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 text-xs md:text-sm text-white font-light">
+            <p>
+              Completed{" "}
+              {projectDetail?.tickets?.filter(
+                (e: any) =>
+                  e.ticketTypeId == 3 &&
+                  e?.isQuestion &&
+                  e?.TicketStatus?.statusTypeId == 616,
+              )?.length || 0}
+            </p>
+            <p>
+              In Progress{" "}
+              {projectDetail?.tickets?.filter(
+                (e: any) =>
+                  e.ticketTypeId == 3 &&
+                  e?.isQuestion &&
+                  e?.TicketStatus?.statusTypeId != 616,
+              )?.length || 0}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{ backgroundColor: customer?.secondary_color }}
+        className="flex px-4 pb-2 md:pb-0 pt-2 rounded-xl flex-col gap-2 md:flex-row md:items-center md:justify-between"
+      >
+        <h3 className="text-black hidden md:block text-md font-semibold flex mx-auto">
+          Filters
+        </h3>
+        <div className="grid gap-1 md:gap-2 grid-cols-2 md:grid-cols-7">
           <SelectOption
             options={priorityOptions}
             placeholder="Priority"
@@ -145,14 +253,14 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
             placeholder="Ticket Status"
             registration={register("ticketStatusId")}
           />
-        </div>
-        <div className="w-full md:w-72">
-          <InputArea
-            id="ticket-search"
-            placeholder="Search"
-            value={searchQuery || ""}
-            onChange={(e) => methods.setValue("searchQuery", e.target.value)}
-          />
+          <div className="">
+            <InputArea
+              id="ticket-search"
+              placeholder="Search"
+              value={searchQuery || ""}
+              onChange={(e) => methods.setValue("searchQuery", e.target.value)}
+            />
+          </div>
         </div>
       </div>
     </FormProvider>

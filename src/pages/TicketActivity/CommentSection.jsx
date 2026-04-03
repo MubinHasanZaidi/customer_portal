@@ -8,9 +8,12 @@ import {
   fetchTicketComments,
 } from "../../store/actions/ticketActivityActions";
 import { authAPI } from "../../services/api";
+import useCustomerConfig from "../../hooks/useCustomerConfig";
 
-export function CommentSection({ Id, primaryColor, customerUserId }) {
+export function CommentSection({ Id, primaryColor, customerUserId , secondary_color }) {
   const dispatch = useDispatch();
+  const { customerConfig } = useCustomerConfig();
+  const { customer } = customerConfig;
   const [commentsFilter, setCommentsFilter] = useState({
     ticketId: Id,
     page: 1,
@@ -73,30 +76,32 @@ export function CommentSection({ Id, primaryColor, customerUserId }) {
 
   return (
     <>
+      <div
+        style={{ background: customer?.secondary_color }}
+        className="w-full px-4 md:px-6 py-2 md:py-4 mt-4 rounded-2xl flex justify-between"
+      >
+        <h2 className="text-md font-medium text-[#222222]">Comment Section</h2>
+        <button
+          type="button"
+          className="text-sm text-black px-3 rounded-full cursor-pointer inline-flex items-center py-1 "
+          title="Refresh"
+          disabled={!commentsFilter?.ticketId}
+          onClick={refreshComments}
+        >
+          <RefreshCcw className="w-5 h-5" />
+        </button>
+      </div>
       {commentsFilter?.ticketId ? (
-        <div className="w-full overflow-x-auto h-auto min-h-32 px-3 py-2 rounded-lg bg-white mt-2">
-          <CommentForm
-            onSave={handleSubmit}
-            commentForm={commentForm}
-            setCommentForm={setCommentForm}
-          />
-          <hr />
-          <div className="flex justify-between items-center">
-            <h6
-              style={{ color: primaryColor }}
-              className="font-bold mb-0  my-2"
-            >
-              Comments
-            </h6>
-            <button
-              type="button"
-              className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-3 rounded-full cursor-pointer inline-flex items-center py-1 "
-              title="Refresh"
-              disabled={!commentsFilter?.ticketId}
-              onClick={refreshComments}
-            >
-              <RefreshCcw className="w-4 h-4" />
-            </button>
+        <>
+          <div
+            style={{ background: customer?.secondary_color }}
+            className="w-full px-4 md:px-6 py-2 md:py-4 overflow-x-auto h-auto min-h-32 mt-4 rounded-2xl"
+          >
+            <CommentForm
+              onSave={handleSubmit}
+              commentForm={commentForm}
+              setCommentForm={setCommentForm}
+            />
           </div>
           <CommentsList
             commentsFilter={commentsFilter}
@@ -104,8 +109,9 @@ export function CommentSection({ Id, primaryColor, customerUserId }) {
             setCommentForm={setCommentForm}
             customerUserId={customerUserId}
             primaryColor={primaryColor}
+            secondary_color={secondary_color}
           />
-        </div>
+        </>
       ) : null}
     </>
   );

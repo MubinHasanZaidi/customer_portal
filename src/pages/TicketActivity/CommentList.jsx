@@ -14,6 +14,7 @@ const CommentsList = ({
   setCommentsFilter,
   customerUserId,
   primaryColor,
+  secondary_color,
 }) => {
   const dispatch = useDispatch();
   const [deleteModal, setDeleteModal] = useState(null);
@@ -33,7 +34,13 @@ const CommentsList = ({
 
   return (
     <>
-      <div className="flex flex-col gap-2 max-h-[520px] overflow-y-scroll scrollbar-fancy">
+      {/* <div
+        style={{ background: secondary_color }}
+        className="w-full px-2 md:px-4 py-2 md:py-2 my-2 rounded-2xl flex justify-between"
+      >
+        <h2 className="text-sm font-medium text-[#222222]">Comments</h2>
+      </div> */}
+      <div className="flex flex-col gap-2 max-h-[520px] overflow-y-auto py-4 scrollbar-fancy">
         {commentsList?.map((e, i) => {
           return (
             <div
@@ -48,6 +55,7 @@ const CommentsList = ({
                   data={e}
                   key={e?.Id}
                   userId={customerUserId}
+                  secondary_color={secondary_color}
                   primaryColor={primaryColor}
                   onEdit={(val) => {
                     setCommentForm(val);
@@ -99,7 +107,7 @@ const CommentsList = ({
 
 export default CommentsList;
 
-function CommentCard({ data, onEdit, onDelete, userId }) {
+function CommentCard({ data, onEdit, onDelete, userId, secondary_color }) {
   const employee = data?.Employee;
   const employeeName = employee
     ? `${employee?.firstName || ""}${
@@ -123,14 +131,14 @@ function CommentCard({ data, onEdit, onDelete, userId }) {
     <div
       style={
         data?.customerUserId == userId
-          ? { border: "2px solid black" }
-          : { border: "0.5px solid black" }
+          ? { backgroundColor: secondary_color }
+          : { backgroundColor: "#F5F5F5" }
       }
       className={`group w-full max-w-3xl rounded-xl transition-all duration-200 bg-gray-200 text-white`}
     >
       <div className="p-2">
         {/* Header */}
-        <div className="flex items-start justify-between gap-1">
+        <div className="flex items-center px-3 justify-between gap-1 bg-white rounded-2xl">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {/* Avatar */}
 
@@ -147,9 +155,8 @@ function CommentCard({ data, onEdit, onDelete, userId }) {
                     {employeeCode}
                   </span>
                 )}
+                <div className="text-xs text-black">{createdText}</div>
               </div>
-
-              <div className="mt-1 text-xs text-black">{createdText}</div>
             </div>
           </div>
 
@@ -192,7 +199,7 @@ function CommentCard({ data, onEdit, onDelete, userId }) {
         {/* Comment Body */}
         <div className="mt-1">
           <div
-            className={` p-1 rounded-xl text-xs text-black leading-relaxed bg-white
+            className={` p-1 rounded-xl text-xs text-black leading-relaxed bg-transparent
              `}
           >
             {data?.comment || "-"}

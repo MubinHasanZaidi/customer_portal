@@ -39,7 +39,7 @@ const InputDate: React.FC<InputDateProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [touched, setTouched] = useState(false);
-  
+
   const parseDate = (val: string | Date | null): Date | null => {
     if (!val) return null;
 
@@ -92,8 +92,8 @@ const InputDate: React.FC<InputDateProps> = ({
             dateFormat="dd-MMM-yyyy"
             disabled={disable}
             placeholderText={placeholder}
-            className={`form-input placeholder:text-sm px-1 border-x-0 border-t-0 border-b border-b-[#707070] bg-transparent focus:border-b-1 focus:border-b-[#222222] focus:ring-0 placeholder:text-gray-400 ${
-              disable ? "text-[#6f6f6f]" : "text-[#222222]"
+            className={`form-input placeholder:text-xs px-1 border border-[#707070] bg-white focus:border-2 focus:ring-0 placeholder:text-gray-400 text-xs rounded-[5px]  ${
+              disable ? "text-[#6f6f6f]" : "text-black"
             } ${className} ${rightIcon ? "pr-8" : ""}`}
             onFocus={() => setIsFocused(true)}
             onBlur={() => {

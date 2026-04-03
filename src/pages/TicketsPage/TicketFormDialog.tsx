@@ -15,7 +15,7 @@ import { z } from "zod";
 import { authAPI } from "../../services/api";
 import { generateImageUrl } from "../../utils/common";
 
-type TicketActionType = "Ask A Question" | "Report A Bug" | "Task";
+type TicketActionType = "Ask Question" | "Report Bug" | "Task";
 
 const ticketCreateSchema = z.object({
   Id: z.union([z.string(), z.number()]).nullable().optional(),
@@ -34,6 +34,7 @@ export interface TicketCreatePayload {
   startDate: string;
   ticketTypeId: number;
   file: any | null;
+  isQuestion: boolean | null;
 }
 
 interface TicketCreateDialogProps {
@@ -132,7 +133,9 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
   const epicTicket = projectDetail?.epicTicket;
   const reportEmp = projectDetail?.reportEmp;
 
-  const submitHandler: SubmitHandler<TicketCreateFormData> = async (data) => {
+  const submitHandler: SubmitHandler<TicketCreateFormData> = async (
+    data: any,
+  ) => {
     let fileData = data.file || null;
 
     if (data?.file && typeof data?.file === "object") {
@@ -150,6 +153,11 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
       ticketSummary: data.ticketSummary || "",
       startDate: data.startDate,
       ticketTypeId,
+      isQuestion: !data?.Id
+        ? selectedTicketType == "Ask Question"
+          ? true
+          : false
+        : data?.isQuestion,
       file: fileData, // Use the uploaded file name
     });
   };
@@ -161,16 +169,19 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
         if (!isOpen) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-[640px]">
-        <DialogHeader>
+      <DialogContent
+        style={{ backgroundColor: secondaryColor }}
+        className="sm:max-w-[640px]"
+      >
+        <DialogHeader className=" rounded-full">
           <DialogTitle>{selectedTicketType ?? "Ticket"}</DialogTitle>
         </DialogHeader>
         <hr />
         <form
           onSubmit={handleSubmit(submitHandler)}
-          className="grid grid-cols-1 gap-4"
+          className="grid grid-cols-1 gap-1 md:gap-4"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 md:gap-4">
             <InputArea
               id="projectName"
               label="Project Name"
@@ -187,7 +198,7 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
 
           <InputArea
             id="reportEmp"
-            label="Report Employee"
+            label="Assign Employee"
             value={reportEmp}
             disable
           />
@@ -208,7 +219,7 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
             rows={2}
             error={errors.ticketSummary?.message}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 md:gap-4">
             <Controller
               name="startDate"
               control={control}
@@ -250,26 +261,27 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
               />
               <label
                 htmlFor="cv-upload"
-                className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-3 rounded-full cursor-pointer inline-flex items-center py-1 "
+                className="text-xs bg-white line-clamp-1 overflow-hidden  border border-[#222222] text-black px-3 rounded-[5px] w-full cursor-pointer inline-flex items-center py-2 "
               >
-                Choose File
+                {fileName ? (
+                  <a
+                    href={fileUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className=" text-xs text-blue-700 underline"
+                  >
+                    {fileName}
+                  </a>
+                ) : (
+                  "Choose File"
+                )}
               </label>
-              {fileName && (
-                <a
-                  href={fileUrl || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 text-xs text-blue-700 underline"
-                >
-                  {fileName}
-                </a>
-              )}
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex flex-row gap-1 py-2 justify-end">
             <button
               type="button"
-              className="px-4 w-fit disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-white text-[#222222] py-2 rounded-full font-medium hover:bg-black transition-colors"
+            className="px-4 w-fit disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-white text-[#222222] py-2 rounded-full font-medium hover:bg-black transition-colors"
               style={{ background: secondaryColor }}
               onClick={() => onClose()}
             >
@@ -277,8 +289,7 @@ const TicketCreateDialog: React.FC<TicketCreateDialogProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 w-fit disabled:opacity-50 h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
-              style={{ background: primaryColor }}
+              className="px-4 w-fit disabled:opacity-50  h-fit hover:bg-transparent text-sm hover:text-[#222222] border-2 border-[#222222] bg-[#222222] text-white py-2 rounded-full font-medium hover:bg-black transition-colors"
             >
               {isEditMode ? "Update" : "Save"}
             </button>

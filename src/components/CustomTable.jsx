@@ -60,39 +60,46 @@ export function CustomTable({
   }, [pageNumber, totalPages]);
 
   return (
-    <Card className="h-full w-full shadow-none mt-3">
+    <Card className="h-full w-full shadow-none rounded-none">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4">
-          <div>
+          {/* <div>
             <Typography variant="h5" color="blue-gray">
               {heading}
             </Typography>
-          </div>
-          {filterComponent ? <div className="mt-3">{filterComponent}</div> : null}
+          </div> */}
+          {filterComponent ? (
+            <div className="mt-3">{filterComponent}</div>
+          ) : null}
         </div>
       </CardHeader>
-      <CardBody className="py-2  overflow-scroll px-0">
+      <CardBody className="py-2  overflow-auto px-0">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
-            <tr>
-              {column.map((head) => (
-                <th
-                  key={head.key || head.name}
-                  className="border-y border-black px-2 py-1"
-                >
-                  <p className="font-semibold text-xs text-black leading-none opacity-70">
-                    {head?.name}
-                  </p>
-                </th>
-              ))}
+            <tr className="rounded-xl bg-[#F5F5F5]">
+              {column.map((head, index) => {
+                const isFirst = index === 0;
+                const isLast = index === column.length - 1;
+
+                return (
+                  <th
+                    key={head.key || head.name}
+                    className={`py-4 px-2 ${isFirst ? "rounded-s-xl" : ""} ${isLast ? "rounded-e-xl" : ""}`}
+                  >
+                    <p className="font-semibold text-sm text-black leading-none opacity-70">
+                      {head?.name}
+                    </p>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
             {data.map((e, i) => {
               const isLast = i === data.length - 1;
               const classes = isLast
-                ? "p-2"
-                : "p-2 border-b border-blue-gray-50";
+                ? "p-3.5"
+                : "p-3.5 border-b border-blue-gray-50";
 
               return (
                 <tr key={i} className="hover:bg-gray-50">
@@ -138,6 +145,7 @@ export function CustomTable({
         <Button
           variant="outlined"
           size="sm"
+          className="rounded-xl"
           disabled={pageNumber <= 1}
           onClick={() => goToPage(pageNumber - 1)}
         >
@@ -150,6 +158,7 @@ export function CustomTable({
                 key={item}
                 variant={item === pageNumber ? "outlined" : "text"}
                 size="sm"
+                className="rounded-xl"
                 onClick={() => goToPage(item)}
               >
                 {item}
@@ -163,6 +172,7 @@ export function CustomTable({
         </div>
         <Button
           variant="outlined"
+          className="rounded-xl"
           size="sm"
           disabled={pageNumber >= totalPages}
           onClick={() => goToPage(pageNumber + 1)}

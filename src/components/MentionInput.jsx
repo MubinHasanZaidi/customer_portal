@@ -147,13 +147,16 @@ const MentionInputField = ({
       )}
       <div className="relative">
         <div
-          className={`form-input px-1 text-xs border border-[#707070] border-xl bg-transparent focus:ring-0 placeholder:text-gray-400 ${
+          className={`form-input placeholder:text-xs px-1 border border-[#707070] bg-white focus:border-2 focus:ring-0 placeholder:text-gray-400 ${
             disabled ? "text-[#6f6f6f]" : "text-[#222222]"
           } ${className} ${error && touched ? "border-red-500" : ""}`}
           style={{
-            borderBottom:
+            border:
               error && touched ? "1px solid #ef4444" : "1px solid #222222",
             padding: 0,
+            borderRadius: "5px",
+            fontSize: "0.75rem",
+            lineHeight: "1rem",
           }}
         >
           <MentionsInput
@@ -180,7 +183,9 @@ const MentionInputField = ({
           </MentionsInput>
         </div>
       </div>
-      {error && touched && <p className="form-error text-left text-xs">{error}</p>}
+      {error && touched && (
+        <p className="form-error text-left text-xs">{error}</p>
+      )}
     </div>
   );
 };

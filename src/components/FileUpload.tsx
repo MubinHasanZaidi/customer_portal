@@ -31,21 +31,22 @@ const FileUpload = ({
         {/* Visible Upload Label */}
         <label
           htmlFor={id}
-          className="text-xs bg-[#222222] hover:bg-transparent hover:text-[#222222] border border-[#222222] text-white px-3 rounded-full cursor-pointer inline-flex items-center py-1 "
+          className="text-xs bg-white line-clamp-1 overflow-hidden  border border-[#222222] text-black px-3 rounded-[5px] w-full cursor-pointer inline-flex items-center py-2 "
           title={fileName || ""}
         >
-          {"Browse"}
+          {fileName ? (
+            <a
+              href={fileUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 text-xs text-blue-700 underline"
+            >
+              {fileName}
+            </a>
+          ) : (
+            "Browse"
+          )}
         </label>
-        {fileName && (
-          <a
-            href={fileUrl || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 text-xs text-blue-700 underline"
-          >
-            {fileName}
-          </a>
-        )}
       </div>
       {error && <p className="form-error text-left">{error?.file}</p>}
     </div>

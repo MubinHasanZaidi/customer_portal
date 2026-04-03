@@ -4,15 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, CircleUserRound } from "lucide-react";
+import { ArrowLeft, ChevronDown, CircleUserRound } from "lucide-react";
 import useCustomerConfig from "../hooks/useCustomerConfig";
 import { generateImageUrl } from "../utils/common";
 import { themeImages } from "../data/mockData";
 
-const Header = () => {
+const Header = ({ isBack = false }: { isBack?: boolean }) => {
   const { customerConfig, userConfig, setUserConfig } = useCustomerConfig();
   const { customer } = customerConfig;
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -62,7 +61,7 @@ const Header = () => {
 
   return (
     <header className="bg-transparent">
-      <div className="2xl:max-w-[85vw] mx-auto px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 flex flex-row justify-between items-center">
+      <div className="mx-auto px-4 sm:px-4 lg:px-6 py-2 sm:py-4 grid grid-cols-5 justify-between items-center">
         <div
           className="flex items-end lg:items-center cursor-pointer"
           onClick={() => {
@@ -75,14 +74,28 @@ const Header = () => {
             alt={""}
             className="h-8 lg:h-12 m-auto"
           />
+          <div className="w-[1px] h-8 lg:h-12 bg-black"></div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
+          {isBack && (
+            <div data-title={"Go Back"} className="w-fit px-1">
+              <ArrowLeft
+                onClick={() => navigate("/tickets")}
+                className="w-5 h-5 text-black cursor-pointer"
+              />
+            </div>
+          )}
+          <h2 className=" px-2 text-xs md:text-xl font-medium capitalize text-[#222222]">
+            {customer?.Customer?.customerName}
+          </h2>
+        </div>
+        <div className="col-span-3 flex justify-end items-center space-x-2 md:space-x-4 ">
           {userConfig ? (
             <div className="relative" ref={dropdownRef}>
               <div className="flex items-center space-x-2">
                 <span
-                  className="text-xs text-[#222222] truncate max-w-[150px]"
-                  title={`Welcome, ${userConfig?.firstName}`}
+                  className="text-xs text-[#222222] truncate "
+                  title={`Welcome to Customer Portal, ${userConfig?.firstName}`}
                 >
                   Welcome,{" "}
                   <span

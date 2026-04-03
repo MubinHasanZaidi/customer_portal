@@ -17,6 +17,7 @@ import { AppDispatch, RootState } from "@/src/store";
 import {
   Bug,
   CircleHelp,
+  CirclePlus,
   MessageSquareText,
   PencilIcon,
   Ticket,
@@ -28,16 +29,15 @@ import { PriorityType, TicketType } from "../../utils/common";
 import { clearEditRecord } from "../../store/slices/ticketSlice";
 import TicketsFilter from "./TicketsFilter";
 
-type TicketActionType = "Ask A Question" | "Report A Bug" | "Task";
+type TicketActionType = "Ask Question" | "Report Bug" | "Task";
 
 const TicketsPage = () => {
   const { customerConfig } = useCustomerConfig();
   const { customer } = customerConfig;
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { projectDetail, count, entities, editRecord , ticketStatus } = useSelector(
-    (state: RootState) => state.ticket,
-  );
+  const { projectDetail, count, entities, editRecord, ticketStatus } =
+    useSelector((state: RootState) => state.ticket);
   const [selectedTicketType, setSelectedTicketType] =
     useState<TicketActionType | null>(null);
   const [deleteRecord, setDeleteRecord] = useState<any | null>(null);
@@ -55,9 +55,9 @@ const TicketsPage = () => {
   });
 
   const ticketTypeMap: Record<TicketActionType, number> = {
-    "Ask A Question": 3,
+    "Ask Question": 3,
     Task: 3,
-    "Report A Bug": 4,
+    "Report Bug": 4,
   };
 
   useEffect(() => {
@@ -78,7 +78,6 @@ const TicketsPage = () => {
     filter.filter.ticketStatusId,
   ]);
 
-
   const openCreateTicketModal = (type: TicketActionType) => {
     dispatch(clearEditRecord());
     setSelectedTicketType(type);
@@ -91,12 +90,12 @@ const TicketsPage = () => {
 
   const getTicketTypeLabel = (ticket: any): TicketActionType => {
     const typeId = ticket?.ticketTypeId ?? ticket?.TicketType?.Id;
-    if (typeId === 4) return "Report A Bug";
+    if (typeId === 4) return "Report Bug";
     if (typeId === 3 && /task/i.test(ticket?.ticketTypeName || "")) {
       return "Task";
     }
     if (/task/i.test(ticket?.ticketTypeName || "")) return "Task";
-    return "Ask A Question";
+    return "Ask Question";
   };
 
   const isAbove24Hours = (createdAt?: string) => {
@@ -180,8 +179,10 @@ const TicketsPage = () => {
       key: "ticketTypeId",
       name: "Ticket Type",
       type: "string",
-      formatter: (e: any) => {
-        return TicketType?.find((el) => el.value == e)?.label;
+      formatter: (e: any, cell: any) => {
+        return cell?.isQuestion
+          ? "Question"
+          : TicketType?.find((el) => el.value == e)?.label;
       },
     },
     {
@@ -202,7 +203,7 @@ const TicketsPage = () => {
     },
     {
       key: "createdAt",
-      name: "Date",
+      name: "Creation Date",
       type: "string",
       formatter: (cell: any) => new Date(cell).toDateString(),
     },
@@ -234,53 +235,61 @@ const TicketsPage = () => {
       className={`min-h-screen flex flex-col`}
     >
       <Header />
-      <main className="flex-1">
-        <div className="2xl:max-w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 min-h-[90dvh]">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-6">
+      <main className="flex-1 mt-2">
+        <div className="mx-auto min-h-[90dvh]  bg-white grid grid-cols-1 lg:grid-cols-5 gap-0 lg:gap-5">
+          <div
+            style={{ backgroundColor: customer?.secondary_color }}
+            className="col-span-1 mt-0 lg:mt-2 py-2 max-lg:border-t max-lg:border-t-black lg:py-6 px-4 rounded-none flex flex-row lg:flex-col item-center gap-1 md:gap-3"
+          >
             <button
               type="button"
-              className="w-full min-h-20 rounded-2xl px-6 py-5 text-white text-lg font-semibold flex items-center justify-center gap-3"
-              style={{ background: customer?.primary_color }}
-              onClick={() => openCreateTicketModal("Ask A Question")}
-            >
-              <CircleHelp className="w-6 h-6" />
-              Ask A Question
-            </button>
-            <button
-              type="button"
-              className="w-full min-h-20 rounded-2xl px-6 py-5 text-white text-lg font-semibold flex items-center justify-center gap-3"
-              style={{ background: customer?.primary_color }}
-              onClick={() => openCreateTicketModal("Report A Bug")}
-            >
-              <Bug className="w-6 h-6" />
-              Report A Bug
-            </button>
-            <button
-              type="button"
-              className="w-full min-h-20 rounded-2xl px-6 py-5 text-white text-lg font-semibold flex items-center justify-center gap-3"
-              style={{ background: customer?.primary_color }}
+              className=" rounded-full p-2 md:p-3 text-black bg-white text-xs md:text-sm font-semibold flex items-center justify-center gap-1 md:gap-2 hover:shadow-md"
               onClick={() => openCreateTicketModal("Task")}
             >
-              <Ticket className="w-6 h-6" />
-              Create New Task
+              <CirclePlus className="w-4 h-4" />
+              Create Task
             </button>
-          </div>
 
-          <CustomTable
-            column={column}
-            data={entities || []}
-            count={count}
-            heading={"Tickets"}
-            filterComponent={
-              <TicketsFilter
-                filter={filter}
-                setFilter={setFilter}
-                ticketStatusOptions={ticketStatus}
-              />
-            }
-            filter={filter}
-            setFilter={setFilter}
-          />
+            <button
+              type="button"
+              className=" rounded-full p-2 md:p-3 text-black bg-white text-xs md:text-sm font-semibold flex items-center justify-center gap-1 md:gap-2 hover:shadow-md"
+              onClick={() => openCreateTicketModal("Report Bug")}
+            >
+              <Bug className="w-4 h-4" />
+              Report Bug
+            </button>
+            <button
+              type="button"
+              className=" rounded-full p-2 md:p-3 text-black bg-white text-xs md:text-sm font-semibold flex items-center justify-center gap-1 md:gap-2 hover:shadow-md"
+              onClick={() => openCreateTicketModal("Ask Question")}
+            >
+              <CircleHelp className="w-4 h-4" />
+              Ask Question
+            </button>
+            <p className="hidden lg:block text-center mt-auto text-xs font-semibold text-[#222222]">
+              Powered by Dynasoft Cloud
+            </p>
+          </div>
+          <div className="col-span-4 px-3">
+            <CustomTable
+              column={column}
+              data={entities || []}
+              count={count}
+              heading={"Tickets"}
+              filterComponent={
+                <TicketsFilter
+                  filter={filter}
+                  setFilter={setFilter}
+                  ticketStatusOptions={ticketStatus}
+                  customer={customer}
+                  projectDetail={projectDetail}
+                  primary_color={customer?.primary_color}
+                />
+              }
+              filter={filter}
+              setFilter={setFilter}
+            />
+          </div>
         </div>
 
         <TicketCreateDialog
@@ -301,6 +310,7 @@ const TicketsPage = () => {
           onClose={closeDeleteModal}
           onDelete={confirmDeleteTicket}
           ticketCode={deleteRecord?.ticketCode}
+          secondaryColor={customer?.secondary_color}
         />
       </main>
       <Footer />
