@@ -140,14 +140,14 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
           className="p-2 md:p-4 space-y-1 md:space-y-3"
         >
           <h3 className="text-white text-sm md:text-md">
-            Tickets Generated{" "}
+            Tickets Generated :{" "}
             {projectDetail?.tickets?.filter(
               (e: any) => e.ticketTypeId == 3 && !e?.isQuestion,
             )?.length || 0}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 text-xs md:text-sm text-white font-light">
             <p>
-              Completed{" "}
+              Completed :{" "}
               {projectDetail?.tickets?.filter(
                 (e: any) =>
                   e.ticketTypeId == 3 &&
@@ -156,7 +156,7 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
               )?.length || 0}
             </p>
             <p>
-              In Progress{" "}
+              In Progress :{" "}
               {projectDetail?.tickets?.filter(
                 (e: any) =>
                   e.ticketTypeId == 3 &&
@@ -171,14 +171,14 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
           className="p-2 md:p-4 space-y-1 md:space-y-3"
         >
           <h3 className="text-white text-sm md:text-md">
-            Bugs Reported{" "}
+            Bugs Reported :{" "}
             {projectDetail?.tickets?.filter(
               (e: any) => e.ticketTypeId == 4 && !e?.isQuestion,
             )?.length || 0}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 text-xs md:text-sm text-white font-light">
             <p>
-              Completed{" "}
+              Completed :{" "}
               {projectDetail?.tickets?.filter(
                 (e: any) =>
                   e.ticketTypeId == 4 &&
@@ -187,7 +187,7 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
               )?.length || 0}
             </p>
             <p>
-              In Progress{" "}
+              In Progress :{" "}
               {projectDetail?.tickets?.filter(
                 (e: any) =>
                   e.ticketTypeId == 4 &&
@@ -203,14 +203,14 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
         >
           {" "}
           <h3 className="text-white text-sm md:text-md">
-            Question Raised{" "}
+            Question Raised :{" "}
             {projectDetail?.tickets?.filter(
               (e: any) => e.ticketTypeId == 3 && e?.isQuestion,
             )?.length || 0}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 text-xs md:text-sm text-white font-light">
             <p>
-              Completed{" "}
+              Completed :{" "}
               {projectDetail?.tickets?.filter(
                 (e: any) =>
                   e.ticketTypeId == 3 &&
@@ -219,7 +219,7 @@ const TicketsFilter: React.FC<TicketsFilterProps> = ({
               )?.length || 0}
             </p>
             <p>
-              In Progress{" "}
+              In Progress :{" "}
               {projectDetail?.tickets?.filter(
                 (e: any) =>
                   e.ticketTypeId == 3 &&
